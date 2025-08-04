@@ -49,6 +49,7 @@ app.use(cors({
     'http://localhost:5174',
     'http://localhost:3000',
     'https://www.uni-guru.in',
+    'https://uni-guru.vercel.app',
     // Add your Firebase hosting domain here
     'https://uniguru-bf024.web.app/',
     'https://uniguru-bf024.firebaseapp.com/'
