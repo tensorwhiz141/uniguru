@@ -8,6 +8,10 @@ import {
   updatePassword,
   deleteUser
 } from '../controller/userController.js';
+import {
+  forgotPassword,
+  resetPassword
+} from '../controller/authController.js';
 import { protect } from '../middleware/auth.js';
 import {
   validateUserRegistration,
@@ -19,6 +23,8 @@ const router = express.Router();
 // Public routes
 router.post('/signup', validateUserRegistration, signup);
 router.post('/login', validateUserLogin, login);
+router.post('/forgot-password', forgotPassword);
+router.put('/reset-password/:resettoken', resetPassword);
 
 // Protected routes
 router.get('/auth-status', protect, getAuthStatus);

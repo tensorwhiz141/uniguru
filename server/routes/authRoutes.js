@@ -6,7 +6,9 @@ import {
   getMe,
   logout,
   updateDetails,
-  updatePassword
+  updatePassword,
+  forgotPassword,
+  resetPassword
 } from '../controller/authController.js';
 import { protect } from '../middleware/auth.js';
 import {
@@ -21,6 +23,8 @@ router.post('/register', validateUserRegistration, register);
 router.post('/login', validateUserLogin, login);
 router.post('/google', googleAuth);
 router.post('/google/token', googleAuth); // Alternative endpoint for frontend compatibility
+router.post('/forgot-password', forgotPassword);
+router.put('/reset-password/:resettoken', resetPassword);
 
 // Protected routes
 router.get('/me', protect, getMe);
