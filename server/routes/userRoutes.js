@@ -12,7 +12,7 @@ import {
   forgotPassword,
   resetPassword
 } from '../controller/authController.js';
-import { protect } from '../middleware/auth.js';
+import { protect, optionalAuth } from '../middleware/auth.js';
 import {
   validateUserRegistration,
   validateUserLogin
@@ -27,7 +27,7 @@ router.post('/forgot-password', forgotPassword);
 router.put('/reset-password/:resettoken', resetPassword);
 
 // Protected routes
-router.get('/auth-status', protect, getAuthStatus);
+router.get('/auth-status', optionalAuth, getAuthStatus);
 router.get('/logout', protect, logout);
 router.put('/update', protect, updateUser);
 router.put('/password', protect, updatePassword);

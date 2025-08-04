@@ -133,10 +133,28 @@ export const login = async (req, res) => {
  */
 export const getAuthStatus = async (req, res) => {
   try {
+    // If no user is authenticated, return not authenticated status
+    if (!req.user) {
+      return res.status(200).json({
+        success: false,
+        authenticated: false,
+        message: 'User not authenticated'
+      });
+    }
+
     const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(200).json({
+        success: false,
+        authenticated: false,
+        message: 'User not found'
+      });
+    }
 
     res.status(200).json({
       success: true,
+      authenticated: true,
       id: user._id,
       name: user.name,
       email: user.email,
