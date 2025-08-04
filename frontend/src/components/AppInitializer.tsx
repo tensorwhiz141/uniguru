@@ -10,7 +10,7 @@ interface AppInitializerProps {
 
 const AppInitializer: React.FC<AppInitializerProps> = ({ children }) => {
   const { user, isLoggedIn } = useAuth();
-  const { refreshGurus, gurus } = useGuru();
+  const { refreshGurus } = useGuru();
   const { initializeChats } = useChat();
   const [isInitialized, setIsInitialized] = useState(false);
 

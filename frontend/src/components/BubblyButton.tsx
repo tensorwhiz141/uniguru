@@ -22,7 +22,7 @@ const BubblyButton: React.FC<BubblyButtonProps> = ({
   style
 }) => {
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const bubblesRef = useRef<HTMLDivElement[]>([]);
+  // const bubblesRef = useRef<HTMLDivElement[]>([]);
   const isAnimating = useRef(false);
 
   useEffect(() => {
@@ -108,7 +108,7 @@ const BubblyButton: React.FC<BubblyButtonProps> = ({
       }, 0.05);
   };
 
-  const animateButton = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const animateButton = (_e: React.MouseEvent<HTMLButtonElement>) => {
     if (disabled || isAnimating.current) return;
 
     isAnimating.current = true;

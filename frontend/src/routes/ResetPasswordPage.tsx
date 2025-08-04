@@ -7,7 +7,7 @@ import AuthCard from "../components/AuthCard";
 import AuthInput from "../components/AuthInput";
 import AuthButton from "../components/AuthButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
+import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 
 interface FieldErrors {
   password?: string;

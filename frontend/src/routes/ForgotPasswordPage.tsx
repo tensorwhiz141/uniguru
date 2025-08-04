@@ -7,13 +7,13 @@ import AuthCard from "../components/AuthCard";
 import AuthInput from "../components/AuthInput";
 import AuthButton from "../components/AuthButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheckCircle, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 
 const ForgotPasswordPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | undefined>(undefined);
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -34,7 +34,7 @@ const ForgotPasswordPage: React.FC = () => {
     }
 
     setIsLoading(true);
-    setError(null);
+    setError(undefined);
 
     try {
       toast.loading("Sending reset email...", { id: "forgot-password" });
@@ -82,7 +82,7 @@ const ForgotPasswordPage: React.FC = () => {
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
-                  if (error) setError(null);
+                  if (error) setError(undefined);
                 }}
                 required
                 autoComplete="email"
@@ -123,7 +123,7 @@ const ForgotPasswordPage: React.FC = () => {
                     onClick={() => {
                       setIsSubmitted(false);
                       setEmail("");
-                      setError(null);
+                      setError(undefined);
                     }}
                     className="text-blue-300 hover:underline font-medium"
                   >

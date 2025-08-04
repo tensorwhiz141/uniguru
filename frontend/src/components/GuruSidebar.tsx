@@ -7,8 +7,7 @@ import {
   faTrash,
   faChevronDown,
   faChevronUp,
-  faComments,
-  faMessage,
+
   faRefresh,
   faEllipsisV,
   faCheck,
@@ -35,8 +34,8 @@ interface GuruFormData {
 
 const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
   const { user } = useAuth();
-  const { gurus, addGuru, removeGuru, setSelectedGuru, selectedGuru, refreshGurus, selectGuru } = useGuru();
-  const { createNewChatManually, chatSessions, getChatsByGuru, selectChat, currentChatId, loadAllChats, deleteChat, renameChat } = useChat();
+  const { gurus, addGuru, removeGuru, selectedGuru, refreshGurus, selectGuru } = useGuru();
+  const { createNewChatManually, getChatsByGuru, selectChat, currentChatId, loadAllChats, deleteChat, renameChat } = useChat();
 
 
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -57,7 +56,7 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
 
   // Close menu when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (_event: MouseEvent) => {
       if (showChatMenu) {
         setShowChatMenu(null);
       }
@@ -95,7 +94,7 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
 
   // Close chat menu when clicking elsewhere
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (_event: MouseEvent) => {
       if (showChatMenu) {
         setShowChatMenu(null);
       }
@@ -197,10 +196,10 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleSelectGuru = (guru: any) => {
-    setSelectedGuru(guru);
-    // Removed duplicate toast - handled by handleGuruSelect
-  };
+  // const handleSelectGuru = (guru: any) => {
+  //   setSelectedGuru(guru);
+  //   // Removed duplicate toast - handled by handleGuruSelect
+  // };
 
   const handleCreateNewChat = async () => {
     if (!selectedGuru) {
@@ -313,7 +312,7 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
       return;
     }
 
-    const oldTitle = chatSessions.find(chat => chat.id === editingChatId)?.title || "Chat";
+    // const oldTitle = chatSessions.find(chat => chat.id === editingChatId)?.title || "Chat";
 
     // Don't show loading toast for rename - it's too fast and clutters UI
     try {

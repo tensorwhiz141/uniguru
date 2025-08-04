@@ -129,7 +129,7 @@ const EnhancedChatInput: React.FC<EnhancedChatInputProps> = ({
       };
 
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
+        // const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
         // Here you could implement speech-to-text conversion
         // For now, we'll just show a message
         toast.success("Voice recording completed! (Speech-to-text coming soon)", {

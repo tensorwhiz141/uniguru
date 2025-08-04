@@ -1,18 +1,18 @@
 import { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperclip, faMicrophone, faArrowUp, faPen, faCopy, faVolumeHigh, faPause, faPlay, faStop } from "@fortawesome/free-solid-svg-icons";
+import { faPen, faCopy, faVolumeHigh, faPause, faPlay, faStop } from "@fortawesome/free-solid-svg-icons";
 import uniguru from "../assets/uni-logo.png";
 import userimage from "../assets/userimage.png";
 import guruLogo from "../assets/guru.png";
 
-import BubblyButton from "./BubblyButton";
+// import BubblyButton from "./BubblyButton";
 
 import EnhancedChatInput from "./EnhancedChatInput";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import { useChat } from "../context/ChatContext";
 import { useGuru } from "../context/GuruContext";
-import { sendChatRequest, getChatFromGuru, getChatSessionById, scanImageText, readPdf } from "../helpers/api-communicator";
+import { sendChatRequest, getChatSessionById, scanImageText, readPdf } from "../helpers/api-communicator";
 
 interface Message {
   text: string;
@@ -23,7 +23,7 @@ interface Message {
 
 const ChatContainer: React.FC = () => {
   const { user } = useAuth();
-  const { currentChatId, getCurrentChat } = useChat();
+  const { currentChatId } = useChat();
   const { selectedGuru } = useGuru();
   interface FileAttachment {
     id: string;
@@ -37,7 +37,7 @@ const ChatContainer: React.FC = () => {
   const [attachments, setAttachments] = useState<FileAttachment[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [currentUtterance, setCurrentUtterance] = useState<SpeechSynthesisUtterance | null>(null);
+  const [, setCurrentUtterance] = useState<SpeechSynthesisUtterance | null>(null);
   const [playingMessageIndex, setPlayingMessageIndex] = useState<number | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -316,7 +316,7 @@ const ChatContainer: React.FC = () => {
         });
       };
 
-      utterance.onerror = (event) => {
+      utterance.onerror = (_event) => {
         setIsPlaying(false);
         setCurrentUtterance(null);
         setPlayingMessageIndex(null);

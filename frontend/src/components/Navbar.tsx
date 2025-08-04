@@ -4,7 +4,7 @@ import uniguru from "../assets/uni-logo.png";
 import userimage from "../assets/userimage.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useChat } from "../context/ChatContext";
-import { useAuth } from "../context/AuthContext";
+// import { useAuth } from "../context/AuthContext";
 import {
   faTimes,
   faBars,
@@ -24,8 +24,7 @@ const Navbar: React.FC<{
 }> = ({ isLoggedIn, onLogout, isChatStarted }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { chatSessions, selectChat, createNewChat } = useChat();
-  const { user } = useAuth();
+  const { chatSessions, selectChat } = useChat();
 
   // Dropdown states
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);

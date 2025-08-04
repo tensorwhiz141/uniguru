@@ -9,21 +9,15 @@ import {
   faChevronDown,
   faChevronUp,
   faComments,
-  faMessage,
   faRefresh,
-  faEllipsisV,
-  faCheck,
-  faTimes,
   faTools,
-  faUserGraduate,
-  faRobot,
-  faCog
+  faUserGraduate
 } from "@fortawesome/free-solid-svg-icons";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import { useGuru } from "../context/GuruContext";
 import { useChat } from "../context/ChatContext";
-import { createNewGuru, createCustomGuru } from "../helpers/api-communicator";
+import { createCustomGuru } from "../helpers/api-communicator";
 import guruLogo from "../assets/guru.png";
 import BubblyButton from "./BubblyButton";
 import ConfirmationModal from "./ConfirmationModal";
@@ -41,8 +35,8 @@ interface GuruFormData {
 
 const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingChat }) => {
   const { user } = useAuth();
-  const { gurus, addGuru, removeGuru, setSelectedGuru, selectedGuru, refreshGurus, selectGuru } = useGuru();
-  const { createNewChatManually, chatSessions, getChatsByGuru, selectChat, currentChatId, loadAllChats, deleteChat, renameChat } = useChat();
+  const { gurus, addGuru, removeGuru, selectedGuru, refreshGurus, selectGuru } = useGuru();
+  const { getChatsByGuru, selectChat, currentChatId, loadAllChats, deleteChat, renameChat } = useChat();
 
   const [isCollapsed, setIsCollapsed] = useState(() => {
     // Always default to collapsed (closed) on refresh
@@ -128,7 +122,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
 
     try {
       const newGuru = await createCustomGuru(
-        user.id,
+        user?.id || '',
         formData.name.trim(),
         formData.subject.trim(),
         formData.description.trim()
@@ -726,7 +720,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                         style={{
                           background: "rgba(139, 92, 246, 0.05)",
                         }}
-                        onClick={() => toast.info("AI Assistant coming soon!")}
+                        onClick={() => toast.success("AI Assistant coming soon!")}
                       >
                         <div className="flex items-center gap-3">
                           <div className="text-purple-400 text-lg">🤖</div>
@@ -744,7 +738,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                         style={{
                           background: "rgba(139, 92, 246, 0.05)",
                         }}
-                        onClick={() => toast.info("Code Generator coming soon!")}
+                        onClick={() => toast.success("Code Generator coming soon!")}
                       >
                         <div className="flex items-center gap-3">
                           <div className="text-purple-400 text-lg">💻</div>
@@ -762,7 +756,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                         style={{
                           background: "rgba(139, 92, 246, 0.05)",
                         }}
-                        onClick={() => toast.info("Study Planner coming soon!")}
+                        onClick={() => toast.success("Study Planner coming soon!")}
                       >
                         <div className="flex items-center gap-3">
                           <div className="text-purple-400 text-lg">📚</div>
@@ -780,7 +774,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                         style={{
                           background: "rgba(139, 92, 246, 0.05)",
                         }}
-                        onClick={() => toast.info("Note Taking coming soon!")}
+                        onClick={() => toast.success("Note Taking coming soon!")}
                       >
                         <div className="flex items-center gap-3">
                           <div className="text-purple-400 text-lg">📝</div>

@@ -143,7 +143,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
 
       // Validate stored current chat ID
       if (currentChatId && response.chats) {
-        const chatExists = response.chats.some(chat => chat.id === currentChatId);
+        const chatExists = response.chats.some((chat: any) => chat.id === currentChatId);
         if (chatExists) {
           console.log(`Restored current chat from localStorage: ${currentChatId}`);
         } else {

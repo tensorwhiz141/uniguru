@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import ConfirmationModal from './ConfirmationModal';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faExclamationTriangle, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 
 const ModalDemo: React.FC = () => {

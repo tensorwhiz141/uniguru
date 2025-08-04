@@ -361,11 +361,35 @@ export const googleOAuthCallback = async (token: string) => {
       { token }
     );
 
-    console.log("Google Url", response.data);
+    console.log("Google OAuth Success:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error during Google OAuth callback:", error);
-    throw error;
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || "Google authentication failed");
+    } else {
+      throw new Error("An unexpected error occurred during Google authentication");
+    }
+  }
+};
+
+// Google OAuth Login (alternative method)
+export const loginWithGoogle = async (credential: string) => {
+  try {
+    const response = await axios.post(
+      "/auth/google",
+      { token: credential }
+    );
+
+    console.log("Google Login Success:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error during Google login:", error);
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || "Google login failed");
+    } else {
+      throw new Error("An unexpected error occurred during Google login");
+    }
   }
 };
 

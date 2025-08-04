@@ -1,18 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faComments, faTools, faUserGraduate } from "@fortawesome/free-solid-svg-icons";
 import ChatContainer from "../components/ChatContainer";
-import { useAuth } from "../context/AuthContext";
 import { useGuru } from "../context/GuruContext";
 import { useChat } from "../context/ChatContext";
-import BubblyButton from "../components/BubblyButton";
 import LeftSidebar from "../components/LeftSidebar";
 
 const ChatPage: React.FC = () => {
-  const { user } = useAuth();
-  const { selectedGuru, gurus, selectGuru } = useGuru();
-  const { createNewChatManually, currentChatId } = useChat();
+  const { selectedGuru } = useGuru();
+  const { createNewChatManually } = useChat();
   const [isCreatingChat, setIsCreatingChat] = useState(false);
 
   // Removed duplicate welcome toast - handled by AppInitializer

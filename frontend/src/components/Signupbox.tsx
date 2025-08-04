@@ -4,7 +4,8 @@ import { toast } from "react-hot-toast";
 import AuthCard from "./AuthCard";
 import AuthInput from "./AuthInput";
 import AuthButton from "./AuthButton";
-import { signupUser } from "../helpers/api-communicator";
+import GoogleOAuthProduction from "./GoogleOAuthProduction";
+import { signupUser, loginWithGoogle } from "../helpers/api-communicator";
 
 type FormData = {
   name: string;
@@ -12,10 +13,7 @@ type FormData = {
   password: string;
 };
 
-type SignupResponse = {
-  message: string;
-  status: number;
-};
+
 
 interface FieldErrors {
   name?: string;
@@ -113,6 +111,37 @@ const Signupbox: React.FC = () => {
     }
   };
 
+  const handleGoogleSuccess = async (credential: string) => {
+    setIsLoading(true);
+    setErrors({});
+    toast.loading("Creating account with Google...", { id: "google-signup" });
+
+    try {
+      const data = await loginWithGoogle(credential);
+
+      localStorage.setItem("token", data.token);
+      toast.success("Account created successfully! Redirecting to chat...", { id: "google-signup" });
+
+      // Redirect to chat page after successful Google signup/login
+      setTimeout(() => {
+        navigate("/chatpage");
+      }, 1500);
+    } catch (err) {
+      console.error("Google signup failed:", err);
+      const errorMessage = err instanceof Error ? err.message : "Google authentication failed. Please try again.";
+      setErrors({ general: errorMessage });
+      toast.error(errorMessage, { id: "google-signup" });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleError = (error: any) => {
+    console.error("Google OAuth error:", error);
+    setErrors({ general: "Google authentication failed. Please try again." });
+    toast.error("Google authentication failed. Please try again.", { id: "google-signup" });
+  };
+
   return (
     <AuthCard title="Create Account">
       <form onSubmit={handleSubmit}>
@@ -167,6 +196,24 @@ const Signupbox: React.FC = () => {
         >
           {isLoading ? "Creating Account..." : "Sign Up"}
         </AuthButton>
+
+        {/* Divider */}
+        <div className="flex items-center my-6">
+          <div className="flex-1 border-t border-gray-600"></div>
+          <span className="px-4 text-gray-400 text-sm">or</span>
+          <div className="flex-1 border-t border-gray-600"></div>
+        </div>
+
+        {/* Google OAuth Button */}
+        <div className="relative">
+          <GoogleOAuthProduction
+            onSuccess={handleGoogleSuccess}
+            onError={handleGoogleError}
+            disabled={isLoading}
+            text="Sign up with Google"
+            className="w-full"
+          />
+        </div>
       </form>
     </AuthCard>
   );
