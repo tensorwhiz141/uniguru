@@ -8,14 +8,53 @@ axios.defaults.withCredentials = true;
 
 console.log('API Base URL:', API_BASE_URL);
 
-// Add request interceptor for debugging
+// Initialize token from localStorage on app start
+const initializeAuth = () => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  }
+};
+
+// Call initialization
+initializeAuth();
+
+// Add request interceptor for debugging and token handling
 axios.interceptors.request.use(
   (config) => {
     console.log('API Request:', config.method?.toUpperCase(), config.url);
+
+    // Add token to Authorization header if available
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
     return config;
   },
   (error) => {
     console.error('Request Error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor to handle token expiration
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token might be expired or invalid
+      localStorage.removeItem('token');
+      delete axios.defaults.headers.common['Authorization'];
+
+      // Only redirect to login if we're not already on auth pages
+      const currentPath = window.location.pathname;
+      if (!currentPath.includes('/login') && !currentPath.includes('/signup')) {
+        console.log('Token expired, redirecting to login...');
+        // You might want to redirect to login page here
+        // window.location.href = '/login';
+      }
+    }
     return Promise.reject(error);
   }
 );
@@ -47,6 +86,12 @@ export const loginUser = async (email: string, password: string, googleToken?: s
         },
       }
     );
+
+    // Store token in localStorage for subsequent requests
+    if (response.data.token) {
+      localStorage.setItem('token', response.data.token);
+    }
+
     return response.data;
   } catch (error) {
     // Type assertion for AxiosError
@@ -68,6 +113,12 @@ export const signupUser = async (
   try {
     const res = await axios.post("/user/signup", { name, email, password });
     console.log("signup response:", res);
+
+    // Store token in localStorage for subsequent requests
+    if (res.data.token) {
+      localStorage.setItem('token', res.data.token);
+    }
+
     return res.data;
   } catch (error) {
     console.error("Signup error:", error);
@@ -348,10 +399,18 @@ export const logoutUser = async () => {
     if (res.status !== 200) {
       throw new Error("Unable to logout");
     }
+
+    // Clear token from localStorage
+    localStorage.removeItem('token');
+
     const data = await res.data;
     return data;
   } catch (error) {
     console.error("Error logging out:", error);
+
+    // Clear token even if logout request fails
+    localStorage.removeItem('token');
+
     throw error;
   }
 };
@@ -363,6 +422,11 @@ export const googleOAuthCallback = async (token: string) => {
       "/auth/google/token",
       { token }
     );
+
+    // Store token in localStorage for subsequent requests
+    if (response.data.token) {
+      localStorage.setItem('token', response.data.token);
+    }
 
     console.log("Google OAuth Success:", response.data);
     return response.data;
@@ -383,6 +447,11 @@ export const loginWithGoogle = async (credential: string) => {
       "/auth/google",
       { token: credential }
     );
+
+    // Store token in localStorage for subsequent requests
+    if (response.data.token) {
+      localStorage.setItem('token', response.data.token);
+    }
 
     console.log("Google Login Success:", response.data);
     return response.data;
