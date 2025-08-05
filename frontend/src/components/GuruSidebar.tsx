@@ -7,19 +7,17 @@ import {
   faTrash,
   faChevronDown,
   faChevronUp,
-
   faRefresh,
-  faEllipsisV,
-  faCheck,
-  faTimes
+  faEllipsisV
 } from "@fortawesome/free-solid-svg-icons";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import { useGuru } from "../context/GuruContext";
 import { useChat } from "../context/ChatContext";
 import { createNewGuru, createCustomGuru } from "../helpers/api-communicator";
-import guruLogo from "../assets/guru.png";
+const guruLogo = "/guru.png";
 import BubblyButton from "./BubblyButton";
+import RenameModal from "./RenameModal";
 
 interface GuruSidebarProps {
   isOpen: boolean;
@@ -49,9 +47,18 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
   const [isCreating, setIsCreating] = useState(false);
   const [isCreatingChat, setIsCreatingChat] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [editingChatId, setEditingChatId] = useState<string | null>(null);
-  const [editingChatTitle, setEditingChatTitle] = useState("");
   const [showChatMenu, setShowChatMenu] = useState<string | null>(null);
+
+  // Rename modal state
+  const [renameModal, setRenameModal] = useState<{
+    isOpen: boolean;
+    chatId: string;
+    currentName: string;
+  }>({
+    isOpen: false,
+    chatId: '',
+    currentName: ''
+  });
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   // Close menu when clicking outside
@@ -300,42 +307,42 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleStartRename = (chatId: string, currentTitle: string) => {
-    setEditingChatId(chatId);
-    setEditingChatTitle(currentTitle);
+  const openRenameModal = (chatId: string, currentName: string) => {
+    setRenameModal({
+      isOpen: true,
+      chatId,
+      currentName
+    });
     setShowChatMenu(null);
   };
 
-  const handleSaveRename = async () => {
-    if (!editingChatId || !editingChatTitle.trim()) {
-      toast.error("Please enter a valid chat name", { icon: '⚠️' });
+  const closeRenameModal = () => {
+    setRenameModal({
+      isOpen: false,
+      chatId: '',
+      currentName: ''
+    });
+  };
+
+  const handleRenameChat = async (newName: string) => {
+    if (!newName.trim()) {
+      toast.error("Chat name cannot be empty");
       return;
     }
 
-    // const oldTitle = chatSessions.find(chat => chat.id === editingChatId)?.title || "Chat";
+    toast.loading("Renaming chat...", { id: "rename-chat" });
 
-    // Don't show loading toast for rename - it's too fast and clutters UI
     try {
-      await renameChat(editingChatId, editingChatTitle.trim());
+      await renameChat(renameModal.chatId, newName.trim());
 
-      toast.success(`Renamed to "${editingChatTitle.trim()}"`, {
-        icon: '✏️',
-        duration: 2000
+      toast.success("Chat renamed successfully", {
+        id: "rename-chat",
+        icon: '✏️'
       });
-
-      setEditingChatId(null);
-      setEditingChatTitle("");
     } catch (error) {
       console.error("Error renaming chat:", error);
-      toast.error("Failed to rename chat. Please try again.", {
-        duration: 4000
-      });
+      toast.error("Failed to rename chat", { id: "rename-chat" });
     }
-  };
-
-  const handleCancelRename = () => {
-    setEditingChatId(null);
-    setEditingChatTitle("");
   };
 
   return (
@@ -351,7 +358,7 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
       {/* Guru Sidebar */}
       <div
         ref={sidebarRef}
-        className={`guru-sidebar fixed top-16 right-0 h-[calc(100vh-4rem)] w-1/4 min-w-80 transform transition-all duration-300 ease-in-out z-50 ${
+        className={`guru-sidebar fixed top-16 right-0 h-[calc(100vh-4rem)] w-1/4 min-w-80 transform transition-all duration-300 ease-in-out z-[60] ${
           isOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
         } backdrop-blur-xl border-l border-purple-400/20 shadow-2xl`}
         style={{
@@ -359,7 +366,7 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
           backdropFilter: "blur(25px) saturate(120%)",
           borderLeft: "1px solid rgba(147, 51, 234, 0.15)",
           boxShadow: "0 25px 50px -12px rgba(147, 51, 234, 0.1), 0 0 0 1px rgba(147, 51, 234, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.05)",
-          zIndex: 50 // Ensure sidebar is above other elements
+          zIndex: 60 // Ensure sidebar is above other elements including navbar
         }}
       >
         {/* Header */}
@@ -647,7 +654,7 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
                             boxShadow: currentChatId === chat.id
                               ? "0 8px 32px rgba(147, 51, 234, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05)"
                               : "0 4px 16px rgba(147, 51, 234, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.02)",
-                            zIndex: showChatMenu === chat.id ? 100 : 1 // Higher z-index when menu is open
+                            zIndex: showChatMenu === chat.id ? 70 : 1 // Higher z-index when menu is open
                           }}
                         >
                           <div className="flex items-start justify-between">
@@ -655,47 +662,9 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
                               className="flex-1 min-w-0 cursor-pointer"
                               onClick={() => handleChatSelect(chat.id)}
                             >
-                              {editingChatId === chat.id ? (
-                                <div className="flex items-center gap-2 mb-1">
-                                  <input
-                                    type="text"
-                                    value={editingChatTitle}
-                                    onChange={(e) => setEditingChatTitle(e.target.value)}
-                                    className="flex-1 bg-purple-900/40 border border-purple-400/50 rounded-md px-3 py-1.5 text-white text-sm focus:outline-none focus:border-purple-400 focus:bg-purple-900/60 transition-all duration-200"
-                                    onKeyDown={(e) => {
-                                      if (e.key === 'Enter' && editingChatTitle.trim()) {
-                                        handleSaveRename();
-                                      }
-                                      if (e.key === 'Escape') {
-                                        handleCancelRename();
-                                      }
-                                    }}
-                                    placeholder="Enter chat name..."
-                                    maxLength={100}
-                                    autoFocus
-                                    onFocus={(e) => e.target.select()}
-                                  />
-                                  <button
-                                    onClick={handleSaveRename}
-                                    disabled={!editingChatTitle.trim()}
-                                    className="p-1.5 text-green-400 hover:text-green-300 disabled:text-gray-500 disabled:cursor-not-allowed transition-colors"
-                                    title="Save (Enter)"
-                                  >
-                                    <FontAwesomeIcon icon={faCheck} className="text-sm" />
-                                  </button>
-                                  <button
-                                    onClick={handleCancelRename}
-                                    className="p-1.5 text-red-400 hover:text-red-300 transition-colors"
-                                    title="Cancel (Escape)"
-                                  >
-                                    <FontAwesomeIcon icon={faTimes} className="text-sm" />
-                                  </button>
-                                </div>
-                              ) : (
-                                <h4 className="font-medium text-white text-xs sm:text-sm truncate mb-1">
-                                  {chat.title}
-                                </h4>
-                              )}
+                              <h4 className="font-medium text-white text-xs sm:text-sm truncate mb-1">
+                                {chat.title}
+                              </h4>
                               <div className="flex items-center gap-2 text-xs text-gray-400">
                                 <span>💬 {chat.messageCount} messages</span>
                                 <span>•</span>
@@ -704,7 +673,7 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
                             </div>
 
                             {/* Chat Menu Button */}
-                            <div className="relative" style={{ zIndex: showChatMenu === chat.id ? 10000 : 10 }}>
+                            <div className="relative" style={{ zIndex: showChatMenu === chat.id ? 80 : 10 }}>
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -731,7 +700,7 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
                                     onClick={(e) => {
                                       e.preventDefault();
                                       e.stopPropagation();
-                                      handleStartRename(chat.id, chat.title);
+                                      openRenameModal(chat.id, chat.title);
                                     }}
                                     className="w-full px-4 py-3 text-left text-sm text-gray-300 hover:text-white hover:bg-purple-600/30 transition-all duration-200 flex items-center gap-3 first:rounded-t-lg"
                                   >
@@ -764,6 +733,18 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
           )}
         </div>
       </div>
+
+      {/* Rename Modal */}
+      <RenameModal
+        isOpen={renameModal.isOpen}
+        onClose={closeRenameModal}
+        onConfirm={handleRenameChat}
+        title="Rename Chat"
+        currentName={renameModal.currentName}
+        placeholder="Enter new chat name..."
+        confirmText="Rename"
+        cancelText="Cancel"
+      />
     </>
   );
 };

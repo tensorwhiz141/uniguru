@@ -34,7 +34,7 @@ const AuthInput: React.FC<AuthInputProps> = ({
       {/* Label (matching CodePen style) */}
       {label && (
         <label className="
-          block mt-[20px] sm:mt-[30px] text-[14px] sm:text-[16px] font-medium
+          block mt-[16px] sm:mt-[30px] text-[13px] sm:text-[16px] font-medium
           text-glass font-poppins tracking-[0.5px]
         ">
           {label}
@@ -52,11 +52,11 @@ const AuthInput: React.FC<AuthInputProps> = ({
           disabled={disabled}
           autoComplete={autoComplete}
           className={`
-            block h-[48px] sm:h-[50px] w-full mt-2
+            block h-[42px] sm:h-[50px] w-full mt-1 sm:mt-2
             bg-glass-input
             rounded-[3px]
-            px-[10px] py-0
-            text-[14px] font-light
+            px-[8px] sm:px-[10px] py-0
+            text-[13px] sm:text-[14px] font-light
             text-glass placeholder:text-placeholder
             font-poppins tracking-[0.5px]
             outline-none border-none

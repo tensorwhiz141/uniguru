@@ -10,17 +10,17 @@ import {
   faChevronUp,
   faComments,
   faRefresh,
-  faTools,
-  faUserGraduate
+  faTools
 } from "@fortawesome/free-solid-svg-icons";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import { useGuru } from "../context/GuruContext";
 import { useChat } from "../context/ChatContext";
 import { createCustomGuru } from "../helpers/api-communicator";
-import guruLogo from "../assets/guru.png";
+const guruLogo = "/guru.png";
 import BubblyButton from "./BubblyButton";
 import ConfirmationModal from "./ConfirmationModal";
+import RenameModal from "./RenameModal";
 
 interface LeftSidebarProps {
   onCreateNewChat: () => void;
@@ -36,7 +36,7 @@ interface GuruFormData {
 const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingChat }) => {
   const { user } = useAuth();
   const { gurus, addGuru, removeGuru, selectedGuru, refreshGurus, selectGuru } = useGuru();
-  const { getChatsByGuru, selectChat, currentChatId, loadAllChats, deleteChat, renameChat } = useChat();
+  const { selectChat, currentChatId, loadAllChats, deleteChat, renameChat, chatSessions } = useChat();
 
   const [isCollapsed, setIsCollapsed] = useState(() => {
     // Always default to collapsed (closed) on refresh
@@ -59,8 +59,16 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
     description: ""
   });
 
-  const [editingChat, setEditingChat] = useState<string | null>(null);
-  const [editingChatName, setEditingChatName] = useState("");
+  // Rename modal state
+  const [renameModal, setRenameModal] = useState<{
+    isOpen: boolean;
+    chatId: string;
+    currentName: string;
+  }>({
+    isOpen: false,
+    chatId: '',
+    currentName: ''
+  });
 
   // Confirmation modal states
   const [confirmModal, setConfirmModal] = useState<{
@@ -192,19 +200,33 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
     }
   };
 
-  const handleRenameChat = async (chatId: string, newName: string) => {
+  const openRenameModal = (chatId: string, currentName: string) => {
+    setRenameModal({
+      isOpen: true,
+      chatId,
+      currentName
+    });
+  };
+
+  const closeRenameModal = () => {
+    setRenameModal({
+      isOpen: false,
+      chatId: '',
+      currentName: ''
+    });
+  };
+
+  const handleRenameChat = async (newName: string) => {
     if (!newName.trim()) {
       toast.error("Chat name cannot be empty");
       return;
     }
 
     toast.loading("Renaming chat...", { id: "rename-chat" });
-    
+
     try {
-      await renameChat(chatId, newName.trim());
-      setEditingChat(null);
-      setEditingChatName("");
-      
+      await renameChat(renameModal.chatId, newName.trim());
+
       toast.success("Chat renamed successfully", {
         id: "rename-chat",
         icon: '✏️'
@@ -252,6 +274,19 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
     selectChat(chatId);
   };
 
+  // Format date for chat history display
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - date.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 1) return "Today";
+    if (diffDays === 2) return "Yesterday";
+    if (diffDays <= 7) return `${diffDays - 1} days ago`;
+    return date.toLocaleDateString();
+  };
+
   const handleGuruSelect = (guru: any) => {
     selectGuru(guru);
     setActiveSection('chats');
@@ -262,8 +297,8 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
       {/* Sidebar */}
       <div
         ref={sidebarRef}
-        className={`fixed top-16 left-0 h-[calc(100vh-4rem)] transform transition-all duration-300 ease-in-out z-40 backdrop-blur-xl border-r border-purple-400/20 shadow-2xl ${
-          isCollapsed ? 'w-16' : 'w-96 lg:w-96'
+        className={`fixed top-16 left-0 h-[calc(100vh-4rem)] transform transition-all duration-300 ease-in-out z-40 backdrop-blur-xl border-r border-purple-400/20 shadow-2xl flex flex-col overflow-hidden ${
+          isCollapsed ? 'w-16' : 'w-80 lg:w-96'
         }`}
         style={{
           background: "linear-gradient(180deg, rgba(139, 92, 246, 0.08) 0%, rgba(124, 58, 237, 0.06) 30%, rgba(109, 40, 217, 0.05) 70%, rgba(91, 33, 182, 0.04) 100%)",
@@ -273,7 +308,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
         }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-purple-400/20">
+        <div className="flex items-center justify-between p-4 border-b border-purple-400/20 flex-shrink-0">
           {!isCollapsed && (
             <h2 className="text-lg font-bold flex items-center gap-2">
               <img src={guruLogo} alt="Guru" className="w-6 h-6 drop-shadow-lg" />
@@ -297,16 +332,16 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
 
         {/* Navigation Tabs */}
         {!isCollapsed && (
-          <div className="flex border-b border-purple-400/20">
+          <div className="flex border-b border-purple-400/20 flex-shrink-0">
             <button
               onClick={() => setActiveSection('gurus')}
-              className={`flex-1 py-3 px-4 text-sm font-medium transition-all duration-200 ${
+              className={`flex-1 py-3 px-4 text-sm font-medium transition-all duration-200 flex items-center justify-center ${
                 activeSection === 'gurus'
                   ? 'text-purple-300 border-b-2 border-purple-400 bg-purple-400/10'
                   : 'text-gray-300 hover:text-purple-300 hover:bg-purple-400/5'
               }`}
             >
-              <FontAwesomeIcon icon={faUserGraduate} className="mr-2" />
+              <img src={guruLogo} alt="Guru" className="w-4 h-4 mr-2" />
               Gurus
             </button>
             <button
@@ -345,7 +380,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
               className="p-3 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-all duration-200 group"
               title="Gurus"
             >
-              <FontAwesomeIcon icon={faUserGraduate} className="text-lg group-hover:scale-110 transition-transform" />
+              <img src={guruLogo} alt="Guru" className="w-5 h-5 group-hover:scale-110 transition-transform drop-shadow-sm" />
             </button>
             <button
               onClick={() => {
@@ -383,10 +418,10 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
 
         {/* Content */}
         {!isCollapsed && (
-          <div className="flex-1 overflow-y-auto sidebar-scroll p-4 space-y-4">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden sidebar-scroll p-4 pb-6 space-y-4 min-h-0">
             {/* Gurus Section */}
             {activeSection === 'gurus' && (
-              <div className="space-y-4">
+              <div className="flex flex-col h-full space-y-4">
                 {/* Action Buttons */}
                 <div className="flex gap-2">
                   <BubblyButton
@@ -484,7 +519,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                 )}
 
                 {/* Gurus List */}
-                <div>
+                <div className="flex flex-col flex-1 min-h-0">
                   <button
                     onClick={toggleGuruList}
                     className="flex items-center justify-between w-full text-left mb-3 text-purple-300 hover:text-white transition-colors py-2"
@@ -499,7 +534,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                   </button>
 
                   {isGuruListExpanded && (
-                    <div className="space-y-2 max-h-60 overflow-y-auto sidebar-scroll">
+                    <div className="space-y-2 flex-1 overflow-y-auto overflow-x-hidden sidebar-scroll min-h-0">
                       {gurus.length === 0 ? (
                         <div className="text-gray-300 text-center py-4">
                           <p className="text-sm">No gurus yet</p>
@@ -523,13 +558,16 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                           >
                             <div className="flex items-start justify-between">
                               <div className="flex-1 min-w-0">
-                                <h4 className="text-white font-medium text-sm truncate">
-                                  {guru.name}
-                                </h4>
-                                <p className="text-purple-300 text-xs mt-1 truncate">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <img src={guruLogo} alt="Guru" className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+                                  <h4 className="text-white font-medium text-sm truncate break-words">
+                                    {guru.name}
+                                  </h4>
+                                </div>
+                                <p className="text-purple-300 text-xs truncate break-words">
                                   {guru.subject}
                                 </p>
-                                <p className="text-gray-300 text-xs mt-1 line-clamp-2">
+                                <p className="text-gray-300 text-xs mt-1 line-clamp-2 break-words">
                                   {guru.description}
                                 </p>
                               </div>
@@ -560,7 +598,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
 
             {/* Chats Section */}
             {activeSection === 'chats' && (
-              <div className="space-y-4">
+              <div className="flex flex-col h-full space-y-4">
                 {/* New Chat Button */}
                 <BubblyButton
                   onClick={onCreateNewChat}
@@ -575,130 +613,96 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                   <span>{isCreatingChat ? "Creating..." : "New Chat"}</span>
                 </BubblyButton>
 
-                {selectedGuru ? (
-                  <div>
-                    <button
-                      onClick={toggleChatList}
-                      className="flex items-center justify-between w-full text-left mb-3 text-purple-300 hover:text-white transition-colors py-2"
-                    >
-                      <span className="text-base font-semibold">
-                        Chat Sessions ({getChatsByGuru(selectedGuru.id).length})
-                      </span>
-                      <FontAwesomeIcon
-                        icon={isChatListExpanded ? faChevronUp : faChevronDown}
-                        className="text-sm"
-                      />
-                    </button>
+                {/* All Chat History */}
+                <div className="flex flex-col flex-1 min-h-0">
+                  <button
+                    onClick={toggleChatList}
+                    className="flex items-center justify-between w-full text-left mb-3 text-purple-300 hover:text-white transition-colors py-2"
+                  >
+                    <span className="text-base font-semibold">
+                      Recent Conversations ({chatSessions.length})
+                    </span>
+                    <FontAwesomeIcon
+                      icon={isChatListExpanded ? faChevronUp : faChevronDown}
+                      className="text-sm"
+                    />
+                  </button>
 
-                    {isChatListExpanded && (
-                      <div className="space-y-2 max-h-60 overflow-y-auto scrollbar-hide">
-                        {getChatsByGuru(selectedGuru.id).length === 0 ? (
-                          <div className="text-gray-300 text-center py-4">
-                            <p className="text-sm">No chat sessions yet</p>
-                            <p className="text-xs">Create your first chat to get started!</p>
-                          </div>
-                        ) : (
-                          getChatsByGuru(selectedGuru.id).map((chat) => (
-                            <div
-                              key={chat.id}
-                              className={`backdrop-blur-sm rounded-lg p-3 border transition-all duration-300 relative group hover:scale-[1.02] cursor-pointer ${
-                                currentChatId === chat.id
-                                  ? "border-purple-400/50 shadow-lg shadow-purple-500/20"
-                                  : "border-purple-400/30 hover:border-purple-400/50"
-                              }`}
-                              style={{
-                                background: currentChatId === chat.id
-                                  ? "linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(124, 58, 237, 0.1))"
-                                  : "rgba(139, 92, 246, 0.05)",
-                              }}
-                              onClick={() => handleChatSelect(chat.id)}
-                            >
-                              <div className="flex items-start justify-between">
-                                <div className="flex-1 min-w-0">
-                                  {editingChat === chat.id ? (
-                                    <input
-                                      type="text"
-                                      value={editingChatName}
-                                      onChange={(e) => setEditingChatName(e.target.value)}
-                                      onBlur={() => {
-                                        if (editingChatName.trim()) {
-                                          handleRenameChat(chat.id, editingChatName);
-                                        } else {
-                                          setEditingChat(null);
-                                          setEditingChatName("");
-                                        }
-                                      }}
-                                      onKeyDown={(e) => {
-                                        if (e.key === 'Enter') {
-                                          if (editingChatName.trim()) {
-                                            handleRenameChat(chat.id, editingChatName);
-                                          } else {
-                                            setEditingChat(null);
-                                            setEditingChatName("");
-                                          }
-                                        } else if (e.key === 'Escape') {
-                                          setEditingChat(null);
-                                          setEditingChatName("");
-                                        }
-                                      }}
-                                      className="w-full bg-transparent text-white text-sm font-medium border-none outline-none"
-                                      autoFocus
-                                      onClick={(e) => e.stopPropagation()}
-                                    />
-                                  ) : (
-                                    <h4 className="text-white font-medium text-sm truncate">
-                                      {chat.title || `Chat ${chat.id.slice(0, 8)}`}
-                                    </h4>
-                                  )}
-                                  <p className="text-gray-300 text-xs mt-1">
-                                    {new Date(chat.createdAt).toLocaleDateString()}
+                  {isChatListExpanded && (
+                    <div className="space-y-2 flex-1 overflow-y-auto overflow-x-hidden sidebar-scroll min-h-0">
+                      {chatSessions.length === 0 ? (
+                        <div className="text-gray-300 text-center py-8">
+                          <p className="text-sm">No chat history yet</p>
+                          <p className="text-xs">Start a conversation to see your chat history here</p>
+                        </div>
+                      ) : (
+                        chatSessions.slice(0, 20).map((chat) => (
+                          <div
+                            key={chat.id}
+                            className={`backdrop-blur-sm rounded-lg p-3 border transition-all duration-300 relative group hover:scale-[1.02] cursor-pointer ${
+                              currentChatId === chat.id
+                                ? "border-purple-400/50 shadow-lg shadow-purple-500/20"
+                                : "border-purple-400/30 hover:border-purple-400/50"
+                            }`}
+                            style={{
+                              background: currentChatId === chat.id
+                                ? "linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(124, 58, 237, 0.1))"
+                                : "rgba(139, 92, 246, 0.05)",
+                            }}
+                            onClick={() => handleChatSelect(chat.id)}
+                          >
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1 min-w-0">
+                                <h4 className="text-white font-medium text-sm truncate break-words">
+                                  {chat.title || `Chat ${chat.id.slice(0, 8)}`}
+                                </h4>
+                                <div className="flex items-center justify-between mt-1">
+                                  <p className="text-gray-300 text-xs">
+                                    {chat.guru.name} • {chat.messageCount} messages
+                                  </p>
+                                  <p className="text-gray-400 text-xs">
+                                    {formatDate(chat.lastActivity)}
                                   </p>
                                 </div>
-                                <div className="flex items-center gap-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setEditingChat(chat.id);
-                                      setEditingChatName(chat.title || `Chat ${chat.id.slice(0, 8)}`);
-                                    }}
-                                    className="p-1 rounded text-gray-400 hover:text-purple-400 transition-colors"
-                                    title="Rename chat"
-                                  >
-                                    <FontAwesomeIcon icon={faEdit} size="xs" />
-                                  </button>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleDeleteChat(chat.id, chat.title || `Chat ${chat.id.slice(0, 8)}`);
-                                    }}
-                                    className="p-1 rounded transition-colors text-gray-400 hover:text-red-400"
-                                    title="Delete chat"
-                                  >
-                                    <FontAwesomeIcon
-                                      icon={faTrash}
-                                      size="xs"
-                                    />
-                                  </button>
-                                </div>
+                              </div>
+                              <div className="flex items-center gap-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    openRenameModal(chat.id, chat.title || `Chat ${chat.id.slice(0, 8)}`);
+                                  }}
+                                  className="p-1 rounded text-gray-400 hover:text-purple-400 transition-colors"
+                                  title="Rename chat"
+                                >
+                                  <FontAwesomeIcon icon={faEdit} size="xs" />
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteChat(chat.id, chat.title || `Chat ${chat.id.slice(0, 8)}`);
+                                  }}
+                                  className="p-1 rounded transition-colors text-gray-400 hover:text-red-400"
+                                  title="Delete chat"
+                                >
+                                  <FontAwesomeIcon
+                                    icon={faTrash}
+                                    size="xs"
+                                  />
+                                </button>
                               </div>
                             </div>
-                          ))
-                        )}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="text-gray-300 text-center py-8">
-                    <p className="text-sm">Select a guru first</p>
-                    <p className="text-xs">Choose a guru to view and manage chat sessions</p>
-                  </div>
-                )}
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
             {/* Tools Section */}
             {activeSection === 'tools' && (
-              <div className="space-y-4">
+              <div className="flex flex-col h-full space-y-4">
                 <div>
                   <button
                     onClick={toggleToolsList}
@@ -803,6 +807,18 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
         confirmText="Delete"
         cancelText="Cancel"
         type="danger"
+      />
+
+      {/* Rename Modal */}
+      <RenameModal
+        isOpen={renameModal.isOpen}
+        onClose={closeRenameModal}
+        onConfirm={handleRenameChat}
+        title="Rename Chat"
+        currentName={renameModal.currentName}
+        placeholder="Enter new chat name..."
+        confirmText="Rename"
+        cancelText="Cancel"
       />
     </>
   );

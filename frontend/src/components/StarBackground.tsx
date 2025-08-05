@@ -40,16 +40,22 @@ const StarBackground: React.FC = () => {
 };
 
 const StarsCanvas: React.FC = () => (
-  <div className="absolute inset-0 z-0">
-    <Canvas
-      camera={{ position: [0, 0, 1] }}
-      style={{ background: "#1B0725" }}
-    >
-      <Suspense fallback={null}>
-        <StarBackground />
-      </Suspense>
-    </Canvas>
-  </div>
+  <Canvas
+    camera={{ position: [0, 0, 1] }}
+    style={{
+      background: "#1B0725",
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      zIndex: 0
+    }}
+  >
+    <Suspense fallback={null}>
+      <StarBackground />
+    </Suspense>
+  </Canvas>
 );
 
 export default StarsCanvas;

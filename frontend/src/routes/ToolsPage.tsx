@@ -9,7 +9,7 @@ const ToolsPage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="relative min-h-screen pt-20">
+    <div className="relative min-h-screen">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Back Button */}

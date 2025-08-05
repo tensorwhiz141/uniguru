@@ -104,9 +104,9 @@ const Loginbox: React.FC<LoginboxProps> = ({ onLoginSuccess }) => {
         </AuthButton>
 
         {/* Divider */}
-        <div className="flex items-center my-6">
+        <div className="flex items-center my-4 sm:my-6">
           <div className="flex-1 border-t border-gray-600"></div>
-          <span className="px-4 text-gray-400 text-sm">or</span>
+          <span className="px-3 sm:px-4 text-gray-400 text-xs sm:text-sm">or</span>
           <div className="flex-1 border-t border-gray-600"></div>
         </div>
 

@@ -31,10 +31,10 @@ const AuthButton: React.FC<AuthButtonProps> = ({
 
   const variantClasses = {
     primary: `
-      mt-4 sm:mt-6 w-full
+      mt-3 sm:mt-6 w-full
       bg-white text-button
-      py-[12px] sm:py-[15px] px-4
-      text-[16px] sm:text-[18px] font-semibold
+      py-[10px] sm:py-[15px] px-4
+      text-[14px] sm:text-[18px] font-semibold
       rounded-[5px]
       flex items-center justify-center
       hover:bg-gray-100

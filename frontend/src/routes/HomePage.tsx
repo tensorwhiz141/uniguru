@@ -5,12 +5,12 @@ import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faRocket,
-  faUserGraduate,
   faBrain
 } from "@fortawesome/free-solid-svg-icons";
 import BHI from "../assets/blackhole-logo.png";
 import uniLogo from "../assets/uni-logo.png";
-import StarsCanvas from "../components/StarBackground";
+// import StarsCanvas from "../components/StarBackground";
+const guruLogo = "/guru.png";
 
 interface HomePageProps {
   onChatStarted: () => void;
@@ -28,16 +28,12 @@ const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
   };
 
   return (
-    <div className="relative min-h-full z-10">
-      <div className="absolute inset-0 -z-10">
-        <StarsCanvas />
-      </div>
-
+    <div className="relative min-h-screen">
       {/* Hero Section */}
-      <main className="flex flex-col items-center justify-center min-h-screen text-center p-4 relative z-10">
+      <main className="flex flex-col items-center justify-center min-h-screen text-center p-4 pt-20 relative z-10">
         <div
           ref={welcomeContainerRef}
-          className="welcome-container p-8 max-w-6xl mx-auto relative z-10"
+          className="welcome-container p-8 max-w-6xl mx-auto relative w-full"
         >
           {/* Main Logo/Icon */}
           <div className="mb-4 flex justify-center">
@@ -82,7 +78,7 @@ const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 max-w-4xl mx-auto">
             <div className="group backdrop-blur-xl bg-white/5 rounded-xl p-4 border border-purple-400/20 hover:border-purple-400/60 hover:bg-white/10 transition-all duration-300 cursor-pointer text-center hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20">
               <div className="flex justify-center mb-2">
-                <FontAwesomeIcon icon={faUserGraduate} className="text-purple-400 text-xl group-hover:scale-110 group-hover:text-purple-300 transition-all duration-300" />
+                <img src={guruLogo} alt="Guru" className="w-5 h-5 group-hover:scale-110 transition-all duration-300 drop-shadow-sm" />
               </div>
               <h3 className="text-sm font-bold text-white mb-1">Create</h3>
               <p className="text-xs text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity duration-300">

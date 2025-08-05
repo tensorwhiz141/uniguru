@@ -15,6 +15,64 @@ import StarsCanvas from "./components/StarBackground";
 import ChatPage from "./routes/ChatPage";
 import BubblyButtonDemo from "./components/BubblyButtonDemo";
 import AppInitializer from "./components/AppInitializer";
+import { useGuru } from "./context/GuruContext";
+import { useChat } from "./context/ChatContext";
+import toast from "react-hot-toast";
+
+// Wrapper component for ChatPage that handles chat creation
+const ChatPageWrapper: React.FC<{
+  isLoggedIn: boolean;
+  onLogout: () => void;
+  isChatStarted: boolean;
+}> = ({ isLoggedIn, onLogout, isChatStarted }) => {
+  const { selectedGuru } = useGuru();
+  const { createNewChatManually } = useChat();
+  const [isCreatingChat, setIsCreatingChat] = useState(false);
+
+  const handleCreateNewChat = async () => {
+    if (!selectedGuru) {
+      toast.error("Please select a guru first", {
+        icon: '🧙‍♂️'
+      });
+      return;
+    }
+
+    setIsCreatingChat(true);
+    toast.loading("Creating new chat...", { id: "create-chat-main" });
+
+    try {
+      await createNewChatManually(selectedGuru.id);
+      toast.success("New chat created! 🎉", {
+        id: "create-chat-main",
+        icon: '💬'
+      });
+    } catch (error) {
+      console.error("Error creating new chat:", error);
+      toast.error("Failed to create new chat. Please try again.", { id: "create-chat-main" });
+    } finally {
+      setIsCreatingChat(false);
+    }
+  };
+
+  return (
+    <div className="relative h-screen overflow-hidden">
+      <div className="fixed inset-0 z-0">
+        <StarsCanvas />
+      </div>
+      <Navbar
+        isLoggedIn={isLoggedIn}
+        onLogout={onLogout}
+        isChatStarted={isChatStarted}
+        onCreateNewChat={handleCreateNewChat}
+        isCreatingChat={isCreatingChat}
+      />
+      <ChatPage
+        onCreateNewChat={handleCreateNewChat}
+        isCreatingChat={isCreatingChat}
+      />
+    </div>
+  );
+};
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -39,25 +97,25 @@ function App() {
   };
 
   return (
-    <main>
+    <div className="min-h-screen bg-black">
       <AppInitializer>
         <Routes>
         <Route
           path="/"
           element={
-            <>
+            <div className="relative min-h-screen">
+              <div className="fixed inset-0 z-0">
+                <StarsCanvas />
+              </div>
               <Navbar
                 isLoggedIn={isLoggedIn}
                 onLogout={handleLogout}
                 isChatStarted={isChatStarted}
               />
-              <div className="absolute inset-0 -z-10">
-                <StarsCanvas />
-              </div>
               <HomePage
                 onChatStarted={handleChatStarted}
               />
-            </>
+            </div>
           }
         />
         <Route path="/login" element={<LoginPage />} />
@@ -67,49 +125,47 @@ function App() {
         <Route
           path="/tools"
           element={
-            <>
+            <div className="relative min-h-screen">
+              <div className="fixed inset-0 z-0">
+                <StarsCanvas />
+              </div>
               <Navbar
                 isLoggedIn={isLoggedIn}
                 onLogout={handleLogout}
                 isChatStarted={isChatStarted}
               />
-              <div className="absolute inset-0 -z-10">
-                <StarsCanvas />
+              <div className="pt-16">
+                <ToolsPage />
               </div>
-              <ToolsPage />
-            </>
+            </div>
           }
         />
         <Route
           path="/chatpage"
           element={
-            <>
-              <Navbar
-                isLoggedIn={isLoggedIn}
-                onLogout={handleLogout}
-                isChatStarted={isChatStarted}
-              />
-              <div className="absolute inset-0 -z-10">
-                <StarsCanvas />
-              </div>
-              <ChatPage />
-            </>
+            <ChatPageWrapper
+              isLoggedIn={isLoggedIn}
+              onLogout={handleLogout}
+              isChatStarted={isChatStarted}
+            />
           }
         />
         <Route
           path="/about"
           element={
-            <>
+            <div className="relative min-h-screen">
+              <div className="fixed inset-0 z-0">
+                <StarsCanvas />
+              </div>
               <Navbar
                 isLoggedIn={isLoggedIn}
                 onLogout={handleLogout}
                 isChatStarted={isChatStarted}
               />
-              <div className="absolute inset-0 -z-10">
-                <StarsCanvas />
+              <div className="pt-16">
+                <AboutPage />
               </div>
-              <AboutPage />
-            </>
+            </div>
           }
         />
         <Route path="/demo" element={<BubblyButtonDemo />} />
@@ -118,12 +174,12 @@ function App() {
         <Route
           path="*"
           element={
-            <>
-              <div className="absolute inset-0 -z-10">
+            <div className="relative min-h-screen">
+              <div className="fixed inset-0 z-0">
                 <StarsCanvas />
               </div>
               <NotFoundPage />
-            </>
+            </div>
           }
         />
       </Routes>
@@ -154,7 +210,7 @@ function App() {
         }}
       />
       </AppInitializer>
-    </main>
+    </div>
   );
 }
 

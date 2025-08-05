@@ -344,7 +344,7 @@ const EnhancedChatInput: React.FC<EnhancedChatInputProps> = ({
     setShowStats(true);
     if (containerRef.current) {
       gsap.to(containerRef.current, {
-        boxShadow: "0 0 30px rgba(232, 121, 249, 0.4), 0 0 60px rgba(168, 85, 247, 0.2)",
+        boxShadow: "0 0 8px rgba(139, 92, 246, 0.1), 0 0 16px rgba(124, 58, 237, 0.05)",
         scale: 1.02,
         duration: 0.3,
         ease: "power2.out"
@@ -369,14 +369,14 @@ const EnhancedChatInput: React.FC<EnhancedChatInputProps> = ({
   };
 
   return (
-    <div className="w-full max-w-4xl px-2 sm:px-4 flex flex-col relative">
+    <div className="w-full flex flex-col relative">
       {/* File Attachments Preview */}
       {attachments.length > 0 && (
         <div className="mb-3 flex flex-wrap gap-2">
           {attachments.map((attachment) => (
             <div
               key={attachment.id}
-              className="relative bg-gray-800/80 backdrop-blur-sm border border-purple-400/30 rounded-lg p-2 flex items-center space-x-2 max-w-xs"
+              className="relative bg-gray-800/40 backdrop-blur-sm border border-purple-400/20 rounded-lg p-2 flex items-center space-x-2 max-w-xs"
             >
               {/* File Icon */}
               <div className="flex-shrink-0">
@@ -442,8 +442,8 @@ const EnhancedChatInput: React.FC<EnhancedChatInputProps> = ({
           backgroundImage: charCount > maxChars * 0.9
             ? 'linear-gradient(transparent, transparent), linear-gradient(135deg, #fbbf24, #f59e0b, #d97706)'
             : isDragOver
-            ? 'linear-gradient(transparent, transparent), linear-gradient(135deg, #a855f7, #c084fc, #e879f9)'
-            : 'linear-gradient(transparent, transparent), linear-gradient(135deg, #f8fafc, #e879f9, #c084fc, #a855f7, #9333ea, #f8fafc)',
+            ? 'linear-gradient(rgba(0,0,0,0.15), rgba(0,0,0,0.15)), linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(124, 58, 237, 0.2), rgba(139, 92, 246, 0.25))'
+            : 'linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.15), rgba(168, 85, 247, 0.1))',
           backgroundOrigin: 'border-box',
           backgroundClip: 'content-box, border-box',
         }}
@@ -499,7 +499,7 @@ const EnhancedChatInput: React.FC<EnhancedChatInputProps> = ({
               maxHeight: isExpanded ? (window.innerWidth < 640 ? "200px" : "300px") : (window.innerWidth < 640 ? "120px" : "150px"),
               overflowY: "auto",
               scrollbarWidth: "thin",
-              scrollbarColor: "rgba(232, 121, 249, 0.3) transparent",
+              scrollbarColor: "rgba(139, 92, 246, 0.2) transparent",
               outline: "none",
               border: "none",
               boxShadow: "none",
@@ -559,8 +559,8 @@ const EnhancedChatInput: React.FC<EnhancedChatInputProps> = ({
             ? 'linear-gradient(135deg, #61ACEF, #9987ED, #B679E1, #9791DB, #74BDCC, #59D2BF)'
             : 'linear-gradient(135deg, #4B5563, #6B7280)',
           boxShadow: (message.trim() || attachments.length > 0)
-            ? '0 4px 20px rgba(97, 172, 239, 0.4), 0 0 30px rgba(168, 85, 247, 0.2)'
-            : '0 2px 10px rgba(75, 85, 99, 0.3)',
+            ? '0 2px 8px rgba(139, 92, 246, 0.15), 0 0 12px rgba(124, 58, 237, 0.1)'
+            : '0 1px 4px rgba(75, 85, 99, 0.2)',
           transform: (message.trim() || attachments.length > 0) ? 'scale(1)' : 'scale(0.95)',
         }}
       >

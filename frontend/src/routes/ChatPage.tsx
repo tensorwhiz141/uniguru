@@ -5,12 +5,18 @@ import { useGuru } from "../context/GuruContext";
 import { useChat } from "../context/ChatContext";
 import LeftSidebar from "../components/LeftSidebar";
 
-const ChatPage: React.FC = () => {
+interface ChatPageProps {
+  onCreateNewChat?: () => void;
+  isCreatingChat?: boolean;
+}
+
+const ChatPage: React.FC<ChatPageProps> = ({ onCreateNewChat, isCreatingChat }) => {
   const { selectedGuru } = useGuru();
   const { createNewChatManually } = useChat();
-  const [isCreatingChat, setIsCreatingChat] = useState(false);
+  const [isCreatingChatLocal, setIsCreatingChatLocal] = useState(false);
 
-  // Removed duplicate welcome toast - handled by AppInitializer
+  // Use props if provided, otherwise use local state
+  const actualIsCreatingChat = isCreatingChat !== undefined ? isCreatingChat : isCreatingChatLocal;
 
   const handleCreateNewChat = async () => {
     if (!selectedGuru) {
@@ -20,7 +26,13 @@ const ChatPage: React.FC = () => {
       return;
     }
 
-    setIsCreatingChat(true);
+    // Use provided handler if available, otherwise use local handler
+    if (onCreateNewChat) {
+      onCreateNewChat();
+      return;
+    }
+
+    setIsCreatingChatLocal(true);
     toast.loading("Creating new chat...", { id: "create-chat-main" });
 
     try {
@@ -33,7 +45,7 @@ const ChatPage: React.FC = () => {
       console.error("Error creating new chat:", error);
       toast.error("Failed to create new chat. Please try again.", { id: "create-chat-main" });
     } finally {
-      setIsCreatingChat(false);
+      setIsCreatingChatLocal(false);
     }
   };
 
@@ -41,12 +53,14 @@ const ChatPage: React.FC = () => {
     <div className="relative h-screen overflow-hidden">
       {/* Main Chat Layout */}
       <div className="flex h-screen relative z-10 pt-16 overflow-hidden">
-        {/* Left Sidebar - All Tools */}
-        <LeftSidebar onCreateNewChat={handleCreateNewChat} isCreatingChat={isCreatingChat} />
+        {/* Left Sidebar - Hidden on mobile, visible on larger screens */}
+        <div className="hidden lg:block">
+          <LeftSidebar onCreateNewChat={handleCreateNewChat} isCreatingChat={actualIsCreatingChat} />
+        </div>
 
-        {/* Main Chat Area */}
-        <div className="flex-1 flex justify-center overflow-hidden ml-16 lg:ml-80">
-          <div className="w-full max-w-4xl flex flex-col overflow-hidden">
+        {/* Main Chat Area - Centered and wider */}
+        <div className="flex-1 flex justify-center items-stretch overflow-hidden">
+          <div className="w-full max-w-7xl flex flex-col overflow-hidden mx-auto">
             {/* Chat Container */}
             <div className="flex-1 overflow-hidden">
               <ChatContainer />
@@ -54,7 +68,6 @@ const ChatPage: React.FC = () => {
           </div>
         </div>
       </div>
-
     </div>
   );
 };
