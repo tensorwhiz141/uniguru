@@ -176,7 +176,7 @@ const Navbar: React.FC<NavbarProps> = ({
   return (
     <>
       {/* Main Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-40 bg-black/30 backdrop-blur-xl border-b border-white/10">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-black/30 backdrop-blur-xl border-b border-white/10">
         <div className="w-full px-6">
           <div className="flex items-center justify-between h-16">
 
@@ -303,8 +303,8 @@ const Navbar: React.FC<NavbarProps> = ({
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div ref={mobileMenuRef} className="md:hidden bg-gradient-to-b from-gray-900/98 to-black/95 backdrop-blur-xl border-t border-purple-500/20 shadow-2xl animate-mobile-slide-down mobile-safe-area relative z-30">
-            <div className="px-6 py-6 space-y-4 mobile-scroll max-h-[calc(100vh-4rem)] overflow-y-auto">
+          <div ref={mobileMenuRef} className="md:hidden animate-mobile-slide-down mobile-menu-safe-area">
+            <div className="px-6 py-3 space-y-3 mobile-scroll max-h-[calc(100vh-5rem)] overflow-y-auto">
 
 
 

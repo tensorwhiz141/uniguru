@@ -16,10 +16,10 @@ const AuthCard: React.FC<AuthCardProps> = ({
   return (
     <div className={`
       min-h-screen flex items-center justify-center
-      p-4 sm:p-4 mobile-safe-area
+      p-4 sm:p-4 auth-safe-area
       ${className}
     `}
-    style={{ minHeight: '100vh', minHeight: '100dvh' }}>
+    style={{ minHeight: '100dvh' }}>
       {/* Glassmorphism Card - Mobile responsive sizing */}
       <div className="
         w-full
