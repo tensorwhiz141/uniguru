@@ -11,7 +11,6 @@ import {
   faSignOutAlt,
   faSignInAlt,
   faInfoCircle,
-  faPlus,
   faRefresh,
   faTrash,
   faEdit,

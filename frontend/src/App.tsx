@@ -26,7 +26,7 @@ const ChatPageWrapper: React.FC<{
 }> = ({ isChatStarted }) => {
   const { selectedGuru } = useGuru();
   const { createNewChatManually } = useChat();
-  const { isLoggedIn, logout } = useAuth();
+  const { logout } = useAuth();
   const [isCreatingChat, setIsCreatingChat] = useState(false);
   const navigate = useNavigate();
 
@@ -80,7 +80,7 @@ const ChatPageWrapper: React.FC<{
 
 function App() {
   const [isChatStarted, setIsChatStarted] = useState(false); // Track if Let's Chat was clicked
-  const { isLoggedIn, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {

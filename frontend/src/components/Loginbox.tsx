@@ -27,7 +27,7 @@ const Loginbox: React.FC<LoginboxProps> = ({ onLoginSuccess }) => {
     toast.loading("Signing you in...", { id: "login" });
 
     try {
-      const result = await login(email, password);
+      await login(email, password);
 
       toast.success("Welcome back! Redirecting to chat...", { id: "login" });
       onLoginSuccess();
