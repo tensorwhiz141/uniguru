@@ -536,7 +536,9 @@ const ChatContainer: React.FC = () => {
                 />
               )}
               <div
-                className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg relative flex items-center ${
+                className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg relative ${
+                  msg.sender === "bot" && !msg.isLoading ? "flex flex-col" : "flex items-center"
+                } ${
                   msg.sender === "user"
                     ? "bg-[linear-gradient(135deg,_#61ACEF,_#9987ED,_#B679E1,_#9791DB,_#74BDCC,_#59D2BF)] text-black"
                     : "border border-gray-700 text-white"
@@ -550,6 +552,7 @@ const ChatContainer: React.FC = () => {
                   alignSelf: msg.sender === "user" ? "flex-end" : "flex-start",
                   marginTop: "10px",
                   fontSize: window.innerWidth < 640 ? "14px" : "16px", // Responsive font size
+                  marginBottom: msg.sender === "bot" && !msg.isLoading ? (window.innerWidth < 640 ? "8px" : "20px") : "0px",
                 }}
               >
                 {msg.isLoading ? (
@@ -562,24 +565,26 @@ const ChatContainer: React.FC = () => {
                     <span className="text-purple-300 text-sm">Guru is thinking...</span>
                   </div>
                 ) : (
-                  msg.text
+                  <div className={msg.sender === "bot" ? "w-full" : ""}>
+                    {msg.text}
+                  </div>
                 )}
                 {msg.sender === "bot" && !msg.isLoading && (
-                  <div className="absolute bottom-[-18px] sm:bottom-[-20px] right-0 flex items-center space-x-1.5 sm:space-x-2">
+                  <div className="mt-2 flex items-center justify-end space-x-2 sm:absolute sm:bottom-[-18px] sm:mt-0 sm:bottom-[-20px] sm:right-0 sm:space-x-1.5 sm:space-x-2">
                     {/* Audio Controls */}
                     {isPlaying && playingMessageIndex === index ? (
                       <div className="flex items-center space-x-1">
                         <FontAwesomeIcon
                           icon={window.speechSynthesis?.paused ? faPlay : faPause}
                           className="text-purple-400 hover:text-purple-300 cursor-pointer transition-colors"
-                          style={{ fontSize: '14px' }}
+                          style={{ fontSize: window.innerWidth < 640 ? '12px' : '14px' }}
                           onClick={() => handleTextToSpeech(msg.text, index)}
                           title={window.speechSynthesis?.paused ? "Resume audio" : "Pause audio"}
                         />
                         <FontAwesomeIcon
                           icon={faStop}
                           className="text-red-400 hover:text-red-300 cursor-pointer transition-colors"
-                          style={{ fontSize: '14px' }}
+                          style={{ fontSize: window.innerWidth < 640 ? '12px' : '14px' }}
                           onClick={handleStopAudio}
                           title="Stop audio"
                         />
@@ -588,7 +593,7 @@ const ChatContainer: React.FC = () => {
                       <FontAwesomeIcon
                         icon={faVolumeHigh}
                         className="text-gray-400 hover:text-purple-400 cursor-pointer transition-colors"
-                        style={{ fontSize: '14px' }}
+                        style={{ fontSize: window.innerWidth < 640 ? '12px' : '14px' }}
                         onClick={() => handleTextToSpeech(msg.text, index)}
                         title="Read aloud"
                       />
@@ -596,7 +601,7 @@ const ChatContainer: React.FC = () => {
                     <FontAwesomeIcon
                       icon={faCopy}
                       className="text-gray-400 hover:text-purple-400 cursor-pointer transition-colors"
-                      style={{ fontSize: '14px' }}
+                      style={{ fontSize: window.innerWidth < 640 ? '12px' : '14px' }}
                       onClick={() => handleCopyMessage(msg.text)}
                       title="Copy message"
                     />

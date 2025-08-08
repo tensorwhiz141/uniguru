@@ -441,7 +441,7 @@ const EnhancedChatInput: React.FC<EnhancedChatInputProps> = ({
           <FontAwesomeIcon
             icon={faPaperclip}
             className="mx-1 sm:mx-2 cursor-pointer text-white/80 hover:text-white transition-colors"
-            style={{ fontSize: '16px' }}
+            style={{ fontSize: window.innerWidth < 640 ? '14px' : '16px' }}
             title="Attach file"
             onClick={handleFileClick}
           />
@@ -494,30 +494,30 @@ const EnhancedChatInput: React.FC<EnhancedChatInputProps> = ({
             className={`mx-1 sm:mx-2 cursor-pointer transition-all duration-300 hidden xs:block ${
               message.trim() ? 'text-white/80 hover:text-white' : 'text-white/40 cursor-not-allowed'
             }`}
-            style={{ fontSize: '16px' }}
+            style={{ fontSize: window.innerWidth < 640 ? '14px' : '16px' }}
             onClick={handleCopyText}
             title={message.trim() ? "Copy text" : "No text to copy"}
           />
           <FontAwesomeIcon
             icon={faMicrophone}
-            className={`mx-1 sm:mx-2 cursor-pointer hidden sm:block transition-all duration-300 ${
+            className={`mx-1 sm:mx-2 cursor-pointer transition-all duration-300 ${
               isRecording
                 ? 'text-red-400 hover:text-red-300 animate-pulse'
                 : 'text-white/80 hover:text-white'
             }`}
-            style={{ fontSize: '16px' }}
+            style={{ fontSize: window.innerWidth < 640 ? '14px' : '16px' }}
             title={isRecording ? "Stop recording" : "Start voice recording"}
             onClick={handleMicrophoneClick}
           />
           <button
             onClick={toggleExpanded}
-            className="mx-1 sm:mx-2 cursor-pointer text-white/80 hover:text-white"
+            className="mx-1 sm:mx-2 cursor-pointer text-white/80 hover:text-white hidden xs:block"
             title={isExpanded ? "Collapse" : "Expand"}
           >
             <FontAwesomeIcon
               icon={isExpanded ? faCompress : faExpand}
               className="transition-transform duration-300"
-              style={{ fontSize: '16px' }}
+              style={{ fontSize: window.innerWidth < 640 ? '14px' : '16px' }}
             />
           </button>
         </div>
