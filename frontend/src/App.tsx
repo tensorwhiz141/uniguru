@@ -107,11 +107,14 @@ function App() {
               <div className="fixed inset-0 z-0">
                 <StarsCanvas />
               </div>
-              <Navbar
-                isLoggedIn={isLoggedIn}
-                onLogout={handleLogout}
-                isChatStarted={isChatStarted}
-              />
+              {/* Hide navbar on mobile for home page */}
+              <div className="hidden md:block">
+                <Navbar
+                  isLoggedIn={isLoggedIn}
+                  onLogout={handleLogout}
+                  isChatStarted={isChatStarted}
+                />
+              </div>
               <HomePage
                 onChatStarted={handleChatStarted}
               />
@@ -157,12 +160,15 @@ function App() {
               <div className="fixed inset-0 z-0">
                 <StarsCanvas />
               </div>
-              <Navbar
-                isLoggedIn={isLoggedIn}
-                onLogout={handleLogout}
-                isChatStarted={isChatStarted}
-              />
-              <div className="pt-16">
+              {/* Hide navbar on mobile for about page */}
+              <div className="hidden md:block">
+                <Navbar
+                  isLoggedIn={isLoggedIn}
+                  onLogout={handleLogout}
+                  isChatStarted={isChatStarted}
+                />
+              </div>
+              <div className="pt-0 md:pt-16">
                 <AboutPage />
               </div>
             </div>

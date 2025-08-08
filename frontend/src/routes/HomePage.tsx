@@ -31,7 +31,7 @@ const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
     <div className="relative min-h-screen">
       {/* Mobile Layout - WITH CONTEXT & BETTER POSITIONING */}
       <main className="block sm:hidden">
-        <div className="h-screen flex flex-col p-4 pt-16 overflow-hidden">
+        <div className="h-screen flex flex-col p-4 pt-4 overflow-hidden">
           {/* Header with Context */}
           <div className="text-center flex-shrink-0 mb-6">
             <img src={uniLogo} alt="UniGuru" className="w-20 h-20 mx-auto mb-3" />

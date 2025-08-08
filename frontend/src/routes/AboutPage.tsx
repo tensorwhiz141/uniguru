@@ -1,10 +1,26 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import uniguru from "../assets/uni-logo.png";
 // import StarsCanvas from "../components/StarBackground";
 
 const AboutPage: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="relative min-h-screen text-white">
+      {/* Mobile Back Button - Only visible on mobile */}
+      <div className="md:hidden fixed top-4 left-4 z-50">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center justify-center w-10 h-10 bg-black/50 backdrop-blur-sm border border-white/20 rounded-full text-white hover:bg-black/70 transition-all duration-200 shadow-lg"
+          aria-label="Go back"
+        >
+          <FontAwesomeIcon icon={faChevronLeft} className="text-lg" />
+        </button>
+      </div>
+
       <div className="relative z-10 container mx-auto px-4 py-12 max-w-4xl">
         {/* Header Section */}
         <div className="text-center mb-12">
