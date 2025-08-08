@@ -11,6 +11,7 @@ declare global {
   interface Window {
     google: any;
     googleOneTapCallback: (response: any) => void;
+    IdentityCredential?: any;
   }
 }
 
@@ -62,12 +63,14 @@ const GoogleOAuthButton: React.FC<GoogleOAuthButtonProps> = ({
           return;
         }
 
-        // Initialize Google Sign-In
+        // Initialize Google Sign-In with FedCM support
         window.google.accounts.id.initialize({
           client_id: clientId,
           callback: window.googleOneTapCallback,
           auto_select: false,
           cancel_on_tap_outside: true,
+          // Enable FedCM
+          use_fedcm_for_prompt: true,
         });
 
         // Render the button

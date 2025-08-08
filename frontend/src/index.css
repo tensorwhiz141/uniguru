@@ -588,6 +588,58 @@ body {
 
 /* ===== MOBILE-SPECIFIC UTILITIES ===== */
 
+/* Mobile HomePage Optimizations */
+@media (max-width: 640px) {
+  .welcome-container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  /* Enhanced mobile touch targets */
+  .touch-target {
+    min-height: 48px !important;
+    min-width: 48px !important;
+  }
+
+  /* Mobile-specific card hover effects */
+  .mobile-card-hover:active {
+    transform: scale(0.98);
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  /* Mobile typography improvements */
+  .mobile-heading {
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .mobile-text {
+    line-height: 1.5;
+  }
+
+  /* Mobile-specific spacing improvements */
+  .mobile-spacing {
+    margin-bottom: 2rem;
+  }
+
+  /* Prevent horizontal scroll on mobile */
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Optimize mobile viewport */
+  .min-h-screen {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+
+  /* Mobile-safe button styling */
+  .mobile-button {
+    -webkit-tap-highlight-color: rgba(147, 51, 234, 0.2);
+    tap-highlight-color: rgba(147, 51, 234, 0.2);
+  }
+}
+
 /* Mobile-specific animations */
 @keyframes mobile-slide-up {
   from {

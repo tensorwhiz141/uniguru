@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes, faPlus, faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import { faTimes, faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import BubblyButton from "./BubblyButton";
 
 interface RightSidebarProps {
@@ -59,7 +59,6 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ isOpen, onClose }) => {
             variant="success"
             className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-full"
           >
-            <FontAwesomeIcon icon={faPlus} />
             <span className="font-medium">New Chat</span>
           </BubblyButton>
         </div>

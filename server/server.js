@@ -31,16 +31,37 @@ app.use(helmet({
   contentSecurityPolicy: false
 }));
 
-// Rate limiting
+// Rate limiting - more lenient for development
 const limiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100, // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later.',
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 1000, // Increased limit for development
+  message: {
+    success: false,
+    message: 'Too many requests from this IP, please try again later.'
+  },
   standardHeaders: true,
   legacyHeaders: false,
+  // Skip rate limiting for health checks and in development
+  skip: (req) => {
+    return req.path === '/health' || process.env.NODE_ENV === 'development';
+  }
 });
 
-app.use(limiter);
+// Apply rate limiting conditionally
+if (process.env.NODE_ENV === 'production') {
+  app.use(limiter);
+} else {
+  // More lenient rate limiting for development
+  app.use(rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minute
+    max: 1000, // Very high limit for development
+    message: {
+      success: false,
+      message: 'Rate limit exceeded'
+    },
+    skip: (req) => req.path === '/health'
+  }));
+}
 
 // CORS configuration
 app.use(cors({
@@ -50,13 +71,17 @@ app.use(cors({
     'http://localhost:3000',
     'https://www.uni-guru.in',
     'https://uni-guru.vercel.app',
-    // Add your Firebase hosting domain here
+    // Firebase hosting domains
+    'https://uniguru-bf024.web.app',
+    'https://uniguru-bf024.firebaseapp.com',
+    // Additional Firebase domains (without trailing slash)
     'https://uniguru-bf024.web.app/',
     'https://uniguru-bf024.firebaseapp.com/'
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With'],
+  optionsSuccessStatus: 200 // For legacy browser support
 }));
 
 // Body parsing middleware

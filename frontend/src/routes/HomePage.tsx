@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -29,8 +29,84 @@ const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
 
   return (
     <div className="relative min-h-screen">
-      {/* Hero Section */}
-      <main className="flex flex-col items-center justify-center min-h-screen text-center p-4 pt-20 relative z-10">
+      {/* Mobile Layout - WITH CONTEXT & BETTER POSITIONING */}
+      <main className="block sm:hidden">
+        <div className="h-screen flex flex-col p-4 pt-16 overflow-hidden">
+          {/* Header with Context */}
+          <div className="text-center flex-shrink-0 mb-6">
+            <img src={uniLogo} alt="UniGuru" className="w-20 h-20 mx-auto mb-3" />
+            <h1
+              className="text-4xl font-bold bg-clip-text text-transparent mb-2"
+              style={{
+                fontFamily: "inknut",
+                background: "linear-gradient(135deg, #b18615, #d4a01c, #f7c52d, #d4a01c, #b18615)",
+                backgroundClip: "text",
+                WebkitBackgroundClip: "text"
+              }}
+            >
+              UniGuru
+            </h1>
+            <p className="text-base text-gray-200 font-light mb-3">AI Learning Platform</p>
+
+            {/* Context Box */}
+            <div className="bg-white/5 backdrop-blur-xl rounded-xl p-3 border border-purple-400/20 mb-4">
+              <p className="text-sm text-gray-100 leading-relaxed">
+                Create <span className="text-purple-400 font-semibold">personalized AI mentors</span> who roleplay as real experts in any field
+              </p>
+            </div>
+          </div>
+
+          {/* Features - Centered */}
+          <div className="flex-1 flex flex-col justify-center min-h-0">
+            <div className="space-y-3 mb-4">
+              <div className="flex items-center space-x-3 p-3 bg-white/5 rounded-xl border border-purple-400/20">
+                <img src={guruLogo} alt="Create" className="w-8 h-8 flex-shrink-0" />
+                <div>
+                  <h3 className="text-base font-bold text-white">Create Your Guru</h3>
+                  <p className="text-xs text-gray-300">Math professor, scientist, code mentor - any expert</p>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-3 p-3 bg-white/5 rounded-xl border border-blue-400/20">
+                <FontAwesomeIcon icon={faBrain} className="text-blue-400 text-xl w-8 flex-shrink-0" />
+                <div>
+                  <h3 className="text-base font-bold text-white">AI Roleplay</h3>
+                  <p className="text-xs text-gray-300">Your mentor thinks and responds like a real expert</p>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-3 p-3 bg-white/5 rounded-xl border border-green-400/20">
+                <FontAwesomeIcon icon={faRocket} className="text-green-400 text-xl w-8 flex-shrink-0" />
+                <div>
+                  <h3 className="text-base font-bold text-white">Learn Faster</h3>
+                  <p className="text-xs text-gray-300">Get personalized insights and authentic knowledge</p>
+                </div>
+              </div>
+            </div>
+
+            {/* CTA Button - Moved Up Here */}
+            <div className="text-center">
+              {isLetChatVisible && (
+                <button
+                  onClick={handleLetChatClick}
+                  className="w-full py-4 px-6 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold text-lg rounded-xl shadow-lg active:scale-95 transition-all duration-200"
+                  style={{ fontFamily: "Inter, system-ui, sans-serif" }}
+                >
+                  🚀 START CREATING YOUR GURU
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Bottom Examples */}
+          <div className="text-center flex-shrink-0 pb-4">
+            <p className="text-xs text-gray-400 mb-2">Popular: Math • Science • Coding • Languages</p>
+          </div>
+        </div>
+      </main>
+
+      {/* Desktop Layout - Original */}
+      <main className="hidden sm:flex flex-col items-center justify-center min-h-screen text-center p-4 pt-20 relative z-10">
         <div
           ref={welcomeContainerRef}
           className="welcome-container p-8 max-w-6xl mx-auto relative w-full"
@@ -164,7 +240,8 @@ const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
         </div>
       </main>
 
-      <footer className="absolute bottom-5 right-5 z-10">
+      {/* Footer with blackhole logo - Hidden on mobile */}
+      <footer className="absolute bottom-5 right-5 z-10 hidden sm:block">
         <img src={BHI} alt="BHI Logo" className="h-12" />
       </footer>
     </div>

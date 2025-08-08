@@ -1,17 +1,19 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { MessageSquarePlus } from "lucide-react";
 import {
   faChevronRight,
   faChevronLeft,
-  faPlus,
   faEdit,
   faTrash,
   faChevronDown,
   faChevronUp,
   faComments,
   faRefresh,
-  faTools
+  faTools,
+  faPlus
 } from "@fortawesome/free-solid-svg-icons";
+import { gsap } from "gsap";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import { useGuru } from "../context/GuruContext";
@@ -21,6 +23,7 @@ const guruLogo = "/guru.png";
 import BubblyButton from "./BubblyButton";
 import ConfirmationModal from "./ConfirmationModal";
 import RenameModal from "./RenameModal";
+import "../styles/discord-tooltips.css";
 
 interface LeftSidebarProps {
   onCreateNewChat: () => void;
@@ -48,6 +51,32 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
     }
   });
   const [activeSection, setActiveSection] = useState<'gurus' | 'chats' | 'tools'>('gurus');
+
+  // Refs for GSAP animations
+  const contentRef = useRef<HTMLDivElement>(null);
+  const gurusRef = useRef<HTMLDivElement>(null);
+  const chatsRef = useRef<HTMLDivElement>(null);
+  const toolsRef = useRef<HTMLDivElement>(null);
+
+  // Initial animation for sections
+  useEffect(() => {
+    const currentRef =
+      activeSection === 'gurus' ? gurusRef :
+      activeSection === 'chats' ? chatsRef : toolsRef;
+
+    if (currentRef.current) {
+      gsap.fromTo(currentRef.current,
+        { opacity: 0, scale: 0.98 },
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.3,
+          ease: "power2.out",
+          delay: 0.05
+        }
+      );
+    }
+  }, [activeSection]);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [isGuruListExpanded, setIsGuruListExpanded] = useState(true);
   const [isChatListExpanded, setIsChatListExpanded] = useState(true);
@@ -289,7 +318,74 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
 
   const handleGuruSelect = (guru: any) => {
     selectGuru(guru);
-    setActiveSection('chats');
+    handleSectionChange('chats');
+  };
+
+  // Smooth section transition with GSAP
+  const handleSectionChange = (newSection: 'gurus' | 'chats' | 'tools') => {
+    if (newSection === activeSection) return;
+
+    const currentRef =
+      activeSection === 'gurus' ? gurusRef :
+      activeSection === 'chats' ? chatsRef : toolsRef;
+
+    const newRef =
+      newSection === 'gurus' ? gurusRef :
+      newSection === 'chats' ? chatsRef : toolsRef;
+
+    // Set the content container height to prevent jumping
+    if (contentRef.current) {
+      const currentHeight = contentRef.current.offsetHeight;
+      gsap.set(contentRef.current, { height: currentHeight });
+    }
+
+    // Animate out current section
+    if (currentRef.current) {
+      gsap.to(currentRef.current, {
+        opacity: 0,
+        scale: 0.98,
+        duration: 0.15,
+        ease: "power2.out",
+        onComplete: () => {
+          setActiveSection(newSection);
+
+          // Small delay to ensure DOM update
+          gsap.delayedCall(0.02, () => {
+            // Reset content container height to auto after transition
+            if (contentRef.current) {
+              gsap.set(contentRef.current, { height: 'auto' });
+            }
+
+            // Animate in new section
+            if (newRef.current) {
+              gsap.fromTo(newRef.current,
+                { opacity: 0, scale: 0.98 },
+                {
+                  opacity: 1,
+                  scale: 1,
+                  duration: 0.2,
+                  ease: "power2.out"
+                }
+              );
+            }
+          });
+        }
+      });
+    } else {
+      // Fallback if no current ref
+      setActiveSection(newSection);
+      if (newRef.current) {
+        gsap.fromTo(newRef.current,
+          { opacity: 0, scale: 0.98 },
+          {
+            opacity: 1,
+            scale: 1,
+            duration: 0.2,
+            ease: "power2.out"
+          }
+        );
+      }
+    }
   };
 
   return (
@@ -330,98 +426,162 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
           </button>
         </div>
 
-        {/* Navigation Tabs */}
+        {/* Navigation Tabs - Discord Style */}
         {!isCollapsed && (
-          <div className="flex border-b border-purple-400/20 flex-shrink-0">
+          <div className="flex border-b border-purple-400/20 flex-shrink-0 bg-black/10">
             <button
-              onClick={() => setActiveSection('gurus')}
-              className={`flex-1 py-3 px-4 text-sm font-medium transition-all duration-200 flex items-center justify-center ${
+              onClick={() => handleSectionChange('gurus')}
+              className={`relative flex-1 py-3 px-4 text-sm font-medium transition-all duration-200 ease-out flex items-center justify-center group overflow-hidden ${
                 activeSection === 'gurus'
-                  ? 'text-purple-300 border-b-2 border-purple-400 bg-purple-400/10'
-                  : 'text-gray-300 hover:text-purple-300 hover:bg-purple-400/5'
+                  ? 'text-white bg-purple-500/20'
+                  : 'text-gray-300 hover:text-white hover:bg-purple-400/10'
               }`}
             >
-              <img src={guruLogo} alt="Guru" className="w-4 h-4 mr-2" />
-              Gurus
+              {/* Discord-style active indicator */}
+              {activeSection === 'gurus' && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-purple-400 rounded-t-full"></div>
+              )}
+
+              {/* Hover effect background */}
+              <div className="absolute inset-0 bg-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+
+              <img src={guruLogo} alt="Guru" className="w-4 h-4 mr-2 relative z-10 transition-transform duration-200 group-hover:scale-110" />
+              <span className="relative z-10">Gurus</span>
             </button>
+
             <button
-              onClick={() => setActiveSection('chats')}
-              className={`flex-1 py-3 px-4 text-sm font-medium transition-all duration-200 ${
+              onClick={() => handleSectionChange('chats')}
+              className={`relative flex-1 py-3 px-4 text-sm font-medium transition-all duration-200 ease-out flex items-center justify-center group overflow-hidden ${
                 activeSection === 'chats'
-                  ? 'text-purple-300 border-b-2 border-purple-400 bg-purple-400/10'
-                  : 'text-gray-300 hover:text-purple-300 hover:bg-purple-400/5'
+                  ? 'text-white bg-blue-500/20'
+                  : 'text-gray-300 hover:text-white hover:bg-blue-400/10'
               }`}
             >
-              <FontAwesomeIcon icon={faComments} className="mr-2" />
-              Chats
+              {activeSection === 'chats' && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-400 rounded-t-full"></div>
+              )}
+
+              <div className="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+
+              <FontAwesomeIcon icon={faComments} className="mr-2 relative z-10 transition-transform duration-200 group-hover:scale-110" />
+              <span className="relative z-10">Chats</span>
             </button>
+
             <button
-              onClick={() => setActiveSection('tools')}
-              className={`flex-1 py-3 px-4 text-sm font-medium transition-all duration-200 ${
+              onClick={() => handleSectionChange('tools')}
+              className={`relative flex-1 py-3 px-4 text-sm font-medium transition-all duration-200 ease-out flex items-center justify-center group overflow-hidden ${
                 activeSection === 'tools'
-                  ? 'text-purple-300 border-b-2 border-purple-400 bg-purple-400/10'
-                  : 'text-gray-300 hover:text-purple-300 hover:bg-purple-400/5'
+                  ? 'text-white bg-orange-500/20'
+                  : 'text-gray-300 hover:text-white hover:bg-orange-400/10'
               }`}
             >
-              <FontAwesomeIcon icon={faTools} className="mr-2" />
-              Tools
+              {activeSection === 'tools' && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-orange-400 rounded-t-full"></div>
+              )}
+
+              <div className="absolute inset-0 bg-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+
+              <FontAwesomeIcon icon={faTools} className="mr-2 relative z-10 transition-transform duration-200 group-hover:scale-110" />
+              <span className="relative z-10">Tools</span>
             </button>
           </div>
         )}
 
-        {/* Collapsed Icons */}
+        {/* Collapsed Icons - Discord Style */}
         {isCollapsed && (
-          <div className="flex flex-col items-center py-4 space-y-4">
-            <button
-              onClick={() => {
-                setIsCollapsed(false);
-                setActiveSection('gurus');
-              }}
-              className="p-3 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-all duration-200 group"
-              title="Gurus"
-            >
-              <img src={guruLogo} alt="Guru" className="w-5 h-5 group-hover:scale-110 transition-transform drop-shadow-sm" />
-            </button>
-            <button
-              onClick={() => {
-                setIsCollapsed(false);
-                setActiveSection('chats');
-              }}
-              className="p-3 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-all duration-200 group"
-              title="Chats"
-            >
-              <FontAwesomeIcon icon={faComments} className="text-lg group-hover:scale-110 transition-transform" />
-            </button>
-            <button
-              onClick={() => {
-                setIsCollapsed(false);
-                setActiveSection('tools');
-              }}
-              className="p-3 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-all duration-200 group"
-              title="Tools"
-            >
-              <FontAwesomeIcon icon={faTools} className="text-lg group-hover:scale-110 transition-transform" />
-            </button>
-            <button
-              onClick={onCreateNewChat}
-              disabled={isCreatingChat || !selectedGuru}
-              className="p-3 rounded-xl bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white transition-all duration-200 group disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-purple-500/25"
-              title="New Chat"
-            >
-              <FontAwesomeIcon
-                icon={faPlus}
-                className={`text-lg group-hover:scale-110 transition-transform ${isCreatingChat ? 'animate-spin' : ''}`}
-              />
-            </button>
+          <div className="flex flex-col items-center py-4 space-y-3">
+            {/* Gurus Button */}
+            <div className="relative group discord-tooltip" data-tooltip={`My Gurus (${gurus.length})`}>
+              {/* Discord-style indicator bar */}
+              <div className="absolute -left-3 top-1/2 transform -translate-y-1/2 w-1 bg-white rounded-r-full transition-all duration-200 ease-out group-hover:h-5 h-2 opacity-0 group-hover:opacity-100"></div>
+
+              <button
+                onClick={() => {
+                  setIsCollapsed(false);
+                  handleSectionChange('gurus');
+                }}
+                className="relative w-12 h-12 rounded-3xl bg-gray-700/80 hover:bg-purple-600 text-gray-300 hover:text-white transition-all duration-200 ease-out group-hover:rounded-2xl flex items-center justify-center overflow-hidden"
+                title={`My Gurus (${gurus.length})`}
+              >
+                {/* Discord-style background glow */}
+                <div className="absolute inset-0 bg-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-3xl group-hover:rounded-2xl"></div>
+
+                <img src={guruLogo} alt="Guru" className="relative z-10 w-6 h-6 transition-transform duration-200 group-hover:scale-110" />
+              </button>
+            </div>
+
+            {/* Chats Button */}
+            <div className="relative group">
+              <div className="absolute -left-3 top-1/2 transform -translate-y-1/2 w-1 bg-white rounded-r-full transition-all duration-200 ease-out group-hover:h-5 h-2 opacity-0 group-hover:opacity-100"></div>
+
+              <button
+                onClick={() => {
+                  setIsCollapsed(false);
+                  handleSectionChange('chats');
+                }}
+                className="relative w-12 h-12 rounded-3xl bg-gray-700/80 hover:bg-blue-600 text-gray-300 hover:text-white transition-all duration-200 ease-out group-hover:rounded-2xl flex items-center justify-center overflow-hidden"
+                title={`Recent Conversations (${chatSessions.length})`}
+              >
+                <div className="absolute inset-0 bg-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-3xl group-hover:rounded-2xl"></div>
+
+                <FontAwesomeIcon icon={faComments} className="relative z-10 text-lg transition-transform duration-200 group-hover:scale-110" />
+              </button>
+            </div>
+
+            {/* Tools Button */}
+            <div className="relative group">
+              <div className="absolute -left-3 top-1/2 transform -translate-y-1/2 w-1 bg-white rounded-r-full transition-all duration-200 ease-out group-hover:h-5 h-2 opacity-0 group-hover:opacity-100"></div>
+
+              <button
+                onClick={() => {
+                  setIsCollapsed(false);
+                  handleSectionChange('tools');
+                }}
+                className="relative w-12 h-12 rounded-3xl bg-gray-700/80 hover:bg-orange-600 text-gray-300 hover:text-white transition-all duration-200 ease-out group-hover:rounded-2xl flex items-center justify-center overflow-hidden"
+                title="Available Tools"
+              >
+                <div className="absolute inset-0 bg-orange-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-3xl group-hover:rounded-2xl"></div>
+
+                <FontAwesomeIcon icon={faTools} className="relative z-10 text-lg transition-transform duration-200 group-hover:scale-110" />
+              </button>
+            </div>
+
+            {/* Separator */}
+            <div className="w-8 h-0.5 bg-gray-600/50 rounded-full my-2"></div>
+
+            {/* New Chat Button */}
+            <div className="relative group">
+              <div className="absolute -left-3 top-1/2 transform -translate-y-1/2 w-1 bg-white rounded-r-full transition-all duration-200 ease-out group-hover:h-5 h-2 opacity-0 group-hover:opacity-100 group-disabled:opacity-0"></div>
+
+              <button
+                onClick={onCreateNewChat}
+                disabled={isCreatingChat || !selectedGuru}
+                className="relative w-12 h-12 rounded-3xl bg-green-600 hover:bg-green-500 text-white transition-all duration-200 ease-out group-hover:rounded-2xl flex items-center justify-center overflow-hidden disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-green-600 disabled:hover:rounded-3xl shadow-lg hover:shadow-green-500/30"
+                title={!selectedGuru ? "Select a guru first" : isCreatingChat ? "Creating chat..." : "Start New Chat"}
+              >
+                {/* Discord-style background glow */}
+                <div className="absolute inset-0 bg-green-400/30 opacity-0 group-hover:opacity-100 group-disabled:opacity-0 transition-opacity duration-200 rounded-3xl group-hover:rounded-2xl"></div>
+
+                {/* Disabled state overlay */}
+                {(isCreatingChat || !selectedGuru) && (
+                  <div className="absolute inset-0 bg-gray-900/40 rounded-3xl"></div>
+                )}
+
+                <MessageSquarePlus
+                  size={20}
+                  className={`relative z-10 transition-all duration-200 group-hover:scale-110 group-disabled:scale-100 ${isCreatingChat ? 'animate-spin' : ''}`}
+                />
+              </button>
+            </div>
           </div>
         )}
 
         {/* Content */}
         {!isCollapsed && (
-          <div className="flex-1 overflow-y-auto overflow-x-hidden sidebar-scroll p-4 pb-6 space-y-4 min-h-0">
+          <div ref={contentRef} className="flex-1 overflow-y-auto overflow-x-hidden sidebar-scroll p-4 pb-6 space-y-4 min-h-0">
             {/* Gurus Section */}
             {activeSection === 'gurus' && (
-              <div className="flex flex-col h-full space-y-4">
+              <div ref={gurusRef} className="flex flex-col h-full space-y-4">
                 {/* Action Buttons */}
                 <div className="flex gap-2">
                   <BubblyButton
@@ -429,7 +589,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                     variant="primary"
                     className="flex-1 flex items-center justify-center gap-2 py-2 px-3 font-medium text-sm"
                   >
-                    <FontAwesomeIcon icon={faPlus} className="text-sm" />
+                  
                     <span>Create Guru</span>
                   </BubblyButton>
                   <button
@@ -451,7 +611,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                   <div className="bg-gradient-to-br from-purple-900/40 to-purple-800/30 backdrop-blur-sm rounded-xl p-6 border border-purple-400/30 shadow-xl">
                     <div className="flex items-center gap-3 mb-6">
                       <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
-                        <FontAwesomeIcon icon={faPlus} className="text-white text-sm" />
+                        <img src={guruLogo} alt="Guru" className="w-5 h-5" />
                       </div>
                       <h3 className="text-white font-semibold text-lg">Create New Guru</h3>
                     </div>
@@ -522,14 +682,14 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                 <div className="flex flex-col flex-1 min-h-0">
                   <button
                     onClick={toggleGuruList}
-                    className="flex items-center justify-between w-full text-left mb-3 text-purple-300 hover:text-white transition-colors py-2"
+                    className="flex items-center justify-between w-full text-left mb-3 text-purple-300 hover:text-white transition-all duration-200 ease-out py-2 px-2 rounded-lg hover:bg-purple-500/10 group"
                   >
-                    <span className="text-base font-semibold">
+                    <span className="text-base font-semibold transition-colors duration-200">
                       My Gurus ({gurus.length})
                     </span>
                     <FontAwesomeIcon
                       icon={isGuruListExpanded ? faChevronUp : faChevronDown}
-                      className="text-sm"
+                      className="text-sm transition-transform duration-200 group-hover:scale-110"
                     />
                   </button>
 
@@ -544,40 +704,49 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                         gurus.map((guru) => (
                           <div
                             key={guru.id}
-                            className={`backdrop-blur-sm rounded-lg p-3 border transition-all duration-300 relative group hover:scale-[1.02] cursor-pointer ${
+                            className={`guru-card relative backdrop-blur-sm rounded-xl p-3 border transition-all duration-200 ease-out cursor-pointer group overflow-hidden ${
                               selectedGuru?.id === guru.id
-                                ? "border-purple-400/50 shadow-lg shadow-purple-500/20"
-                                : "border-purple-400/30 hover:border-purple-400/50"
+                                ? "border-purple-400/60 shadow-lg shadow-purple-500/25 scale-[1.02]"
+                                : "border-purple-400/20 hover:border-purple-400/50 hover:scale-[1.02]"
                             }`}
                             style={{
                               background: selectedGuru?.id === guru.id
-                                ? "linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(124, 58, 237, 0.1))"
+                                ? "linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.15))"
                                 : "rgba(139, 92, 246, 0.05)",
                             }}
                             onClick={() => handleGuruSelect(guru)}
+                            title={`${guru.name}\n${guru.subject}\n${guru.description}`}
                           >
-                            <div className="flex items-start justify-between">
+                            {/* Discord-style left indicator for selected */}
+                            {selectedGuru?.id === guru.id && (
+                              <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-purple-400 rounded-r-full"></div>
+                            )}
+
+                            {/* Hover glow effect */}
+                            <div className="absolute inset-0 bg-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-xl"></div>
+
+                            <div className="flex items-start justify-between relative z-10">
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 mb-1">
-                                  <img src={guruLogo} alt="Guru" className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                                  <h4 className="text-white font-medium text-sm truncate break-words">
+                                  <img src={guruLogo} alt="Guru" className="w-4 h-4 flex-shrink-0 transition-transform duration-200 group-hover:scale-110" />
+                                  <h4 className="text-white font-medium text-sm truncate break-words transition-colors duration-200">
                                     {guru.name}
                                   </h4>
                                 </div>
-                                <p className="text-purple-300 text-xs truncate break-words">
+                                <p className="text-purple-300 text-xs truncate break-words transition-colors duration-200 group-hover:text-purple-200">
                                   {guru.subject}
                                 </p>
-                                <p className="text-gray-300 text-xs mt-1 line-clamp-2 break-words">
+                                <p className="text-gray-300 text-xs mt-1 line-clamp-2 break-words transition-colors duration-200 group-hover:text-gray-200">
                                   {guru.description}
                                 </p>
                               </div>
-                              <div className="flex items-center gap-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <div className="flex items-center gap-1 ml-2 opacity-0 group-hover:opacity-100 transition-all duration-200">
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     handleDeleteGuru(guru.id, guru.name);
                                   }}
-                                  className="p-1 rounded transition-colors text-gray-400 hover:text-red-400"
+                                  className="p-1.5 rounded-lg transition-all duration-200 text-gray-400 hover:text-red-400 hover:bg-red-500/10 hover:scale-110"
                                   title="Delete guru"
                                 >
                                   <FontAwesomeIcon
@@ -598,33 +767,43 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
 
             {/* Chats Section */}
             {activeSection === 'chats' && (
-              <div className="flex flex-col h-full space-y-4">
-                {/* New Chat Button */}
-                <BubblyButton
-                  onClick={onCreateNewChat}
-                  disabled={isCreatingChat || !selectedGuru}
-                  variant="primary"
-                  className="w-full flex items-center justify-center gap-2 py-3 px-4 font-medium text-sm"
-                >
-                  <FontAwesomeIcon
-                    icon={isCreatingChat ? faComments : faPlus}
-                    className={`text-sm ${isCreatingChat ? 'animate-pulse' : ''}`}
-                  />
-                  <span>{isCreatingChat ? "Creating..." : "New Chat"}</span>
-                </BubblyButton>
+              <div ref={chatsRef} className="flex flex-col h-full space-y-4">
+                {/* New Chat Button - Discord Style */}
+                <div className="relative group">
+                  <BubblyButton
+                    onClick={onCreateNewChat}
+                    disabled={isCreatingChat || !selectedGuru}
+                    variant="primary"
+                    className="w-full flex items-center justify-center py-3 px-4 font-medium text-sm transition-all duration-200 ease-out relative overflow-hidden group-hover:scale-[1.02] disabled:hover:scale-100"
+                  >
+                    {/* Discord-style shimmer effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></div>
+
+                    {/* Pulse effect for disabled state */}
+                    {(isCreatingChat || !selectedGuru) && (
+                      <div className="absolute inset-0 bg-gray-500/20 animate-pulse rounded-lg"></div>
+                    )}
+
+                    <FontAwesomeIcon
+                      icon={faPlus}
+                      className={`text-sm mr-3 transition-all duration-200 relative z-10 group-hover:rotate-90 group-disabled:rotate-0 ${isCreatingChat ? 'animate-spin' : ''}`}
+                    />
+                    <span className="relative z-10">{isCreatingChat ? "Creating..." : "Start New Chat"}</span>
+                  </BubblyButton>
+                </div>
 
                 {/* All Chat History */}
                 <div className="flex flex-col flex-1 min-h-0">
                   <button
                     onClick={toggleChatList}
-                    className="flex items-center justify-between w-full text-left mb-3 text-purple-300 hover:text-white transition-colors py-2"
+                    className="flex items-center justify-between w-full text-left mb-3 text-purple-300 hover:text-white transition-all duration-200 ease-out py-2 px-2 rounded-lg hover:bg-blue-500/10 group"
                   >
-                    <span className="text-base font-semibold">
+                    <span className="text-base font-semibold transition-colors duration-200">
                       Recent Conversations ({chatSessions.length})
                     </span>
                     <FontAwesomeIcon
                       icon={isChatListExpanded ? faChevronUp : faChevronDown}
-                      className="text-sm"
+                      className="text-sm transition-transform duration-200 group-hover:scale-110"
                     />
                   </button>
 
@@ -639,39 +818,48 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                         chatSessions.slice(0, 20).map((chat) => (
                           <div
                             key={chat.id}
-                            className={`backdrop-blur-sm rounded-lg p-3 border transition-all duration-300 relative group hover:scale-[1.02] cursor-pointer ${
+                            className={`chat-card relative backdrop-blur-sm rounded-xl p-3 border transition-all duration-200 ease-out cursor-pointer group overflow-hidden ${
                               currentChatId === chat.id
-                                ? "border-purple-400/50 shadow-lg shadow-purple-500/20"
-                                : "border-purple-400/30 hover:border-purple-400/50"
+                                ? "border-blue-400/60 shadow-lg shadow-blue-500/25 scale-[1.02]"
+                                : "border-purple-400/20 hover:border-blue-400/50 hover:scale-[1.02]"
                             }`}
                             style={{
                               background: currentChatId === chat.id
-                                ? "linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(124, 58, 237, 0.1))"
+                                ? "linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.15))"
                                 : "rgba(139, 92, 246, 0.05)",
                             }}
                             onClick={() => handleChatSelect(chat.id)}
+                            title={`${chat.title || `Chat ${chat.id.slice(0, 8)}`}\nWith ${chat.guru.name} • ${chat.messageCount} messages\nLast active: ${formatDate(chat.lastActivity)}`}
                           >
-                            <div className="flex items-start justify-between">
+                            {/* Discord-style left indicator for active chat */}
+                            {currentChatId === chat.id && (
+                              <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-blue-400 rounded-r-full"></div>
+                            )}
+
+                            {/* Hover glow effect */}
+                            <div className="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-xl"></div>
+
+                            <div className="flex items-start justify-between relative z-10">
                               <div className="flex-1 min-w-0">
-                                <h4 className="text-white font-medium text-sm truncate break-words">
+                                <h4 className="text-white font-medium text-sm truncate break-words transition-colors duration-200">
                                   {chat.title || `Chat ${chat.id.slice(0, 8)}`}
                                 </h4>
                                 <div className="flex items-center justify-between mt-1">
-                                  <p className="text-gray-300 text-xs">
+                                  <p className="text-gray-300 text-xs transition-colors duration-200 group-hover:text-gray-200">
                                     {chat.guru.name} • {chat.messageCount} messages
                                   </p>
-                                  <p className="text-gray-400 text-xs">
+                                  <p className="text-gray-400 text-xs transition-colors duration-200 group-hover:text-gray-300">
                                     {formatDate(chat.lastActivity)}
                                   </p>
                                 </div>
                               </div>
-                              <div className="flex items-center gap-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <div className="flex items-center gap-1 ml-2 opacity-0 group-hover:opacity-100 transition-all duration-200">
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     openRenameModal(chat.id, chat.title || `Chat ${chat.id.slice(0, 8)}`);
                                   }}
-                                  className="p-1 rounded text-gray-400 hover:text-purple-400 transition-colors"
+                                  className="p-1.5 rounded-lg transition-all duration-200 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 hover:scale-110"
                                   title="Rename chat"
                                 >
                                   <FontAwesomeIcon icon={faEdit} size="xs" />
@@ -681,7 +869,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                                     e.stopPropagation();
                                     handleDeleteChat(chat.id, chat.title || `Chat ${chat.id.slice(0, 8)}`);
                                   }}
-                                  className="p-1 rounded transition-colors text-gray-400 hover:text-red-400"
+                                  className="p-1.5 rounded-lg transition-all duration-200 text-gray-400 hover:text-red-400 hover:bg-red-500/10 hover:scale-110"
                                   title="Delete chat"
                                 >
                                   <FontAwesomeIcon
@@ -702,16 +890,16 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
 
             {/* Tools Section */}
             {activeSection === 'tools' && (
-              <div className="flex flex-col h-full space-y-4">
+              <div ref={toolsRef} className="flex flex-col h-full space-y-4">
                 <div>
                   <button
                     onClick={toggleToolsList}
-                    className="flex items-center justify-between w-full text-left mb-3 text-purple-300 hover:text-white transition-colors py-2"
+                    className="flex items-center justify-between w-full text-left mb-3 text-purple-300 hover:text-white transition-all duration-200 ease-out py-2 px-2 rounded-lg hover:bg-orange-500/10 group"
                   >
-                    <span className="text-base font-semibold">Available Tools</span>
+                    <span className="text-base font-semibold transition-colors duration-200">Available Tools</span>
                     <FontAwesomeIcon
                       icon={isToolsExpanded ? faChevronUp : faChevronDown}
-                      className="text-sm"
+                      className="text-sm transition-transform duration-200 group-hover:scale-110"
                     />
                   </button>
 
@@ -720,17 +908,21 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                       {/* AI Assistant Tool */}
                       <div
                         key="ai-assistant"
-                        className="backdrop-blur-sm rounded-lg p-3 border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300 cursor-pointer hover:scale-[1.02]"
+                        className="relative backdrop-blur-sm rounded-xl p-3 border border-purple-400/20 hover:border-purple-400/50 transition-all duration-200 ease-out cursor-pointer group overflow-hidden hover:scale-[1.02]"
                         style={{
                           background: "rgba(139, 92, 246, 0.05)",
                         }}
                         onClick={() => toast.success("AI Assistant coming soon!")}
+                        title="AI Assistant - Get intelligent help with your queries and tasks"
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="text-purple-400 text-lg">🤖</div>
+                        {/* Hover glow effect */}
+                        <div className="absolute inset-0 bg-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-xl"></div>
+
+                        <div className="flex items-center gap-3 relative z-10">
+                          <div className="text-purple-400 text-lg transition-transform duration-200 group-hover:scale-110">🤖</div>
                           <div>
-                            <h4 className="text-white font-medium text-sm">AI Assistant</h4>
-                            <p className="text-gray-300 text-xs">Get help with your queries</p>
+                            <h4 className="text-white font-medium text-sm transition-colors duration-200">AI Assistant</h4>
+                            <p className="text-gray-300 text-xs transition-colors duration-200 group-hover:text-gray-200">Get help with your queries</p>
                           </div>
                         </div>
                       </div>
@@ -738,56 +930,66 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                       {/* Code Generator Tool */}
                       <div
                         key="code-generator"
-                        className="backdrop-blur-sm rounded-lg p-3 border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300 cursor-pointer hover:scale-[1.02]"
+                        className="relative backdrop-blur-sm rounded-xl p-3 border border-purple-400/20 hover:border-green-400/50 transition-all duration-200 ease-out cursor-pointer group overflow-hidden hover:scale-[1.02]"
                         style={{
                           background: "rgba(139, 92, 246, 0.05)",
                         }}
                         onClick={() => toast.success("Code Generator coming soon!")}
+                        title="Code Generator - Generate code snippets and programming solutions"
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="text-purple-400 text-lg">💻</div>
-                          <div>
-                            <h4 className="text-white font-medium text-sm">Code Generator</h4>
-                            <p className="text-gray-300 text-xs">Generate code snippets</p>
+                          {/* Hover glow effect */}
+                          <div className="absolute inset-0 bg-green-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-xl"></div>
+
+                          <div className="flex items-center gap-3 relative z-10">
+                            <div className="text-green-400 text-lg transition-transform duration-200 group-hover:scale-110">💻</div>
+                            <div>
+                              <h4 className="text-white font-medium text-sm transition-colors duration-200">Code Generator</h4>
+                              <p className="text-gray-300 text-xs transition-colors duration-200 group-hover:text-gray-200">Generate code snippets</p>
+                            </div>
                           </div>
                         </div>
-                      </div>
 
                       {/* Study Planner Tool */}
                       <div
                         key="study-planner"
-                        className="backdrop-blur-sm rounded-lg p-3 border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300 cursor-pointer hover:scale-[1.02]"
+                        className="relative backdrop-blur-sm rounded-xl p-3 border border-purple-400/20 hover:border-blue-400/50 transition-all duration-200 ease-out cursor-pointer group overflow-hidden hover:scale-[1.02]"
                         style={{
                           background: "rgba(139, 92, 246, 0.05)",
                         }}
                         onClick={() => toast.success("Study Planner coming soon!")}
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="text-purple-400 text-lg">📚</div>
-                          <div>
-                            <h4 className="text-white font-medium text-sm">Study Planner</h4>
-                            <p className="text-gray-300 text-xs">Plan your learning journey</p>
+                          {/* Hover glow effect */}
+                          <div className="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-xl"></div>
+
+                          <div className="flex items-center gap-3 relative z-10">
+                            <div className="text-blue-400 text-lg transition-transform duration-200 group-hover:scale-110">📚</div>
+                            <div>
+                              <h4 className="text-white font-medium text-sm transition-colors duration-200">Study Planner</h4>
+                              <p className="text-gray-300 text-xs transition-colors duration-200 group-hover:text-gray-200">Plan your learning journey</p>
+                            </div>
                           </div>
                         </div>
-                      </div>
 
                       {/* Note Taking Tool */}
                       <div
                         key="note-taking"
-                        className="backdrop-blur-sm rounded-lg p-3 border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300 cursor-pointer hover:scale-[1.02]"
+                        className="relative backdrop-blur-sm rounded-xl p-3 border border-purple-400/20 hover:border-yellow-400/50 transition-all duration-200 ease-out cursor-pointer group overflow-hidden hover:scale-[1.02]"
                         style={{
                           background: "rgba(139, 92, 246, 0.05)",
                         }}
                         onClick={() => toast.success("Note Taking coming soon!")}
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="text-purple-400 text-lg">📝</div>
-                          <div>
-                            <h4 className="text-white font-medium text-sm">Note Taking</h4>
-                            <p className="text-gray-300 text-xs">Save and organize your insights</p>
+                          {/* Hover glow effect */}
+                          <div className="absolute inset-0 bg-yellow-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-xl"></div>
+
+                          <div className="flex items-center gap-3 relative z-10">
+                            <div className="text-yellow-400 text-lg transition-transform duration-200 group-hover:scale-110">📝</div>
+                            <div>
+                              <h4 className="text-white font-medium text-sm transition-colors duration-200">Note Taking</h4>
+                              <p className="text-gray-300 text-xs transition-colors duration-200 group-hover:text-gray-200">Save and organize your insights</p>
+                            </div>
                           </div>
                         </div>
-                      </div>
                     </div>
                   )}
                 </div>

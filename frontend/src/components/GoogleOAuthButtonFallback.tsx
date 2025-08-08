@@ -33,7 +33,7 @@ const GoogleOAuthButtonFallback: React.FC<GoogleOAuthButtonFallbackProps> = ({
           throw new Error("Google Client ID not configured");
         }
 
-        // Initialize Google Sign-In
+        // Initialize Google Sign-In with FedCM support
         window.google.accounts.id.initialize({
           client_id: clientId,
           callback: (response: any) => {
@@ -47,6 +47,8 @@ const GoogleOAuthButtonFallback: React.FC<GoogleOAuthButtonFallbackProps> = ({
           },
           auto_select: false,
           cancel_on_tap_outside: true,
+          // Enable FedCM
+          use_fedcm_for_prompt: true,
         });
 
         // Prompt for Google Sign-In

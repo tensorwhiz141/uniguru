@@ -84,12 +84,14 @@ const GoogleOAuthProduction: React.FC<GoogleOAuthProductionProps> = ({
         };
 
         try {
-          // Initialize Google Sign-In (no need to render button since we use custom one)
+          // Initialize Google Sign-In with FedCM support
           window.google.accounts.id.initialize({
             client_id: clientId,
             callback: window.googleSignInCallback,
             auto_select: false,
             cancel_on_tap_outside: true,
+            // Enable FedCM
+            use_fedcm_for_prompt: true,
           });
         } catch (error) {
           console.error('Error initializing Google Sign-In:', error);

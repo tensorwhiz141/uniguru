@@ -214,12 +214,13 @@ const Navbar: React.FC<NavbarProps> = ({
               {/* Homepage Auth Buttons */}
               {isHomePage && !isLoggedIn && !isChatStarted && (
                 <div className="flex items-center space-x-3">
-                  <button
+                  <BubblyButton
                     onClick={() => navigate("/login")}
-                    className="flex items-center justify-center px-5 py-2.5 text-white/80 hover:text-white hover:bg-white/10 transition-all duration-200 font-medium rounded-lg border border-white/10 hover:border-white/20 backdrop-blur-sm"
+                    variant="primary"
+                    className="px-6 py-2.5 font-medium text-sm flex items-center justify-center"
                   >
                     Login
-                  </button>
+                  </BubblyButton>
                   <BubblyButton
                     onClick={() => navigate("/signup")}
                     variant="secondary"
@@ -260,13 +261,14 @@ const Navbar: React.FC<NavbarProps> = ({
                       )}
                     </div>
                   ) : (
-                    <button
+                    <BubblyButton
                       onClick={() => navigate("/login")}
-                      className="flex items-center justify-center space-x-2 px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all duration-200 border border-white/20 hover:border-white/30 backdrop-blur-sm font-medium"
+                      variant="primary"
+                      className="flex items-center justify-center space-x-2 px-5 py-2.5 font-medium text-sm"
                     >
                       <FontAwesomeIcon icon={faSignInAlt} className="text-sm" />
-                      <span className="text-sm">Login</span>
-                    </button>
+                      <span>Login</span>
+                    </BubblyButton>
                   )}
                 </>
               )}
@@ -310,15 +312,16 @@ const Navbar: React.FC<NavbarProps> = ({
                     <FontAwesomeIcon icon={faInfoCircle} className="text-sm" />
                     <span>About</span>
                   </button>
-                  <button
+                  <BubblyButton
                     onClick={() => {
                       navigate("/login");
                       setMobileMenuOpen(false);
                     }}
-                    className="w-full px-4 py-2 text-white hover:bg-gray-800 rounded-lg transition-colors text-left"
+                    variant="primary"
+                    className="w-full px-4 py-2 font-medium rounded-lg"
                   >
                     Login
-                  </button>
+                  </BubblyButton>
                   <BubblyButton
                     onClick={() => {
                       navigate("/signup");
@@ -371,7 +374,7 @@ const Navbar: React.FC<NavbarProps> = ({
                           variant="primary"
                           className="flex-1 flex items-center justify-center gap-2 py-2 px-3 font-medium text-sm"
                         >
-                          <FontAwesomeIcon icon={faPlus} className="text-sm" />
+                        
                           <span>Create Guru</span>
                         </BubblyButton>
                         <button
@@ -494,7 +497,7 @@ const Navbar: React.FC<NavbarProps> = ({
                           disabled={isCreatingChat}
                           className="w-full flex items-center justify-center gap-2 py-2 px-3 font-medium text-sm"
                         >
-                          <FontAwesomeIcon icon={faPlus} className="text-sm" />
+                       
                           <span>{isCreatingChat ? 'Creating...' : 'New Chat'}</span>
                         </BubblyButton>
                       )}
@@ -612,16 +615,17 @@ const Navbar: React.FC<NavbarProps> = ({
                         <span>Logout</span>
                       </button>
                     ) : (
-                      <button
+                      <BubblyButton
                         onClick={() => {
                           navigate("/login");
                           setMobileMenuOpen(false);
                         }}
-                        className="w-full px-4 py-2 text-white hover:bg-gray-800 rounded-lg transition-colors text-left flex items-center space-x-2"
+                        variant="primary"
+                        className="w-full px-4 py-2 font-medium rounded-lg flex items-center justify-center space-x-2"
                       >
                         <FontAwesomeIcon icon={faSignInAlt} className="text-sm" />
                         <span>Login</span>
-                      </button>
+                      </BubblyButton>
                     )}
                   </div>
                 </div>

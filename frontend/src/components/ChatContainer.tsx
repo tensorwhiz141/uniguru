@@ -648,7 +648,7 @@ const ChatContainer: React.FC = () => {
           />
         </div>
 
-        <div className="text-center text-gray-400 mt-2 text-xs sm:text-sm px-4">
+        <div className="text-center text-gray-400 mt-2 text-[10px] xs:text-xs sm:text-sm px-4">
           Guru can make mistakes. Check important info.
         </div>
       </div>

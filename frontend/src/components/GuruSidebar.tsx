@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronRight,
-  faPlus,
   faEdit,
   faTrash,
   faChevronDown,
@@ -413,8 +412,7 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
               variant="primary"
               className="flex-1 flex items-center justify-center gap-2 sm:gap-3 py-3 px-4 font-medium text-sm sm:text-base touch-target"
             >
-              <FontAwesomeIcon icon={faPlus} className="text-sm sm:text-base" />
-              <span>Create New Guru</span>
+              <span>Create Guru</span>
             </BubblyButton>
             <button
               onClick={async () => {
@@ -611,7 +609,6 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
                 variant="secondary"
                 className="w-full flex items-center justify-center gap-2 sm:gap-3 py-3 px-4 font-medium text-sm sm:text-base touch-target mb-4"
               >
-                <FontAwesomeIcon icon={faPlus} className="text-sm sm:text-base" />
                 <span>{isCreatingChat ? "Creating..." : "New Chat"}</span>
               </BubblyButton>
 
