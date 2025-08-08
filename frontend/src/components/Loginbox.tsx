@@ -5,7 +5,8 @@ import AuthCard from "./AuthCard";
 import AuthInput from "./AuthInput";
 import AuthButton from "./AuthButton";
 import GoogleOAuthProduction from "./GoogleOAuthProduction";
-import { loginUser, loginWithGoogle } from "../helpers/api-communicator";
+import { useAuth } from "../context/AuthContext";
+import { loginWithGoogle } from "../helpers/api-communicator";
 
 interface LoginboxProps {
   onLoginSuccess: () => void;
@@ -16,6 +17,7 @@ const Loginbox: React.FC<LoginboxProps> = ({ onLoginSuccess }) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -25,9 +27,8 @@ const Loginbox: React.FC<LoginboxProps> = ({ onLoginSuccess }) => {
     toast.loading("Signing you in...", { id: "login" });
 
     try {
-      const data = await loginUser(email, password);
+      const result = await login(email, password);
 
-      localStorage.setItem("token", data.token);
       toast.success("Welcome back! Redirecting to chat...", { id: "login" });
       onLoginSuccess();
       navigate("/chatpage");

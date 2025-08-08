@@ -7,7 +7,7 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLoginSuccess = () => {
-    localStorage.setItem("isLoggedIn", "true");
+    // AuthContext will handle the login state, no need for localStorage
     navigate("/chatpage", { replace: true });
   };
 

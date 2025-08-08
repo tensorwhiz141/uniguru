@@ -9,6 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import BHI from "../assets/blackhole-logo.png";
 import uniLogo from "../assets/uni-logo.png";
+import { useAuth } from "../context/AuthContext";
 // import StarsCanvas from "../components/StarBackground";
 const guruLogo = "/guru.png";
 
@@ -19,6 +20,7 @@ interface HomePageProps {
 const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
   const [isLetChatVisible, setIsLetChatVisible] = useState(true);
   const welcomeContainerRef = useRef<HTMLDivElement | null>(null);
+  const { isLoggedIn, user } = useAuth();
   const navigate = useNavigate();
 
   const handleLetChatClick = () => {
@@ -48,12 +50,24 @@ const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
             </h1>
             <p className="text-base text-gray-200 font-light mb-3">AI Learning Platform</p>
 
-            {/* Context Box */}
-            <div className="bg-white/5 backdrop-blur-xl rounded-xl p-3 border border-purple-400/20 mb-4">
-              <p className="text-sm text-gray-100 leading-relaxed">
-                Create <span className="text-purple-400 font-semibold">personalized AI mentors</span> who roleplay as real experts in any field
-              </p>
-            </div>
+            {/* Welcome Message for Logged In Users */}
+            {isLoggedIn && user ? (
+              <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 backdrop-blur-xl rounded-xl p-4 border border-green-400/30 mb-4">
+                <p className="text-lg text-green-100 font-semibold mb-1">
+                  Welcome back, {user.name}! 👋
+                </p>
+                <p className="text-sm text-gray-200">
+                  Ready to continue learning with your AI mentors?
+                </p>
+              </div>
+            ) : (
+              /* Context Box for Non-Logged In Users */
+              <div className="bg-white/5 backdrop-blur-xl rounded-xl p-3 border border-purple-400/20 mb-4">
+                <p className="text-sm text-gray-100 leading-relaxed">
+                  Create <span className="text-purple-400 font-semibold">personalized AI mentors</span> who roleplay as real experts in any field
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Features - Centered */}
@@ -165,13 +179,24 @@ const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
             Create AI Mentors Who Roleplay as Real Experts
           </p>
 
-          {/* Main Description */}
+          {/* Welcome Message for Logged In Users or Main Description */}
           <div className="max-w-3xl mx-auto mb-6">
-            <p className="text-sm sm:text-base lg:text-lg text-gray-100 leading-relaxed mb-4 font-light">
-              Build your own <span className="text-purple-400 font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">AI Gurus</span> -
-              specialized mentors who embody any expertise you need. Your mathematician Guru thinks like a real mathematician,
-              your scientist Guru conducts deep research, and your philosopher Guru explores ideas authentically.
-            </p>
+            {isLoggedIn && user ? (
+              <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 backdrop-blur-xl rounded-xl p-6 border border-green-400/30 mb-6">
+                <h2 className="text-2xl font-bold text-green-100 mb-2">
+                  Welcome back, {user.name}! 👋
+                </h2>
+                <p className="text-lg text-gray-200 leading-relaxed">
+                  Ready to continue your learning journey? Your AI mentors are waiting to help you explore new knowledge and insights.
+                </p>
+              </div>
+            ) : (
+              <p className="text-sm sm:text-base lg:text-lg text-gray-100 leading-relaxed mb-4 font-light">
+                Build your own <span className="text-purple-400 font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">AI Gurus</span> -
+                specialized mentors who embody any expertise you need. Your mathematician Guru thinks like a real mathematician,
+                your scientist Guru conducts deep research, and your philosopher Guru explores ideas authentically.
+              </p>
+            )}
           </div>
 
           {/* Interactive Feature Cards - Hover to reveal */}

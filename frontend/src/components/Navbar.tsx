@@ -26,7 +26,6 @@ import { createCustomGuru } from "../helpers/api-communicator";
 import toast from "react-hot-toast";
 
 interface NavbarProps {
-  isLoggedIn: boolean;
   onLogout: () => void;
   isChatStarted: boolean;
   onCreateNewChat?: () => void;
@@ -34,7 +33,6 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({
-  isLoggedIn,
   onLogout,
   isChatStarted,
   onCreateNewChat,
@@ -42,7 +40,7 @@ const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isLoggedIn } = useAuth();
   const { gurus, addGuru, removeGuru, selectedGuru, refreshGurus, selectGuru } = useGuru();
   const { getChatsByGuru, selectChat, currentChatId, deleteChat, renameChat } = useChat();
 

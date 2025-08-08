@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Navbar from "./components/Navbar";
@@ -17,17 +17,18 @@ import BubblyButtonDemo from "./components/BubblyButtonDemo";
 import AppInitializer from "./components/AppInitializer";
 import { useGuru } from "./context/GuruContext";
 import { useChat } from "./context/ChatContext";
+import { useAuth } from "./context/AuthContext";
 import toast from "react-hot-toast";
 
 // Wrapper component for ChatPage that handles chat creation
 const ChatPageWrapper: React.FC<{
-  isLoggedIn: boolean;
-  onLogout: () => void;
   isChatStarted: boolean;
-}> = ({ isLoggedIn, onLogout, isChatStarted }) => {
+}> = ({ isChatStarted }) => {
   const { selectedGuru } = useGuru();
   const { createNewChatManually } = useChat();
+  const { isLoggedIn, logout } = useAuth();
   const [isCreatingChat, setIsCreatingChat] = useState(false);
+  const navigate = useNavigate();
 
   const handleCreateNewChat = async () => {
     if (!selectedGuru) {
@@ -54,14 +55,17 @@ const ChatPageWrapper: React.FC<{
     }
   };
 
+  const handleLogout = async () => {
+    await logout(navigate);
+  };
+
   return (
     <div className="relative h-screen overflow-hidden">
       <div className="fixed inset-0 z-0">
         <StarsCanvas />
       </div>
       <Navbar
-        isLoggedIn={isLoggedIn}
-        onLogout={onLogout}
+        onLogout={handleLogout}
         isChatStarted={isChatStarted}
         onCreateNewChat={handleCreateNewChat}
         isCreatingChat={isCreatingChat}
@@ -75,21 +79,12 @@ const ChatPageWrapper: React.FC<{
 };
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isChatStarted, setIsChatStarted] = useState(false); // Track if Let's Chat was clicked
+  const { isLoggedIn, logout } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const loggedInState = localStorage.getItem("isLoggedIn") === "true";
-    setIsLoggedIn(loggedInState);
-  }, []);
-
-
-
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    localStorage.removeItem("isLoggedIn");
-    navigate("/");
+  const handleLogout = async () => {
+    await logout(navigate);
   };
 
   const handleChatStarted = () => {
@@ -108,7 +103,6 @@ function App() {
                 <StarsCanvas />
               </div>
               <Navbar
-                isLoggedIn={isLoggedIn}
                 onLogout={handleLogout}
                 isChatStarted={isChatStarted}
               />
@@ -130,7 +124,6 @@ function App() {
                 <StarsCanvas />
               </div>
               <Navbar
-                isLoggedIn={isLoggedIn}
                 onLogout={handleLogout}
                 isChatStarted={isChatStarted}
               />
@@ -144,8 +137,6 @@ function App() {
           path="/chatpage"
           element={
             <ChatPageWrapper
-              isLoggedIn={isLoggedIn}
-              onLogout={handleLogout}
               isChatStarted={isChatStarted}
             />
           }
@@ -160,7 +151,6 @@ function App() {
               {/* Hide navbar on mobile for about page */}
               <div className="hidden md:block">
                 <Navbar
-                  isLoggedIn={isLoggedIn}
                   onLogout={handleLogout}
                   isChatStarted={isChatStarted}
                 />
