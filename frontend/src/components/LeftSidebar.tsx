@@ -39,7 +39,7 @@ interface GuruFormData {
 const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingChat }) => {
   const { user } = useAuth();
   const { gurus, addGuru, removeGuru, selectedGuru, refreshGurus, selectGuru } = useGuru();
-  const { selectChat, currentChatId, loadAllChats, deleteChat, renameChat, chatSessions } = useChat();
+  const { selectChat, currentChatId, loadAllChats, deleteChat, renameChat, chatSessions, getChatsByGuru } = useChat();
 
   const [isCollapsed, setIsCollapsed] = useState(() => {
     // Always default to collapsed (closed) on refresh
@@ -520,7 +520,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                   handleSectionChange('chats');
                 }}
                 className="relative w-12 h-12 rounded-3xl bg-gray-700/80 hover:bg-blue-600 text-gray-300 hover:text-white transition-all duration-200 ease-out group-hover:rounded-2xl flex items-center justify-center overflow-hidden"
-                title={`Recent Conversations (${chatSessions.length})`}
+                title={selectedGuru ? `${selectedGuru.name} Chats (${getChatsByGuru(selectedGuru.id).length})` : `Recent Conversations (${chatSessions.length})`}
               >
                 <div className="absolute inset-0 bg-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-3xl group-hover:rounded-2xl"></div>
 
@@ -799,7 +799,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                     className="flex items-center justify-between w-full text-left mb-3 text-purple-300 hover:text-white transition-all duration-200 ease-out py-2 px-2 rounded-lg hover:bg-blue-500/10 group"
                   >
                     <span className="text-base font-semibold transition-colors duration-200">
-                      Recent Conversations ({chatSessions.length})
+                      {selectedGuru ? `${selectedGuru.name} Chats` : 'Recent Conversations'} ({selectedGuru ? getChatsByGuru(selectedGuru.id).length : chatSessions.length})
                     </span>
                     <FontAwesomeIcon
                       icon={isChatListExpanded ? faChevronUp : faChevronDown}
@@ -809,13 +809,31 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
 
                   {isChatListExpanded && (
                     <div className="space-y-2 flex-1 overflow-y-auto overflow-x-hidden sidebar-scroll min-h-0">
-                      {chatSessions.length === 0 ? (
-                        <div className="text-gray-300 text-center py-8">
-                          <p className="text-sm">No chat history yet</p>
-                          <p className="text-xs">Start a conversation to see your chat history here</p>
-                        </div>
-                      ) : (
-                        chatSessions.slice(0, 20).map((chat) => (
+                      {(() => {
+                        // Filter chats by selected guru if one is selected
+                        const filteredChats = selectedGuru
+                          ? getChatsByGuru(selectedGuru.id)
+                          : chatSessions;
+
+                        if (filteredChats.length === 0) {
+                          return (
+                            <div className="text-gray-300 text-center py-8">
+                              {selectedGuru ? (
+                                <>
+                                  <p className="text-sm">No chat history with {selectedGuru.name}</p>
+                                  <p className="text-xs">Start a conversation to see your chat history here</p>
+                                </>
+                              ) : (
+                                <>
+                                  <p className="text-sm">No chat history yet</p>
+                                  <p className="text-xs">Select a guru and start a conversation</p>
+                                </>
+                              )}
+                            </div>
+                          );
+                        }
+
+                        return filteredChats.slice(0, 20).map((chat) => (
                           <div
                             key={chat.id}
                             className={`chat-card relative backdrop-blur-sm rounded-xl p-3 border transition-all duration-200 ease-out cursor-pointer group overflow-hidden ${
@@ -880,8 +898,8 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                               </div>
                             </div>
                           </div>
-                        ))
-                      )}
+                        ));
+                      })()}
                     </div>
                   )}
                 </div>
