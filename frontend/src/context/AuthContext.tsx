@@ -58,6 +58,7 @@ type UserAuth = {
   isLoggedIn: boolean;
   user: User | null;
   selectedGuru: Guru | null;
+  isAuthLoading: boolean;
   login: (email: string, password: string) => Promise<{ navigateUrl?: string }>;
   signup: (
     name: string,
@@ -79,6 +80,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { guruName } = useParams<{ guruName: string }>();
   const [user, setUser] = useState<User | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [gurus, setGurus] = useState<Guru[]>([]);
   const [selectedGuru, setSelectedGuru] = useState<Guru | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -86,6 +88,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const checkStatus = async () => {
       try {
+        setIsAuthLoading(true);
         const data = await checkAuthStatus();
         if (data) {
           setUser({ id: data.id, email: data.email, name: data.name });
@@ -103,6 +106,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       } catch (error) {
         console.error("Error checking auth status:", error);
+      } finally {
+        setIsAuthLoading(false);
       }
     };
     checkStatus();
@@ -238,6 +243,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       value={{
         user,
         isLoggedIn,
+        isAuthLoading,
         selectedGuru,
         setSelectedGuru,
         addGuru,

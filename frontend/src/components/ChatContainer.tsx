@@ -8,6 +8,7 @@ import guruLogo from "../assets/guru.png";
 // import BubblyButton from "./BubblyButton";
 
 import EnhancedChatInput from "./EnhancedChatInput";
+import LoadingSpinner from "./LoadingSpinner";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import { useChat } from "../context/ChatContext";
@@ -556,12 +557,8 @@ const ChatContainer: React.FC = () => {
                 }}
               >
                 {msg.isLoading ? (
-                  <div className="flex items-center space-x-2">
-                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                      <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                    </div>
+                  <div className="flex items-center space-x-3">
+                    <LoadingSpinner size="small" variant="dots" />
                     <span className="text-purple-300 text-sm">Guru is thinking...</span>
                   </div>
                 ) : (

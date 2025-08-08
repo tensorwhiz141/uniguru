@@ -1,12 +1,37 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRobot, faCog, faTools, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import toast from "react-hot-toast";
 import BubblyButton from "../components/BubblyButton";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const ToolsPage: React.FC = () => {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simulate loading for better UX
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 600);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="relative min-h-screen flex items-center justify-center">
+        <div className="bg-glass-card backdrop-blur-xl rounded-xl p-8 border border-glass-border shadow-glass">
+          <LoadingSpinner
+            size="large"
+            variant="gradient-ring"
+            text="Loading tools..."
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative min-h-screen">

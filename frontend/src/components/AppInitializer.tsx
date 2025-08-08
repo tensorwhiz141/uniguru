@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useGuru } from '../context/GuruContext';
 import { useChat } from '../context/ChatContext';
+import LoadingSpinner from './LoadingSpinner';
+import StarsCanvas from './StarBackground';
 import toast from 'react-hot-toast';
 
 interface AppInitializerProps {
@@ -13,6 +15,7 @@ const AppInitializer: React.FC<AppInitializerProps> = ({ children }) => {
   const { refreshGurus } = useGuru();
   const { initializeChats } = useChat();
   const [isInitialized, setIsInitialized] = useState(false);
+  const [showFullScreenLoader, setShowFullScreenLoader] = useState(false);
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -20,11 +23,8 @@ const AppInitializer: React.FC<AppInitializerProps> = ({ children }) => {
         try {
           console.log('🚀 Initializing UniGuru application...');
 
-          // Show a subtle loading toast
-          const loadingToast = toast.loading('Loading...', {
-            duration: 0, // Don't auto-dismiss
-            icon: '🔄'
-          });
+          // Show full screen loader for better UX
+          setShowFullScreenLoader(true);
 
           // Initialize gurus first
           await refreshGurus();
@@ -34,17 +34,13 @@ const AppInitializer: React.FC<AppInitializerProps> = ({ children }) => {
           await initializeChats();
           console.log('✅ Chats loaded');
 
-          // Dismiss loading toast and show a brief welcome
-          toast.dismiss(loadingToast);
-          toast.success(`Welcome back, ${user.name}!`, {
-            duration: 2000, // Shorter duration
-            icon: '👋'
-          });
+          // Hide full screen loader
+          setShowFullScreenLoader(false);
 
           setIsInitialized(true);
         } catch (error) {
           console.error('❌ Error initializing app:', error);
-          toast.dismiss(); // Dismiss any existing toasts
+          setShowFullScreenLoader(false);
           toast.error('Failed to load data. Please refresh if needed.', {
             duration: 4000,
             icon: '⚠️'
@@ -63,8 +59,29 @@ const AppInitializer: React.FC<AppInitializerProps> = ({ children }) => {
   useEffect(() => {
     if (!isLoggedIn) {
       setIsInitialized(false);
+      setShowFullScreenLoader(false);
     }
   }, [isLoggedIn]);
+
+  // Show full screen loader when initializing
+  if (showFullScreenLoader) {
+    return (
+      <div className="fixed inset-0 z-50 bg-black">
+        <div className="fixed inset-0 z-0">
+          <StarsCanvas />
+        </div>
+        <div className="relative z-10 flex items-center justify-center min-h-screen">
+          <div className="bg-glass-card backdrop-blur-xl rounded-xl p-8 border border-glass-border shadow-glass">
+            <LoadingSpinner
+              size="xl"
+              variant="gradient-ring"
+              text="Initializing UniGuru..."
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return <>{children}</>;
 };
