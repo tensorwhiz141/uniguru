@@ -630,7 +630,23 @@ body {
   /* Optimize mobile viewport */
   .min-h-screen {
     min-height: 100vh;
+    min-height: 100dvh;
     min-height: -webkit-fill-available;
+  }
+
+  /* Fix auth card positioning on mobile */
+  .mobile-safe-area {
+    padding-top: max(env(safe-area-inset-top), 1rem);
+    padding-bottom: max(env(safe-area-inset-bottom), 1rem);
+  }
+
+  /* Ensure auth cards are properly centered on mobile */
+  .mobile-safe-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    min-height: 100dvh;
   }
 
   /* Mobile-safe button styling */
@@ -674,6 +690,28 @@ body {
   }
 }
 
+@keyframes mobile-menu-item-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes mobile-menu-stagger {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .animate-mobile-slide-up {
   animation: mobile-slide-up 0.3s ease-out;
 }
@@ -684,6 +722,22 @@ body {
 
 .animate-mobile-fade-in {
   animation: mobile-fade-in 0.2s ease-out;
+}
+
+.animate-mobile-menu-item {
+  animation: mobile-menu-item-fade-in 0.4s ease-out;
+}
+
+.animate-mobile-stagger-1 {
+  animation: mobile-menu-stagger 0.5s ease-out 0.1s both;
+}
+
+.animate-mobile-stagger-2 {
+  animation: mobile-menu-stagger 0.5s ease-out 0.2s both;
+}
+
+.animate-mobile-stagger-3 {
+  animation: mobile-menu-stagger 0.5s ease-out 0.3s both;
 }
 
 /* Mobile-specific responsive utilities */

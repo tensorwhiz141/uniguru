@@ -107,14 +107,11 @@ function App() {
               <div className="fixed inset-0 z-0">
                 <StarsCanvas />
               </div>
-              {/* Hide navbar on mobile for home page */}
-              <div className="hidden md:block">
-                <Navbar
-                  isLoggedIn={isLoggedIn}
-                  onLogout={handleLogout}
-                  isChatStarted={isChatStarted}
-                />
-              </div>
+              <Navbar
+                isLoggedIn={isLoggedIn}
+                onLogout={handleLogout}
+                isChatStarted={isChatStarted}
+              />
               <HomePage
                 onChatStarted={handleChatStarted}
               />

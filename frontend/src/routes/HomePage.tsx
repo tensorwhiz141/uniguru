@@ -31,7 +31,7 @@ const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
     <div className="relative min-h-screen">
       {/* Mobile Layout - WITH CONTEXT & BETTER POSITIONING */}
       <main className="block sm:hidden">
-        <div className="h-screen flex flex-col p-4 pt-4 overflow-hidden">
+        <div className="h-screen flex flex-col p-4 pt-20 overflow-hidden">
           {/* Header with Context */}
           <div className="text-center flex-shrink-0 mb-6">
             <img src={uniLogo} alt="UniGuru" className="w-20 h-20 mx-auto mb-3" />
@@ -89,10 +89,34 @@ const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
               {isLetChatVisible && (
                 <button
                   onClick={handleLetChatClick}
-                  className="w-full py-4 px-6 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold text-lg rounded-xl shadow-lg active:scale-95 transition-all duration-200"
-                  style={{ fontFamily: "Inter, system-ui, sans-serif" }}
+                  className="group relative w-full py-4 px-6 bg-transparent border-2 border-purple-400 text-purple-400 font-bold text-lg rounded-xl
+                           hover:text-white hover:border-transparent
+                           transition-all duration-300 ease-out
+                           overflow-hidden
+                           shadow-[0_0_20px_rgba(147,51,234,0.3)]
+                           hover:shadow-[0_0_40px_rgba(147,51,234,0.8),0_0_60px_rgba(59,130,246,0.4)]
+                           backdrop-blur-sm active:scale-95"
+                  style={{ fontFamily: "Inter, system-ui, sans-serif", fontWeight: "600", letterSpacing: "0.05em" }}
                 >
-                  🚀 START CREATING YOUR GURU
+                  {/* Animated background fill */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600
+                                transform scale-x-0 group-hover:scale-x-100
+                                transition-transform duration-300 ease-out origin-left"></div>
+
+                  {/* Button content */}
+                  <div className="relative z-10 flex items-center justify-center gap-3">
+                    <div className="w-0 h-0 border-l-[8px] border-l-purple-400 group-hover:border-l-white
+                                  border-t-[6px] border-t-transparent
+                                  border-b-[6px] border-b-transparent
+                                  transition-colors duration-300"></div>
+                    <span className="tracking-wide">START CREATING</span>
+                  </div>
+
+                  {/* Corner accents */}
+                  <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-purple-400 group-hover:border-white transition-colors duration-300"></div>
+                  <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-purple-400 group-hover:border-white transition-colors duration-300"></div>
+                  <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-purple-400 group-hover:border-white transition-colors duration-300"></div>
+                  <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-purple-400 group-hover:border-white transition-colors duration-300"></div>
                 </button>
               )}
             </div>

@@ -15,6 +15,7 @@ import {
   faRefresh,
   faTrash,
   faEdit,
+  faUserPlus,
 
 } from "@fortawesome/free-solid-svg-icons";
 import BubblyButton from "./BubblyButton";
@@ -282,12 +283,21 @@ const Navbar: React.FC<NavbarProps> = ({
                   e.stopPropagation();
                   setMobileMenuOpen(!mobileMenuOpen);
                 }}
-                className="p-3 text-gray-300 hover:text-white transition-colors touch-target rounded-lg hover:bg-white/10 relative z-50 min-w-[48px] min-h-[48px] flex items-center justify-center"
+                className={`p-3 transition-all duration-300 touch-target rounded-xl relative z-50 min-w-[48px] min-h-[48px] flex items-center justify-center border ${
+                  mobileMenuOpen
+                    ? 'text-white bg-gradient-to-br from-purple-600 to-blue-600 border-purple-500/50 shadow-lg shadow-purple-500/25'
+                    : 'text-gray-300 hover:text-white hover:bg-gradient-to-br hover:from-purple-600/20 hover:to-blue-600/20 border-transparent hover:border-purple-500/30'
+                }`}
                 aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
                 type="button"
                 style={{ touchAction: 'manipulation', userSelect: 'none' }}
               >
-                <FontAwesomeIcon icon={mobileMenuOpen ? faTimes : faBars} className="text-lg pointer-events-none" />
+                <FontAwesomeIcon
+                  icon={mobileMenuOpen ? faTimes : faBars}
+                  className={`text-lg pointer-events-none transition-transform duration-300 ${
+                    mobileMenuOpen ? 'rotate-90' : 'rotate-0'
+                  }`}
+                />
               </button>
             </div>
           </div>
@@ -295,45 +305,10 @@ const Navbar: React.FC<NavbarProps> = ({
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div ref={mobileMenuRef} className="md:hidden bg-gray-900/95 backdrop-blur-sm border-t border-gray-700 animate-mobile-slide-down mobile-safe-area relative z-30">
-            <div className="px-4 py-4 space-y-3 mobile-scroll max-h-[calc(100vh-4rem)] overflow-y-auto">
+          <div ref={mobileMenuRef} className="md:hidden bg-gradient-to-b from-gray-900/98 to-black/95 backdrop-blur-xl border-t border-purple-500/20 shadow-2xl animate-mobile-slide-down mobile-safe-area relative z-30">
+            <div className="px-6 py-6 space-y-4 mobile-scroll max-h-[calc(100vh-4rem)] overflow-y-auto">
 
-              {/* Homepage Mobile Auth */}
-              {isHomePage && !isLoggedIn && !isChatStarted && (
-                <div className="space-y-2 border-b border-gray-700 pb-3 mb-3">
-                  {/* About Mobile */}
-                  <button
-                    onClick={() => {
-                      navigate("/about");
-                      setMobileMenuOpen(false);
-                    }}
-                    className="w-full px-4 py-2 text-white hover:bg-gray-800 rounded-lg transition-colors text-left flex items-center space-x-2"
-                  >
-                    <FontAwesomeIcon icon={faInfoCircle} className="text-sm" />
-                    <span>About</span>
-                  </button>
-                  <BubblyButton
-                    onClick={() => {
-                      navigate("/login");
-                      setMobileMenuOpen(false);
-                    }}
-                    variant="primary"
-                    className="w-full px-4 py-2 font-medium rounded-lg"
-                  >
-                    Login
-                  </BubblyButton>
-                  <BubblyButton
-                    onClick={() => {
-                      navigate("/signup");
-                      setMobileMenuOpen(false);
-                    }}
-                    variant="secondary"
-                    className="w-full px-4 py-2 font-medium rounded-lg"
-                  >
-                    Sign Up
-                  </BubblyButton>
-                </div>
-              )}
+
 
               {/* Chat Page Mobile - Include sidebar content */}
               {isChatPage && (
@@ -374,7 +349,7 @@ const Navbar: React.FC<NavbarProps> = ({
                           variant="primary"
                           className="flex-1 flex items-center justify-center gap-2 py-2 px-3 font-medium text-sm"
                         >
-                        
+
                           <span>Create Guru</span>
                         </BubblyButton>
                         <button
@@ -497,7 +472,7 @@ const Navbar: React.FC<NavbarProps> = ({
                           disabled={isCreatingChat}
                           className="w-full flex items-center justify-center gap-2 py-2 px-3 font-medium text-sm"
                         >
-                       
+
                           <span>{isCreatingChat ? 'Creating...' : 'New Chat'}</span>
                         </BubblyButton>
                       )}
@@ -587,49 +562,90 @@ const Navbar: React.FC<NavbarProps> = ({
                       </div>
                     </div>
                   )}
-
-                  {/* Divider */}
-                  <div className="border-t border-gray-700 pt-3">
-                    {/* About Mobile */}
-                    <button
-                      onClick={() => {
-                        navigate("/about");
-                        setMobileMenuOpen(false);
-                      }}
-                      className="w-full px-4 py-2 text-white hover:bg-gray-800 rounded-lg transition-colors text-left flex items-center space-x-2 mb-2"
-                    >
-                      <FontAwesomeIcon icon={faInfoCircle} className="text-sm" />
-                      <span>About</span>
-                    </button>
-
-                    {/* Mobile Authentication Section */}
-                    {isLoggedIn ? (
-                      <button
-                        onClick={() => {
-                          onLogout();
-                          setMobileMenuOpen(false);
-                        }}
-                        className="w-full px-4 py-2 text-red-400 hover:bg-gray-800 rounded-lg transition-colors text-left flex items-center space-x-2"
-                      >
-                        <FontAwesomeIcon icon={faSignOutAlt} className="text-sm" />
-                        <span>Logout</span>
-                      </button>
-                    ) : (
-                      <BubblyButton
-                        onClick={() => {
-                          navigate("/login");
-                          setMobileMenuOpen(false);
-                        }}
-                        variant="primary"
-                        className="w-full px-4 py-2 font-medium rounded-lg flex items-center justify-center space-x-2"
-                      >
-                        <FontAwesomeIcon icon={faSignInAlt} className="text-sm" />
-                        <span>Login</span>
-                      </BubblyButton>
-                    )}
-                  </div>
                 </div>
               )}
+
+              {/* Universal Mobile Navigation - Always visible */}
+              <div className="border-t border-gradient-to-r from-purple-500/30 to-blue-500/30 pt-6 mt-6">
+                {/* Navigation Header */}
+                <div className="mb-4">
+                  <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-3">Navigation</h3>
+                </div>
+
+                {/* About Mobile */}
+                <button
+                  onClick={() => {
+                    navigate("/about");
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full px-5 py-4 text-white hover:bg-gradient-to-r hover:from-purple-600/20 hover:to-blue-600/20 rounded-xl transition-all duration-300 text-left flex items-center space-x-4 mb-3 group border border-transparent hover:border-purple-500/30 animate-mobile-stagger-1"
+                >
+                  <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <FontAwesomeIcon icon={faInfoCircle} className="text-white text-sm" />
+                  </div>
+                  <div>
+                    <span className="font-medium">About</span>
+                    <p className="text-xs text-gray-400 mt-0.5">Learn more about UniGuru</p>
+                  </div>
+                </button>
+
+                {/* Authentication Section Header */}
+                <div className="mb-4 mt-6">
+                  <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-3">Account</h3>
+                </div>
+
+                {/* Mobile Authentication Section - Always visible */}
+                {isLoggedIn ? (
+                  <button
+                    onClick={() => {
+                      onLogout();
+                      setMobileMenuOpen(false);
+                    }}
+                    className="w-full px-5 py-4 text-red-400 hover:bg-gradient-to-r hover:from-red-600/20 hover:to-red-500/20 rounded-xl transition-all duration-300 text-left flex items-center space-x-4 group border border-transparent hover:border-red-500/30 animate-mobile-stagger-2"
+                  >
+                    <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                      <FontAwesomeIcon icon={faSignOutAlt} className="text-white text-sm" />
+                    </div>
+                    <div>
+                      <span className="font-medium">Logout</span>
+                      <p className="text-xs text-red-300 mt-0.5">Sign out of your account</p>
+                    </div>
+                  </button>
+                ) : (
+                  <div className="space-y-3">
+                    <button
+                      onClick={() => {
+                        navigate("/login");
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full px-5 py-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white rounded-xl transition-all duration-300 text-left flex items-center space-x-4 group shadow-lg hover:shadow-purple-500/25 animate-mobile-stagger-2"
+                    >
+                      <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <FontAwesomeIcon icon={faSignInAlt} className="text-white text-sm" />
+                      </div>
+                      <div>
+                        <span className="font-semibold">Login</span>
+                        <p className="text-xs text-purple-100 mt-0.5">Access your account</p>
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => {
+                        navigate("/signup");
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full px-5 py-4 bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-500 hover:to-orange-500 text-white rounded-xl transition-all duration-300 text-left flex items-center space-x-4 group shadow-lg hover:shadow-yellow-500/25 animate-mobile-stagger-3"
+                    >
+                      <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <FontAwesomeIcon icon={faUserPlus} className="text-white text-sm" />
+                      </div>
+                      <div>
+                        <span className="font-semibold">Sign Up</span>
+                        <p className="text-xs text-yellow-100 mt-0.5">Create new account</p>
+                      </div>
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}

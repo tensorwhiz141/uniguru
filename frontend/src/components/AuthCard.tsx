@@ -16,22 +16,24 @@ const AuthCard: React.FC<AuthCardProps> = ({
   return (
     <div className={`
       min-h-screen flex items-center justify-center
-      p-2 sm:p-4 mobile-safe-area
+      p-4 sm:p-4 mobile-safe-area
       ${className}
-    `}>
+    `}
+    style={{ minHeight: '100vh', minHeight: '100dvh' }}>
       {/* Glassmorphism Card - Mobile responsive sizing */}
       <div className="
         w-full
-        max-w-[320px] sm:max-w-[400px]
-        min-h-[420px] sm:min-h-[580px] sm:h-[580px]
+        max-w-[340px] sm:max-w-[400px]
+        min-h-[450px] sm:min-h-[580px] sm:h-[580px]
         bg-glass-card
         backdrop-blur-glass
         rounded-glass
         border-2 border-glass-border
         shadow-glass
-        px-[16px] sm:px-[35px]
-        py-[20px] sm:py-[50px]
+        px-[20px] sm:px-[35px]
+        py-[24px] sm:py-[50px]
         animate-mobile-fade-in
+        mx-auto
       ">
         {/* Header */}
         <div className="text-center mb-4 sm:mb-8">
