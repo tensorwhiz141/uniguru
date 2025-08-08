@@ -7,7 +7,6 @@ import {
   faExpand,
   faCompress,
   faCopy,
-  faImage,
   faFile,
   faFilePdf,
   faTimes
@@ -54,7 +53,6 @@ const EnhancedChatInput: React.FC<EnhancedChatInputProps> = ({
   const placeholderRef = useRef<HTMLSpanElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout>();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const imageInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
@@ -94,20 +92,7 @@ const EnhancedChatInput: React.FC<EnhancedChatInputProps> = ({
     fileInputRef.current?.click();
   };
 
-  const handleImageClick = () => {
-    imageInputRef.current?.click();
-  };
-
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file && onFileUpload) {
-      onFileUpload(file);
-    }
-    // Reset the input so the same file can be selected again
-    event.target.value = '';
-  };
-
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file && onFileUpload) {
       onFileUpload(file);
@@ -389,7 +374,7 @@ const EnhancedChatInput: React.FC<EnhancedChatInputProps> = ({
                     />
                   ) : (
                     <FontAwesomeIcon
-                      icon={faImage}
+                      icon={faFile}
                       className="text-blue-400 w-8 h-8"
                     />
                   )
@@ -459,13 +444,6 @@ const EnhancedChatInput: React.FC<EnhancedChatInputProps> = ({
             style={{ fontSize: '16px' }}
             title="Attach file"
             onClick={handleFileClick}
-          />
-          <FontAwesomeIcon
-            icon={faImage}
-            className="mx-1 sm:mx-2 cursor-pointer text-white/80 hover:text-white transition-colors hidden xs:block"
-            style={{ fontSize: '16px' }}
-            title="Add image"
-            onClick={handleImageClick}
           />
         </div>
 
@@ -598,15 +576,8 @@ const EnhancedChatInput: React.FC<EnhancedChatInputProps> = ({
       <input
         ref={fileInputRef}
         type="file"
-        accept=".pdf,.doc,.docx,.txt"
+        accept=".pdf,.doc,.docx,.txt,image/*"
         onChange={handleFileChange}
-        style={{ display: 'none' }}
-      />
-      <input
-        ref={imageInputRef}
-        type="file"
-        accept="image/*"
-        onChange={handleImageChange}
         style={{ display: 'none' }}
       />
     </div>
