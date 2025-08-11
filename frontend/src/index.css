@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Ensure black background is maintained */
+html, body {
+  background-color: #000000 !important;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  background-color: #000000;
+  min-height: 100vh;
+}
+
 /* Global layout improvements */
 html, body {
   margin: 0;
@@ -576,6 +588,62 @@ body {
 }
 .animation-delay-800 {
   animation-delay: 0.8s;
+}
+
+/* Beautiful loading spinner animations */
+@keyframes spinner-gradient {
+  0% {
+    transform: rotate(0deg);
+    background: linear-gradient(45deg, #a855f7, #3b82f6, #06b6d4, #a855f7);
+  }
+  25% {
+    background: linear-gradient(45deg, #3b82f6, #06b6d4, #a855f7, #3b82f6);
+  }
+  50% {
+    transform: rotate(180deg);
+    background: linear-gradient(45deg, #06b6d4, #a855f7, #3b82f6, #06b6d4);
+  }
+  75% {
+    background: linear-gradient(45deg, #a855f7, #3b82f6, #06b6d4, #a855f7);
+  }
+  100% {
+    transform: rotate(360deg);
+    background: linear-gradient(45deg, #a855f7, #3b82f6, #06b6d4, #a855f7);
+  }
+}
+
+@keyframes loading-orbit {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes loading-pulse-glow {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+    box-shadow: 0 0 40px rgba(168, 85, 247, 0.6), 0 0 60px rgba(59, 130, 246, 0.4);
+  }
+}
+
+.animate-spinner-gradient {
+  animation: spinner-gradient 2s linear infinite;
+}
+
+.animate-loading-orbit {
+  animation: loading-orbit 1.5s linear infinite;
+}
+
+.animate-loading-pulse-glow {
+  animation: loading-pulse-glow 2s ease-in-out infinite;
 }
 
 /* Button hover state enhancements */

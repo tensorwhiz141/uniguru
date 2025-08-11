@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Navbar from "./components/Navbar";
@@ -15,6 +15,7 @@ import StarsCanvas from "./components/StarBackground";
 import ChatPage from "./routes/ChatPage";
 import BubblyButtonDemo from "./components/BubblyButtonDemo";
 import AppInitializer from "./components/AppInitializer";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { useGuru } from "./context/GuruContext";
 import { useChat } from "./context/ChatContext";
 import { useAuth } from "./context/AuthContext";
@@ -80,8 +81,25 @@ const ChatPageWrapper: React.FC<{
 
 function App() {
   const [isChatStarted, setIsChatStarted] = useState(false); // Track if Let's Chat was clicked
-  const { logout } = useAuth();
+  const { logout, isLoggedIn } = useAuth();
   const navigate = useNavigate();
+
+  // Hide initial HTML loader when React is ready
+  useEffect(() => {
+    // Immediately hide the loader when React loads
+    const loader = document.getElementById('initial-loader');
+    if (loader) {
+      loader.classList.add('hidden');
+      loader.style.display = 'none';
+      // Remove completely
+      setTimeout(() => {
+        if (loader && loader.parentNode) {
+          loader.parentNode.removeChild(loader);
+        }
+      }, 50);
+    }
+    document.body.classList.add('loaded');
+  }, []);
 
   const handleLogout = async () => {
     await logout(navigate);
@@ -119,26 +137,30 @@ function App() {
         <Route
           path="/tools"
           element={
-            <div className="relative min-h-screen">
-              <div className="fixed inset-0 z-0">
-                <StarsCanvas />
+            <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <div className="relative min-h-screen">
+                <div className="fixed inset-0 z-0">
+                  <StarsCanvas />
+                </div>
+                <Navbar
+                  onLogout={handleLogout}
+                  isChatStarted={isChatStarted}
+                />
+                <div className="pt-16">
+                  <ToolsPage />
+                </div>
               </div>
-              <Navbar
-                onLogout={handleLogout}
-                isChatStarted={isChatStarted}
-              />
-              <div className="pt-16">
-                <ToolsPage />
-              </div>
-            </div>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/chatpage"
           element={
-            <ChatPageWrapper
-              isChatStarted={isChatStarted}
-            />
+            <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <ChatPageWrapper
+                isChatStarted={isChatStarted}
+              />
+            </ProtectedRoute>
           }
         />
         <Route

@@ -1,6 +1,5 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import LoadingSpinner from './LoadingSpinner';
 
 interface AuthButtonProps {
   type?: 'button' | 'submit' | 'reset';
@@ -64,10 +63,9 @@ const AuthButton: React.FC<AuthButtonProps> = ({
       `}
     >
       {loading && (
-        <FontAwesomeIcon
-          icon={faSpinner}
-          className="animate-spin mr-2"
-        />
+        <div className="mr-2">
+          <LoadingSpinner size="small" variant="default" />
+        </div>
       )}
       {children}
     </button>
