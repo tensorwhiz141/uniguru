@@ -1,12 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHome, faArrowLeft, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import BubblyButton from "../components/BubblyButton";
 import uniguru from "../assets/uni-logo.png";
 
-const NotFoundPage: React.FC = () => {
+const NotFoundPage = () => {
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
 
   return (
     <div className="relative min-h-screen flex items-center justify-center">
@@ -113,7 +115,7 @@ const NotFoundPage: React.FC = () => {
               Home
             </button>
             <button
-              onClick={() => navigate("/chatpage")}
+              onClick={() => navigate(isLoggedIn ? "/chatpage" : "/login")}
               className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors border border-gray-700 hover:border-gray-600 rounded-full"
             >
               Chat

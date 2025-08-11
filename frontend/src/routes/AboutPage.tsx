@@ -1,12 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useAuth } from "../context/AuthContext";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import uniguru from "../assets/uni-logo.png";
 // import StarsCanvas from "../components/StarBackground";
 
-const AboutPage: React.FC = () => {
+const AboutPage = () => {
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
 
   return (
     <div className="relative min-h-screen text-white">
@@ -149,7 +151,7 @@ const AboutPage: React.FC = () => {
               Sign Up Now
             </button>
             <button
-              onClick={() => window.location.href = '/chatpage'}
+              onClick={() => navigate(isLoggedIn ? '/chatpage' : '/login')}
               className="px-8 py-3 border-2 border-yellow-400 text-yellow-400 font-semibold rounded-full hover:bg-yellow-400 hover:text-black transition-all duration-200 transform hover:scale-105"
             >
               Try Demo

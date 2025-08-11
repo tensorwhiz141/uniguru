@@ -20,10 +20,29 @@ interface HomePageProps {
 const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
   const [isLetChatVisible, setIsLetChatVisible] = useState(true);
   const welcomeContainerRef = useRef<HTMLDivElement | null>(null);
-  const { isLoggedIn, user } = useAuth();
   const navigate = useNavigate();
+  const { isLoggedIn, isAuthLoading } = useAuth();
+
+  const buttonClasses = [
+    "group relative px-8 py-4 bg-transparent border-2",
+    isAuthLoading ? "border-gray-400 text-gray-400 cursor-not-allowed" : "border-purple-400 text-purple-400",
+    "font-bold text-lg rounded-lg hover:text-white hover:border-transparent",
+    "transition-all duration-300 ease-out overflow-hidden",
+    "shadow-[0_0_20px_rgba(147,51,234,0.3)]",
+    "hover:shadow-[0_0_40px_rgba(147,51,234,0.8),0_0_60px_rgba(59,130,246,0.4)]",
+    "backdrop-blur-sm"
+  ].join(" ");
 
   const handleLetChatClick = () => {
+    if (isAuthLoading) {
+      // Wait for auth to finish loading
+      return;
+    }
+    if (!isLoggedIn) {
+      // Redirect to login if not logged in
+      navigate("/login");
+      return;
+    }
     setIsLetChatVisible(false);
     onChatStarted();
     navigate("/chatpage");
@@ -50,24 +69,12 @@ const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
             </h1>
             <p className="text-base text-gray-200 font-light mb-3">AI Learning Platform</p>
 
-            {/* Welcome Message for Logged In Users */}
-            {isLoggedIn && user ? (
-              <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 backdrop-blur-xl rounded-xl p-4 border border-green-400/30 mb-4">
-                <p className="text-lg text-green-100 font-semibold mb-1">
-                  Welcome back, {user.name}! 👋
-                </p>
-                <p className="text-sm text-gray-200">
-                  Ready to continue learning with your AI mentors?
-                </p>
-              </div>
-            ) : (
-              /* Context Box for Non-Logged In Users */
-              <div className="bg-white/5 backdrop-blur-xl rounded-xl p-3 border border-purple-400/20 mb-4">
-                <p className="text-sm text-gray-100 leading-relaxed">
-                  Create <span className="text-purple-400 font-semibold">personalized AI mentors</span> who roleplay as real experts in any field
-                </p>
-              </div>
-            )}
+            {/* Context Box */}
+            <div className="bg-white/5 backdrop-blur-xl rounded-xl p-3 border border-purple-400/20 mb-4">
+              <p className="text-sm text-gray-100 leading-relaxed">
+                Welcome to UniGuru! <span className="text-purple-400 font-semibold">Create your own AI mentors</span> and start learning with experts in any field
+              </p>
+            </div>
           </div>
 
           {/* Features - Centered */}
@@ -103,13 +110,8 @@ const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
               {isLetChatVisible && (
                 <button
                   onClick={handleLetChatClick}
-                  className="group relative w-full py-4 px-6 bg-transparent border-2 border-purple-400 text-purple-400 font-bold text-lg rounded-xl
-                           hover:text-white hover:border-transparent
-                           transition-all duration-300 ease-out
-                           overflow-hidden
-                           shadow-[0_0_20px_rgba(147,51,234,0.3)]
-                           hover:shadow-[0_0_40px_rgba(147,51,234,0.8),0_0_60px_rgba(59,130,246,0.4)]
-                           backdrop-blur-sm active:scale-95"
+                  disabled={isAuthLoading}
+                  className={buttonClasses}
                   style={{ fontFamily: "Inter, system-ui, sans-serif", fontWeight: "600", letterSpacing: "0.05em" }}
                 >
                   {/* Animated background fill */}
@@ -179,24 +181,13 @@ const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
             Create AI Mentors Who Roleplay as Real Experts
           </p>
 
-          {/* Welcome Message for Logged In Users or Main Description */}
+          {/* Main Description */}
           <div className="max-w-3xl mx-auto mb-6">
-            {isLoggedIn && user ? (
-              <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 backdrop-blur-xl rounded-xl p-6 border border-green-400/30 mb-6">
-                <h2 className="text-2xl font-bold text-green-100 mb-2">
-                  Welcome back, {user.name}! 👋
-                </h2>
-                <p className="text-lg text-gray-200 leading-relaxed">
-                  Ready to continue your learning journey? Your AI mentors are waiting to help you explore new knowledge and insights.
-                </p>
-              </div>
-            ) : (
-              <p className="text-sm sm:text-base lg:text-lg text-gray-100 leading-relaxed mb-4 font-light">
-                Build your own <span className="text-purple-400 font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">AI Gurus</span> -
-                specialized mentors who embody any expertise you need. Your mathematician Guru thinks like a real mathematician,
-                your scientist Guru conducts deep research, and your philosopher Guru explores ideas authentically.
-              </p>
-            )}
+            <p className="text-sm sm:text-base lg:text-lg text-gray-100 leading-relaxed mb-4 font-light">
+              Welcome to UniGuru! Start your learning journey by creating your own <span className="text-purple-400 font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">AI Gurus</span>.
+              Whether you need a mathematician, scientist, or philosopher, your AI mentors will guide you with personalized, expert-level knowledge.
+              Let's begin your adventure in learning!
+            </p>
           </div>
 
           {/* Interactive Feature Cards - Hover to reveal */}
@@ -255,13 +246,16 @@ const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
             {isLetChatVisible && (
               <button
                 onClick={handleLetChatClick}
-                className="group relative px-8 py-4 bg-transparent border-2 border-purple-400 text-purple-400 font-bold text-lg rounded-lg
-                         hover:text-white hover:border-transparent
-                         transition-all duration-300 ease-out
-                         overflow-hidden
-                         shadow-[0_0_20px_rgba(147,51,234,0.3)]
-                         hover:shadow-[0_0_40px_rgba(147,51,234,0.8),0_0_60px_rgba(59,130,246,0.4)]
-                         backdrop-blur-sm"
+                disabled={isAuthLoading}
+                className={[
+                  "group relative px-8 py-4 bg-transparent border-2",
+                  isAuthLoading ? "border-gray-400 text-gray-400 cursor-not-allowed" : "border-purple-400 text-purple-400",
+                  "font-bold text-lg rounded-lg hover:text-white hover:border-transparent",
+                  "transition-all duration-300 ease-out overflow-hidden",
+                  "shadow-[0_0_20px_rgba(147,51,234,0.3)]",
+                  "hover:shadow-[0_0_40px_rgba(147,51,234,0.8),0_0_60px_rgba(59,130,246,0.4)]",
+                  "backdrop-blur-sm"
+                ].join(" ")}
                 style={{ fontFamily: "Inter, system-ui, sans-serif", fontWeight: "600", letterSpacing: "0.05em" }}
               >
                 {/* Animated background fill */}
