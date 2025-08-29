@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 import LoadingSpinner from "./LoadingSpinner";
 import StarsCanvas from "./StarBackground";
 import { useAuth } from "../context/AuthContext";
+import { toast } from "react-hot-toast";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -34,6 +35,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, isLoggedIn })
 
   // Redirect to login if not authenticated
   if (!isLoggedIn) {
+    // Inform the user why they were redirected
+    toast.error("Please log in to continue.", { id: "auth-required" });
     return <Navigate to="/login" replace />;
   }
 

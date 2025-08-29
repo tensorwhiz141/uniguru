@@ -90,7 +90,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       try {
         setIsAuthLoading(true);
         const data = await checkAuthStatus();
-        if (data) {
+        if (data && data.authenticated) {
           setUser({ id: data.id, email: data.email, name: data.name });
           setIsLoggedIn(true);
 
@@ -103,9 +103,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             ? userGurus.find((guru: { name: string }) => guru.name === guruName)
             : userGurus?.[0];
           setSelectedGuru(guruFromParams || null);
+        } else {
+          // User is not authenticated
+          setUser(null);
+          setIsLoggedIn(false);
+          setGurus([]);
+          setSelectedGuru(null);
         }
       } catch (error) {
         console.error("Error checking auth status:", error);
+        // On error, assume user is not authenticated
+        setUser(null);
+        setIsLoggedIn(false);
+        setGurus([]);
+        setSelectedGuru(null);
       } finally {
         setIsAuthLoading(false);
       }
@@ -136,7 +147,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return {};
     } catch (error) {
       console.error("Error during login:", error);
-      return {};
+      const message = error instanceof Error ? error.message : "Login failed. Please try again.";
+      throw new Error(message);
     }
   };
 
@@ -165,7 +177,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return {};
     } catch (error) {
       console.error("Error during signup:", error);
-      return {};
+      const message = error instanceof Error ? error.message : "Signup failed. Please try again.";
+      throw new Error(message);
     }
   };
 

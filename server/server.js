@@ -137,6 +137,13 @@ app.use('/api/v1/chat', chatRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/feature', featureRoutes);
 
+// API routes without version (for frontend compatibility)
+app.use('/api/user', userRoutes);
+app.use('/api/guru', guruRoutes);
+app.use('/api/chat', chatRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/feature', featureRoutes);
+
 // Legacy route support (for frontend compatibility)
 app.use('/user', userRoutes);
 app.use('/guru', guruRoutes);

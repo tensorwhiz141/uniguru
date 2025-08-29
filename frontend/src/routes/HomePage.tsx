@@ -24,8 +24,7 @@ const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
   const { isLoggedIn, isAuthLoading } = useAuth();
 
   const buttonClasses = [
-    "group relative px-8 py-4 bg-transparent border-2",
-    isAuthLoading ? "border-gray-400 text-gray-400 cursor-not-allowed" : "border-purple-400 text-purple-400",
+    "group relative px-8 py-4 bg-transparent border-2 border-purple-400 text-purple-400",
     "font-bold text-lg rounded-lg hover:text-white hover:border-transparent",
     "transition-all duration-300 ease-out overflow-hidden",
     "shadow-[0_0_20px_rgba(147,51,234,0.3)]",
@@ -34,12 +33,7 @@ const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
   ].join(" ");
 
   const handleLetChatClick = () => {
-    if (isAuthLoading) {
-      // Wait for auth to finish loading
-      return;
-    }
-    if (!isLoggedIn) {
-      // Redirect to login if not logged in
+    if (isAuthLoading || !isLoggedIn) {
       navigate("/login");
       return;
     }
@@ -110,7 +104,6 @@ const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
               {isLetChatVisible && (
                 <button
                   onClick={handleLetChatClick}
-                  disabled={isAuthLoading}
                   className={buttonClasses}
                   style={{ fontFamily: "Inter, system-ui, sans-serif", fontWeight: "600", letterSpacing: "0.05em" }}
                 >
@@ -246,10 +239,9 @@ const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
             {isLetChatVisible && (
               <button
                 onClick={handleLetChatClick}
-                disabled={isAuthLoading}
                 className={[
                   "group relative px-8 py-4 bg-transparent border-2",
-                  isAuthLoading ? "border-gray-400 text-gray-400 cursor-not-allowed" : "border-purple-400 text-purple-400",
+                  "border-purple-400 text-purple-400",
                   "font-bold text-lg rounded-lg hover:text-white hover:border-transparent",
                   "transition-all duration-300 ease-out overflow-hidden",
                   "shadow-[0_0_20px_rgba(147,51,234,0.3)]",

@@ -11,7 +11,7 @@ interface AppInitializerProps {
 }
 
 const AppInitializer: React.FC<AppInitializerProps> = ({ children }) => {
-  const { user, isLoggedIn } = useAuth();
+  const { user, isLoggedIn, isAuthLoading } = useAuth();
   const { refreshGurus } = useGuru();
   const { initializeChats } = useChat();
   const [isInitialized, setIsInitialized] = useState(false);
@@ -19,7 +19,8 @@ const AppInitializer: React.FC<AppInitializerProps> = ({ children }) => {
 
   useEffect(() => {
     const initializeApp = async () => {
-      if (isLoggedIn && user && !isInitialized) {
+      // Only initialize if user is authenticated and not currently loading auth status
+      if (isLoggedIn && user && !isInitialized && !isAuthLoading) {
         try {
           console.log('🚀 Initializing UniGuru application...');
 
@@ -47,13 +48,17 @@ const AppInitializer: React.FC<AppInitializerProps> = ({ children }) => {
           });
           setIsInitialized(true); // Set as initialized even on error to prevent infinite loops
         }
+      } else if (!isLoggedIn && !isAuthLoading) {
+        // User is not authenticated, reset initialization state
+        setIsInitialized(false);
+        setShowFullScreenLoader(false);
       }
     };
 
     // Add a small delay to prevent multiple rapid initializations
     const timeoutId = setTimeout(initializeApp, 100);
     return () => clearTimeout(timeoutId);
-  }, [isLoggedIn, user, isInitialized, refreshGurus, initializeChats]);
+  }, [isLoggedIn, user, isInitialized, isAuthLoading, refreshGurus, initializeChats]);
 
   // Reset initialization state when user logs out
   useEffect(() => {

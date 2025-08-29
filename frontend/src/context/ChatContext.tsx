@@ -72,15 +72,20 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { user } = useAuth();
+  const { user, isLoggedIn } = useAuth();
   const { selectedGuru } = useGuru();
 
   // Initialize chats when user logs in
   useEffect(() => {
-    if (user) {
+    if (user && isLoggedIn) {
       initializeChats();
+    } else {
+      // Clear chats when user is not authenticated
+      setChatSessions([]);
+      setCurrentChatId(null);
+      localStorage.removeItem('uniguru_current_chat_id');
     }
-  }, [user]);
+  }, [user, isLoggedIn]);
 
   // Auto-select most recent chat when guru changes (but don't auto-create)
   useEffect(() => {

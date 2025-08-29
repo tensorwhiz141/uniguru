@@ -47,11 +47,29 @@ axios.interceptors.response.use(
       localStorage.removeItem('token');
       delete axios.defaults.headers.common['Authorization'];
 
-      // Only redirect to login if we're not already on auth pages
+      // Only show toast/redirect intent if we're not already on auth pages
       const currentPath = window.location.pathname;
-      if (!currentPath.includes('/login') && !currentPath.includes('/signup')) {
-        console.log('Token expired, redirecting to login...');
-        // You might want to redirect to login page here
+      const onAuthPage =
+        currentPath.includes('/login') ||
+        currentPath.includes('/signup') ||
+        currentPath.includes('/forgot-password') ||
+        currentPath.includes('/reset-password');
+
+      // Show a specific session-expired message
+      try {
+        // Dynamically import to avoid circular deps or SSR issues
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        import('react-hot-toast').then(({ default: toast }) => {
+          if (!onAuthPage) {
+            toast.error('Your session has expired. Please log in again.', { id: 'auth-expired' });
+          }
+        });
+      } catch {}
+
+      if (!onAuthPage) {
+        console.log('Token expired, consider redirecting to login.');
+        // Optionally navigate to login here if desired
         // window.location.href = '/login';
       }
     }
