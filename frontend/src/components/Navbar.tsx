@@ -169,6 +169,21 @@ const Navbar: React.FC<NavbarProps> = ({
     };
   }, [userDropdownOpen, mobileMenuOpen]);
 
+  // Listen for Create Guru trigger from chat area (mobile)
+  useEffect(() => {
+    const onOpenGuruCreate = (_e: Event) => {
+      if (location.pathname === "/chatpage") {
+        setMobileMenuOpen(true);
+        setActiveSection('gurus');
+        setShowCreateForm(true);
+      }
+    };
+    window.addEventListener('open-guru-create' as any, onOpenGuruCreate as EventListener);
+    return () => {
+      window.removeEventListener('open-guru-create' as any, onOpenGuruCreate as EventListener);
+    };
+  }, [location.pathname]);
+
   const isHomePage = location.pathname === "/";
   const isChatPage = location.pathname === "/chatpage";
 

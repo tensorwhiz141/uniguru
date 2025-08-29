@@ -147,6 +147,20 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
     };
   }, []);
 
+  // Open Create Guru panel when receiving global event
+  useEffect(() => {
+    const onOpenGuruCreate = (_e: Event) => {
+      setIsCollapsed(false);
+      handleSectionChange('gurus');
+      setShowCreateForm(true);
+    };
+    // custom event not in WindowEventMap; cast to satisfy TS
+    window.addEventListener('open-guru-create' as any, onOpenGuruCreate as EventListener);
+    return () => {
+      window.removeEventListener('open-guru-create' as any, onOpenGuruCreate as EventListener);
+    };
+  }, []);
+
   const handleCreateGuru = async (e: React.FormEvent) => {
     e.preventDefault();
     

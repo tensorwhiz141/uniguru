@@ -208,7 +208,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return {};
     } catch (error) {
       console.error("Error during Google login:", error);
-      return {};
+      const message = error instanceof Error ? error.message : "Google login failed. Please try again.";
+      throw new Error(message);
     }
   };
 

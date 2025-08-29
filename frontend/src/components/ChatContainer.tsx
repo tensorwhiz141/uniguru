@@ -9,6 +9,7 @@ import guruLogo from "../assets/guru.png";
 
 import EnhancedChatInput from "./EnhancedChatInput";
 import LoadingSpinner from "./LoadingSpinner";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import { useChat } from "../context/ChatContext";
@@ -44,6 +45,7 @@ const ChatContainer: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const navigate = useNavigate();
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -636,24 +638,56 @@ const ChatContainer: React.FC = () => {
       </div>
 
       {/* Fixed Input Area */}
-      <div className="chat-input-area flex-shrink-0 w-full pt-3 pb-4 bg-gradient-to-t from-black/20 to-transparent">
-        <div className="w-full max-w-6xl mx-auto px-4 sm:px-8">
-          <EnhancedChatInput
-            message={message}
-            setMessage={setMessage}
-            onSendMessage={handleSendMessage}
-            onKeyDown={handleKeyDown}
-            textareaRef={textareaRef}
-            onFileUpload={handleFileUpload}
-            attachments={attachments}
-            onRemoveAttachment={handleRemoveAttachment}
-          />
-        </div>
+      {selectedGuru ? (
+        <div className="chat-input-area flex-shrink-0 w-full pt-3 pb-4 bg-gradient-to-t from-black/20 to-transparent">
+          <div className="w-full max-w-6xl mx-auto px-4 sm:px-8">
+            <EnhancedChatInput
+              message={message}
+              setMessage={setMessage}
+              onSendMessage={handleSendMessage}
+              onKeyDown={handleKeyDown}
+              textareaRef={textareaRef}
+              onFileUpload={handleFileUpload}
+              attachments={attachments}
+              onRemoveAttachment={handleRemoveAttachment}
+            />
+          </div>
 
-        <div className="text-center text-gray-400 mt-2 text-[10px] xs:text-xs sm:text-sm px-4">
-          Guru can make mistakes. Check important info.
+          <div className="text-center text-gray-400 mt-2 text-[10px] xs:text-xs sm:text-sm px-4">
+            Guru can make mistakes. Check important info.
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="chat-input-area flex-shrink-0 w-full pt-3 pb-4 bg-gradient-to-t from-black/20 to-transparent">
+          <div className="w-full max-w-6xl mx-auto px-4 sm:px-8">
+            <div className="bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 p-4 sm:p-5 text-center">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <img src={guruLogo} alt="Guru" className="w-6 h-6 opacity-70" />
+                <h4 className="text-white font-medium text-sm sm:text-base">No guru selected</h4>
+              </div>
+              <p className="text-gray-300 text-xs sm:text-sm">
+                Create or select a guru to start chatting.
+              </p>
+              <div className="mt-3 flex flex-col xs:flex-row items-center justify-center gap-2">
+                <button
+                  onClick={() => {
+                    window.dispatchEvent(new CustomEvent('open-guru-create'));
+                  }}
+                  className="px-4 py-2 rounded-md bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white text-sm font-medium shadow-lg shadow-purple-500/20"
+                >
+                  Create Guru
+                </button>
+                <button
+                  onClick={() => navigate('/')}
+                  className="px-4 py-2 rounded-md bg-white/10 hover:bg-white/15 border border-white/10 text-white text-sm font-medium"
+                >
+                  Go to Home
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
 
     </div>

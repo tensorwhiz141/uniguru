@@ -50,11 +50,25 @@ export const GuruProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [gurus, setGurus] = useState<Guru[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
+    // Keep selected guru and localStorage in sync
+    const updateSelectedGuru = (guru: Guru | null) => {
+        setSelectedGuru(guru);
+        try {
+            if (guru) {
+                localStorage.setItem('uniguru_selected_guru', JSON.stringify(guru));
+            } else {
+                localStorage.removeItem('uniguru_selected_guru');
+            }
+        } catch (err) {
+            console.warn('Failed to sync selected guru with localStorage:', err);
+        }
+    };
+
     const clearUserChats = async () => {
         // Call API to clear user chats
         try {
             await deleteUserChats();
-            setSelectedGuru(null);
+            updateSelectedGuru(null);
         } catch (error) {
             console.error("Failed to clear chats:", error);
         }
@@ -64,7 +78,7 @@ export const GuruProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         // Call API to delete guru
         try {
             await deleteGuru(guruId);
-            setSelectedGuru(null);
+            updateSelectedGuru(null);
         } catch (error) {
             console.error("Failed to delete guru:", error);
         }
@@ -74,7 +88,7 @@ export const GuruProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setGurus(prev => {
             const updated = [...prev, guru];
             if (prev.length === 0) {
-                setSelectedGuru(guru);
+                updateSelectedGuru(guru);
             }
             return updated;
         });
@@ -86,7 +100,7 @@ export const GuruProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             setGurus(prev => {
                 const updated = prev.filter(guru => guru.id !== guruId);
                 if (selectedGuru?.id === guruId) {
-                    setSelectedGuru(updated[0] || null);
+                    updateSelectedGuru(updated[0] || null);
                 }
                 return updated;
             });
@@ -102,9 +116,11 @@ export const GuruProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             const userGurus = await fetchUserGurus();
             setGurus(userGurus || []);
 
-            // Auto-select first guru if none selected
+            // Sync selected guru with fetched gurus
             if (!selectedGuru && userGurus && userGurus.length > 0) {
-                setSelectedGuru(userGurus[0]);
+                updateSelectedGuru(userGurus[0]);
+            } else if (!userGurus || userGurus.length === 0) {
+                updateSelectedGuru(null);
             }
         } catch (error) {
             console.error("Failed to refresh gurus:", error);
@@ -114,19 +130,13 @@ export const GuruProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     const selectGuru = (guru: Guru) => {
-        setSelectedGuru(guru);
-        // Save to localStorage for persistence across refreshes
-        try {
-            localStorage.setItem('uniguru_selected_guru', JSON.stringify(guru));
-        } catch (error) {
-            console.warn('Failed to save selected guru to localStorage:', error);
-        }
+        updateSelectedGuru(guru);
     };
 
     return (
         <GuruContext.Provider value={{
             selectedGuru,
-            setSelectedGuru,
+            setSelectedGuru: updateSelectedGuru,
             clearUserChats,
             deleteGurus,
             gurus,
