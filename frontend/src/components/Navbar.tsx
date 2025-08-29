@@ -11,7 +11,6 @@ import {
   faSignOutAlt,
   faSignInAlt,
   faInfoCircle,
-  faRefresh,
   faTrash,
   faEdit,
   faUserPlus,
@@ -50,8 +49,7 @@ const Navbar: React.FC<NavbarProps> = ({
   // Mobile sidebar states (only used on mobile)
   const [activeSection, setActiveSection] = useState<'gurus' | 'chats'>('gurus');
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [, ] = useState<string | null>(null);
+    const [, ] = useState<string | null>(null);
   const [editingChat, setEditingChat] = useState<string | null>(null);
   const [editingChatName, setEditingChatName] = useState('');
 
@@ -104,6 +102,15 @@ const Navbar: React.FC<NavbarProps> = ({
       };
 
       addGuru(newGuru);
+      // Immediately select the newly created guru
+      selectGuru(newGuru);
+      // Sync with backend to ensure consistent state
+      try {
+        await refreshGurus();
+      } catch (err) {
+        console.warn('Could not refresh gurus immediately:', err);
+      }
+
       setGuruFormData({ name: '', subject: '', description: '' });
       setShowCreateForm(false);
 
@@ -364,18 +371,7 @@ const Navbar: React.FC<NavbarProps> = ({
 
                           <span>Create Guru</span>
                         </BubblyButton>
-                        <button
-                          onClick={() => {
-                            setIsRefreshing(true);
-                            refreshGurus().finally(() => setIsRefreshing(false));
-                          }}
-                          disabled={isRefreshing}
-                          className="text-purple-300 hover:text-white transition-all duration-200 p-2 rounded-full hover:bg-purple-400/10 disabled:opacity-50"
-                          title="Refresh Gurus"
-                        >
-                          <FontAwesomeIcon icon={faRefresh} className={`text-sm ${isRefreshing ? 'animate-spin' : ''}`} />
-                        </button>
-                      </div>
+                                              </div>
 
                       {/* Create Guru Form */}
                       {showCreateForm && (

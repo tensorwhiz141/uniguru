@@ -9,7 +9,6 @@ import {
   faChevronDown,
   faChevronUp,
   faComments,
-  faRefresh,
   faTools,
   faPlus
 } from "@fortawesome/free-solid-svg-icons";
@@ -39,7 +38,7 @@ interface GuruFormData {
 const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingChat }) => {
   const { user } = useAuth();
   const { gurus, addGuru, removeGuru, selectedGuru, refreshGurus, selectGuru } = useGuru();
-  const { selectChat, currentChatId, loadAllChats, deleteChat, renameChat, chatSessions, getChatsByGuru } = useChat();
+  const { selectChat, currentChatId, deleteChat, renameChat, chatSessions, getChatsByGuru } = useChat();
 
   const [isCollapsed, setIsCollapsed] = useState(() => {
     // Always default to collapsed (closed) on refresh
@@ -81,7 +80,6 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
   const [isGuruListExpanded, setIsGuruListExpanded] = useState(true);
   const [isChatListExpanded, setIsChatListExpanded] = useState(true);
   const [isToolsExpanded, setIsToolsExpanded] = useState(true);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [formData, setFormData] = useState<GuruFormData>({
     name: "",
     subject: "",
@@ -172,14 +170,31 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
     toast.loading("Creating guru...", { id: "create-guru" });
 
     try {
-      const newGuru = await createCustomGuru(
+      const newGuruResponse = await createCustomGuru(
         user?.id || '',
         formData.name.trim(),
         formData.subject.trim(),
         formData.description.trim()
       );
+
+      const newGuru = {
+        id: newGuruResponse.chatbot?._id || newGuruResponse.guru?.id || newGuruResponse.id,
+        name: newGuruResponse.chatbot?.name || formData.name.trim(),
+        subject: newGuruResponse.chatbot?.subject || formData.subject.trim(),
+        description: newGuruResponse.chatbot?.description || formData.description.trim(),
+        userid: user?.id || ''
+      };
       
-      addGuru(newGuru);
+      addGuru(newGuru as any);
+      // Make the new guru active immediately
+      selectGuru(newGuru as any);
+      // Sync with backend to ensure consistent state
+      try {
+        await refreshGurus();
+      } catch (refreshError) {
+        console.warn("Could not refresh guru list immediately:", refreshError);
+      }
+
       setFormData({ name: "", subject: "", description: "" });
       setShowCreateForm(false);
       
@@ -292,27 +307,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
     setIsToolsExpanded(!isToolsExpanded);
   };
 
-  const handleRefreshData = async () => {
-    setIsRefreshing(true);
-    toast.loading("Refreshing data...", { id: "refresh-data" });
-
-    try {
-      await Promise.all([
-        refreshGurus(),
-        loadAllChats()
-      ]);
-      toast.success("Data refreshed successfully!", {
-        id: "refresh-data",
-        icon: '✅'
-      });
-    } catch (error) {
-      console.error("Error refreshing data:", error);
-      toast.error("Failed to refresh data. Please try again.", { id: "refresh-data" });
-    } finally {
-      setIsRefreshing(false);
-    }
-  };
-
+  
   const handleChatSelect = (chatId: string) => {
     selectChat(chatId);
   };
@@ -606,18 +601,6 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                   
                     <span>Create Guru</span>
                   </BubblyButton>
-                  <button
-                    onClick={handleRefreshData}
-                    disabled={isRefreshing}
-                    className="text-purple-300 hover:text-white transition-all duration-200 p-2 rounded-full hover:bg-purple-400/10 disabled:opacity-50"
-                    title="Refresh"
-                  >
-                    <FontAwesomeIcon
-                      icon={faRefresh}
-                      size="sm"
-                      className={isRefreshing ? 'animate-spin' : ''}
-                    />
-                  </button>
                 </div>
 
                 {/* Create New Guru Form */}

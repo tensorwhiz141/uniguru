@@ -6,7 +6,6 @@ import {
   faTrash,
   faChevronDown,
   faChevronUp,
-  faRefresh,
   faEllipsisV
 } from "@fortawesome/free-solid-svg-icons";
 import toast from "react-hot-toast";
@@ -32,7 +31,7 @@ interface GuruFormData {
 const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
   const { user } = useAuth();
   const { gurus, addGuru, removeGuru, selectedGuru, refreshGurus, selectGuru } = useGuru();
-  const { createNewChatManually, getChatsByGuru, selectChat, currentChatId, loadAllChats, deleteChat, renameChat } = useChat();
+  const { createNewChatManually, getChatsByGuru, selectChat, currentChatId, deleteChat, renameChat } = useChat();
 
 
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -45,7 +44,6 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
   });
   const [isCreating, setIsCreating] = useState(false);
   const [isCreatingChat, setIsCreatingChat] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [showChatMenu, setShowChatMenu] = useState<string | null>(null);
 
   // Rename modal state
@@ -161,6 +159,8 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
       // Add to context
       addGuru(newGuru);
 
+      // Make the new guru active immediately
+      selectGuru(newGuru);
       // Refresh the guru list to make sure UI is updated
       try {
         await refreshGurus();
@@ -240,27 +240,7 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
     setIsChatListExpanded(!isChatListExpanded);
   };
 
-  const handleRefreshData = async () => {
-    setIsRefreshing(true);
-    toast.loading("Refreshing data...", { id: "refresh-data" });
-
-    try {
-      await Promise.all([
-        refreshGurus(),
-        loadAllChats()
-      ]);
-      toast.success("Data refreshed successfully!", {
-        id: "refresh-data",
-        icon: '✅'
-      });
-    } catch (error) {
-      console.error("Error refreshing data:", error);
-      toast.error("Failed to refresh data. Please try again.", { id: "refresh-data" });
-    } finally {
-      setIsRefreshing(false);
-    }
-  };
-
+  
   const handleChatSelect = (chatId: string) => {
     selectChat(chatId);
     // Removed excessive toast notification for chat selection
@@ -382,18 +362,6 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
           </h2>
           <div className="flex items-center gap-2">
             <button
-              onClick={handleRefreshData}
-              disabled={isRefreshing}
-              className="text-purple-300 hover:text-white transition-all duration-200 p-2 rounded-full hover:bg-purple-400/10 hover:scale-110 disabled:opacity-50"
-              title="Refresh Data"
-            >
-              <FontAwesomeIcon
-                icon={faRefresh}
-                size="sm"
-                className={isRefreshing ? 'animate-spin' : ''}
-              />
-            </button>
-            <button
               onClick={onClose}
               className="text-purple-300 hover:text-white transition-all duration-200 p-2 rounded-full hover:bg-purple-400/10 hover:scale-110"
               title="Close Manager"
@@ -414,24 +382,6 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
             >
               <span>Create Guru</span>
             </BubblyButton>
-            <button
-              onClick={async () => {
-                toast.loading("Refreshing guru list...", { id: "refresh-gurus" });
-                try {
-                  await refreshGurus();
-                  toast.success("Guru list refreshed!", {
-                    id: "refresh-gurus",
-                    icon: '✅'
-                  });
-                } catch (error) {
-                  toast.error("Failed to refresh guru list", { id: "refresh-gurus" });
-                }
-              }}
-              className="px-3 py-3 text-purple-300 hover:text-white transition-colors border border-purple-400/30 rounded-lg hover:bg-purple-400/10"
-              title="Refresh guru list"
-            >
-              🔄
-            </button>
           </div>
 
           {/* Create Guru Form */}
