@@ -14,7 +14,6 @@ import {
   faTrash,
   faEdit,
   faUserPlus,
-  faQuestionCircle,
   faChevronLeft,
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
@@ -65,6 +64,27 @@ const Navbar: React.FC<NavbarProps> = ({
     }
   });
   const [showPresetsMobile, setShowPresetsMobile] = useState<boolean>(true);
+
+  // Global helper UI enable/disable toggle (persisted)
+  const [helperEnabled, setHelperEnabled] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('guruOnboardingDismissed') !== 'true';
+    } catch {
+      return true;
+    }
+  });
+  const setHelper = (enable: boolean) => {
+    setHelperEnabled(enable);
+    setShowOnboardingMobile(enable);
+    try {
+      localStorage.setItem('guruOnboardingDismissed', enable ? 'false' : 'true');
+    } catch {}
+    try {
+      // Broadcast to the rest of the app so tips update instantly without refresh
+      window.dispatchEvent(new CustomEvent('helper-ui-changed', { detail: { enabled: enable } }) as any);
+    } catch {}
+    toast.success(`Helper UI ${enable ? 'enabled' : 'disabled'}`, { id: 'toggle-helper-ui' });
+  };
 
   // Presets for mobile quick-start (same as desktop)
   const guruPresets: { emoji: string; name: string; subject: string; description: string; tagline?: string }[] = [
@@ -234,27 +254,7 @@ const Navbar: React.FC<NavbarProps> = ({
   const isHomePage = location.pathname === "/";
   const isChatPage = location.pathname === "/chatpage";
 
-  // Global Help trigger: re-enable onboarding and open Create Guru flow
-  const triggerOnboarding = () => {
-    try {
-      localStorage.setItem('guruOnboardingDismissed', 'false');
-    } catch {}
-
-    const openEvent = () => {
-      // Dispatch custom event used by LeftSidebar and Navbar (mobile) to open the Create Guru UI
-      window.dispatchEvent(new Event('open-guru-create' as any) as Event);
-      toast.success("Opening Create Guru helper", { id: 'open-guru-helper', icon: '✨' });
-    };
-
-    if (!isChatPage) {
-      navigate('/chatpage');
-      // Give the page a short moment to mount the chat UI before dispatching the event
-      setTimeout(openEvent, 300);
-    } else {
-      openEvent();
-    }
-  };
-
+  
   return (
     <>
       {/* Main Navbar */}
@@ -284,15 +284,20 @@ const Navbar: React.FC<NavbarProps> = ({
 
             {/* Desktop Auth Section - Extreme Right */}
             <div className="hidden md:flex items-center space-x-4">
-              {/* Help & Onboarding */}
-              <button
-                onClick={triggerOnboarding}
-                className="flex items-center space-x-2 px-4 py-2 text-white hover:text-purple-300 transition-colors font-medium"
-                title="Show Create Guru helper"
-              >
-                <FontAwesomeIcon icon={faQuestionCircle} className="text-sm" />
-                <span>Help</span>
-              </button>
+                            {/* Helper UI toggle */}
+              <div className="flex items-center gap-2 text-xs text-gray-300">
+                <span>Helper</span>
+                <button
+                  onClick={() => setHelper(!helperEnabled)}
+                  aria-pressed={helperEnabled}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none border ${helperEnabled ? 'bg-purple-600 border-purple-500' : 'bg-gray-700 border-gray-600'}`}
+                  title={helperEnabled ? 'Disable helper UI' : 'Enable helper UI'}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform bg-white rounded-full transition-transform duration-200 ${helperEnabled ? 'translate-x-6' : 'translate-x-1'}`}
+                  />
+                </button>
+              </div>
               {/* About Link */}
               <button
                 onClick={() => navigate("/about")}
@@ -795,22 +800,26 @@ const Navbar: React.FC<NavbarProps> = ({
                   <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-3">Navigation</h3>
                 </div>
 
-                {/* Help & Onboarding Mobile */}
-                <button
-                  onClick={() => {
-                    triggerOnboarding();
-                    setMobileMenuOpen(false);
-                  }}
-                  className="w-full px-5 py-4 text-white hover:bg-gradient-to-r hover:from-purple-600/20 hover:to-blue-600/20 rounded-xl transition-all duration-300 text-left flex items-center space-x-4 mb-3 group border border-transparent hover:border-purple-500/30 animate-mobile-stagger-1"
-                >
-                  <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <FontAwesomeIcon icon={faQuestionCircle} className="text-white text-sm" />
+                {/* Helper UI toggle - Mobile */}
+                <div className="w-full px-5 py-3 rounded-xl bg-black/20 border border-purple-500/20 flex items-center justify-between animate-mobile-stagger-1">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center text-white text-xs">UI</div>
+                    <div>
+                      <div className="font-medium text-sm text-white">Helper UI</div>
+                      <div className="text-xs text-gray-400">Enable tips and guidance</div>
+                    </div>
                   </div>
-                  <div>
-                    <span className="font-medium">Help & Onboarding</span>
-                    <p className="text-xs text-gray-400 mt-0.5">Open the Create Guru guide</p>
-                  </div>
-                </button>
+                  <button
+                    onClick={() => setHelper(!helperEnabled)}
+                    aria-pressed={helperEnabled}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none border ${helperEnabled ? 'bg-purple-600 border-purple-500' : 'bg-gray-700 border-gray-600'}`}
+                    title={helperEnabled ? 'Disable helper UI' : 'Enable helper UI'}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform bg-white rounded-full transition-transform duration-200 ${helperEnabled ? 'translate-x-6' : 'translate-x-1'}`}
+                    />
+                  </button>
+                </div>
 
                 {/* About Mobile */}
                 <button
