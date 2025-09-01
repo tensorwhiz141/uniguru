@@ -15,6 +15,8 @@ import {
   faEdit,
   faUserPlus,
   faQuestionCircle,
+  faChevronLeft,
+  faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 import BubblyButton from "./BubblyButton";
 import { useGuru } from "../context/GuruContext";
@@ -52,6 +54,40 @@ const Navbar: React.FC<NavbarProps> = ({
     const [, ] = useState<string | null>(null);
   const [editingChat, setEditingChat] = useState<string | null>(null);
   const [editingChatName, setEditingChatName] = useState('');
+
+  // Mobile onboarding helper
+  const [showOnboardingMobile, setShowOnboardingMobile] = useState<boolean>(() => {
+    try {
+      const dismissed = localStorage.getItem('guruOnboardingDismissed') === 'true';
+      return !dismissed;
+    } catch {
+      return true;
+    }
+  });
+  const [showPresetsMobile, setShowPresetsMobile] = useState<boolean>(true);
+
+  // Presets for mobile quick-start (same as desktop)
+  const guruPresets: { emoji: string; name: string; subject: string; description: string; tagline?: string }[] = [
+    { emoji: '📐', name: 'Math Tutor', subject: 'Mathematics (Algebra, Calculus, Geometry)', description: 'Patient tutor who explains step-by-step with examples and checks understanding.', tagline: 'Step-by-step explanations with examples' },
+    { emoji: '💻', name: 'Coding Mentor', subject: 'Programming (JavaScript, Python)', description: 'Practical mentor who writes clear code, explains concepts simply, and provides best practices.', tagline: 'Clear code, simple explanations' },
+    { emoji: '⚛️', name: 'Physics Coach', subject: 'Physics (Mechanics, Electricity, Waves)', description: 'Explains concepts with analogies and visual intuition; helps with problem-solving.', tagline: 'Analogies and visual intuition' },
+    { emoji: '✍️', name: 'Essay Coach', subject: 'Writing & Essays', description: 'Helps outline a thesis, improve clarity, suggest revisions, and cite sources properly.', tagline: 'Structure, clarity, and feedback' },
+    { emoji: '🗣️', name: 'Language Buddy', subject: 'Languages (English practice)', description: 'Conversational practice with friendly corrections and useful phrases.', tagline: 'Conversation and gentle corrections' },
+    { emoji: '📊', name: 'Data Science Guru', subject: 'Data Science (Python, Pandas, ML)', description: 'Guides through EDA, data cleaning, model building, and evaluation with practical tips.', tagline: 'From data cleaning to models' },
+    { emoji: '🎯', name: 'Interview Prep Coach', subject: 'Interview Prep (Behavioral & Technical)', description: 'Practices common questions, provides behavioral frameworks, and offers feedback.', tagline: 'Mock questions and feedback' },
+    { emoji: '🧪', name: 'Chemistry Tutor', subject: 'Chemistry (Organic, Inorganic, Physical)', description: 'Breaks down reactions and mechanisms, builds chemical intuition with examples.', tagline: 'Reactions, mechanisms, and intuition' },
+    { emoji: '🏛️', name: 'History Guide', subject: 'History (World, Modern)', description: 'Explains timelines, causes, and consequences with memorable summaries.', tagline: 'Timelines and cause/effect' },
+    { emoji: '��', name: 'Business Strategy Advisor', subject: 'Business/Strategy (Case Studies)', description: 'Uses structured thinking, hypotheses, and classic frameworks to solve cases.', tagline: 'MECE, hypotheses, and frameworks' },
+  ];
+
+  // Horizontal scrolling ref for mobile presets carousel
+  const presetsScrollRefMobile = useRef<HTMLDivElement>(null);
+  const scrollPresetsMobile = (dir: 'left' | 'right') => {
+    const el = presetsScrollRefMobile.current;
+    if (!el) return;
+    const amount = Math.max(220, Math.floor(el.clientWidth * 0.85));
+    el.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' });
+  };
 
   // Form states for guru creation
   const [guruFormData, setGuruFormData] = useState({
@@ -113,6 +149,10 @@ const Navbar: React.FC<NavbarProps> = ({
 
       setGuruFormData({ name: '', subject: '', description: '' });
       setShowCreateForm(false);
+      try {
+        localStorage.setItem('guruOnboardingDismissed', 'true');
+      } catch {}
+      setShowOnboardingMobile(false);
 
       toast.success("Guru created successfully!", {
         id: "create-guru",
@@ -391,51 +431,196 @@ const Navbar: React.FC<NavbarProps> = ({
                   {/* Gurus Section */}
                   {activeSection === 'gurus' && (
                     <div className="space-y-3">
-                      {/* Action Buttons */}
-                      <div className="flex gap-2">
-                        <BubblyButton
-                          onClick={() => setShowCreateForm(!showCreateForm)}
-                          variant="primary"
-                          className="flex-1 flex items-center justify-center gap-2 py-2 px-3 font-medium text-sm"
-                        >
+                      {/* Onboarding banners */}
+                      {showOnboardingMobile && gurus.length === 0 && !showCreateForm && (
+                        <div className="bg-purple-500/10 border border-purple-400/30 text-purple-200 text-xs p-3 rounded-lg flex items-start justify-between gap-3">
+                          <div>
+                            <div className="font-semibold">Getting started</div>
+                            <div>Step 1: Tap "Create Guru" to begin.</div>
+                          </div>
+                          <button
+                            onClick={() => { try { localStorage.setItem('guruOnboardingDismissed','true'); } catch {} setShowOnboardingMobile(false); }}
+                            className="text-[11px] text-purple-300 hover:text-white underline"
+                          >
+                            Hide tips
+                          </button>
+                        </div>
+                      )}
+                      {!showOnboardingMobile && gurus.length === 0 && !showCreateForm && (
+                        <div className="bg-purple-500/5 border border-purple-400/20 text-purple-200 text-[11px] p-2 rounded-lg flex items-center justify-between gap-3">
+                          <span>New here? Show tips again.</span>
+                          <button
+                            onClick={() => { try { localStorage.setItem('guruOnboardingDismissed','false'); } catch {} setShowOnboardingMobile(true); }}
+                            className="text-[11px] text-purple-300 hover:text-white underline"
+                          >
+                            Show tips
+                          </button>
+                        </div>
+                      )}
 
-                          <span>Create Guru</span>
-                        </BubblyButton>
-                                              </div>
+                      {/* Action Button (only when form is hidden) */}
+                      {!showCreateForm && (
+                        <div className="flex gap-2">
+                          <BubblyButton
+                            onClick={() => setShowCreateForm(true)}
+                            variant="primary"
+                            className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 font-medium text-sm ${showOnboardingMobile && gurus.length === 0 ? 'ring-2 ring-purple-400 shadow-purple-500/30 shadow-lg' : ''}`}
+                          >
+                            <span>Create Guru</span>
+                          </BubblyButton>
+                        </div>
+                      )}
 
-                      {/* Create Guru Form */}
+                      {/* Create Guru Form with templates carousel */}
                       {showCreateForm && (
                         <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-                          <h3 className="text-white font-medium mb-3 text-sm">Create New Guru</h3>
-                          {/* Form content would go here - simplified for mobile */}
+                          <div className="flex items-center justify-between mb-3">
+                            <h3 className="text-white font-medium text-sm">Create New Guru</h3>
+                            {showOnboardingMobile && (
+                              <button
+                                onClick={() => { try { localStorage.setItem('guruOnboardingDismissed','true'); } catch {} setShowOnboardingMobile(false); }}
+                                className="text-[11px] text-purple-300 hover:text-white underline"
+                              >
+                                Hide tips
+                              </button>
+                            )}
+                          </div>
+
+                          {/* Templates header */}
+                          <div className="mb-3">
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="text-purple-200 text-[11px]">Quick start templates</div>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => setShowPresetsMobile((prev) => !prev)}
+                                  className="text-[11px] text-purple-300 hover:text-white underline"
+                                >
+                                  {showPresetsMobile ? 'Hide' : 'Show'}
+                                </button>
+                                {showPresetsMobile && (
+                                  <div className="hidden sm:flex items-center gap-1">
+                                    <button
+                                      type="button"
+                                      onClick={() => scrollPresetsMobile('left')}
+                                      className="p-1.5 rounded-full bg-black/30 hover:bg-black/50 border border-purple-400/30 text-purple-200 hover:text-white transition-colors"
+                                      aria-label="Previous templates"
+                                    >
+                                      <FontAwesomeIcon icon={faChevronLeft} className="text-xs" />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => scrollPresetsMobile('right')}
+                                      className="p-1.5 rounded-full bg-black/30 hover:bg-black/50 border border-purple-400/30 text-purple-200 hover:text-white transition-colors"
+                                      aria-label="Next templates"
+                                    >
+                                      <FontAwesomeIcon icon={faChevronRight} className="text-xs" />
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {showPresetsMobile && (
+                              <div className="relative">
+                                <div
+                                  ref={presetsScrollRefMobile}
+                                  className="flex gap-2 overflow-x-auto pr-1"
+                                  style={{ scrollBehavior: 'smooth' }}
+                                >
+                                  {guruPresets.map((p, idx) => (
+                                    <button
+                                      key={idx}
+                                      type="button"
+                                      onClick={() => setGuruFormData({ name: p.name, subject: p.subject, description: p.description })}
+                                      className="min-w-[220px] group relative p-3 rounded-lg border border-purple-400/30 bg-white/5 hover:bg-white/10 hover:border-purple-400/60 transition-all text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/50"
+                                      title={`${p.name} — ${p.subject}`}
+                                      aria-label={`Use ${p.name} template`}
+                                    >
+                                      <div className="flex items-start gap-3">
+                                        <div className="text-lg leading-none">{p.emoji}</div>
+                                        <div className="min-w-0">
+                                          <div className="text-white text-sm font-medium truncate">{p.name}</div>
+                                          <div className="text-purple-200 text-[11px] truncate">{p.subject}</div>
+                                          {p.tagline && (
+                                            <div className="text-gray-400 text-[11px] mt-1 line-clamp-2">{p.tagline}</div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </button>
+                                  ))}
+                                </div>
+                                {/* Bottom navigation controls for small screens */}
+                                <div className="flex justify-center gap-2 mt-2 sm:hidden">
+                                  <button
+                                    type="button"
+                                    onClick={() => scrollPresetsMobile('left')}
+                                    className="px-3 py-1.5 rounded-full bg-black/30 hover:bg-black/50 border border-purple-400/30 text-purple-200 hover:text-white transition-colors"
+                                    aria-label="Previous templates"
+                                  >
+                                    <FontAwesomeIcon icon={faChevronLeft} className="text-xs" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => scrollPresetsMobile('right')}
+                                    className="px-3 py-1.5 rounded-full bg-black/30 hover:bg-black/50 border border-purple-400/30 text-purple-200 hover:text-white transition-colors"
+                                    aria-label="Next templates"
+                                  >
+                                    <FontAwesomeIcon icon={faChevronRight} className="text-xs" />
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Form content */}
                           <div className="space-y-2">
+                            <label className="block text-purple-200 text-xs font-medium">Guru Name *</label>
+                            {showOnboardingMobile && gurus.length === 0 && (
+                              <p className="text-[11px] text-purple-300">Step 2: Give your guru a clear, memorable name.</p>
+                            )}
                             <input
                               type="text"
-                              placeholder="Guru Name"
+                              placeholder="Enter guru name"
                               value={guruFormData.name}
                               onChange={(e) => setGuruFormData(prev => ({ ...prev, name: e.target.value }))}
-                              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg text-sm border border-gray-600 focus:border-purple-400 focus:outline-none"
+                              className={`w-full px-3 py-2 bg-gray-700 text-white rounded-lg text-sm border border-gray-600 focus:border-purple-400 focus:outline-none ${showOnboardingMobile && gurus.length === 0 ? 'ring-2 ring-purple-400/60' : ''}`}
                             />
+
+                            <label className="block text-purple-200 text-xs font-medium mt-2">Subject/Expertise *</label>
+                            {showOnboardingMobile && gurus.length === 0 && (
+                              <p className="text-[11px] text-purple-300">Step 3: Specify the subject or expertise (e.g., Math, Physics, Programming).</p>
+                            )}
                             <input
                               type="text"
-                              placeholder="Subject"
+                              placeholder="e.g., Math, Physics, Programming"
                               value={guruFormData.subject}
                               onChange={(e) => setGuruFormData(prev => ({ ...prev, subject: e.target.value }))}
-                              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg text-sm border border-gray-600 focus:border-purple-400 focus:outline-none"
+                              className={`w-full px-3 py-2 bg-gray-700 text-white rounded-lg text-sm border border-gray-600 focus:border-purple-400 focus:outline-none ${showOnboardingMobile && gurus.length === 0 ? 'ring-2 ring-purple-400/60' : ''}`}
                             />
+
+                            <label className="block text-purple-200 text-xs font-medium mt-2">Description *</label>
+                            {showOnboardingMobile && gurus.length === 0 && (
+                              <p className="text-[11px] text-purple-300">Step 4: Describe your guru's style and what it should help with.</p>
+                            )}
                             <textarea
-                              placeholder="Description"
+                              placeholder="Describe your guru's personality"
                               rows={3}
                               value={guruFormData.description}
                               onChange={(e) => setGuruFormData(prev => ({ ...prev, description: e.target.value }))}
-                              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg text-sm border border-gray-600 focus:border-purple-400 focus:outline-none resize-none"
+                              className={`w-full px-3 py-2 bg-gray-700 text-white rounded-lg text-sm border border-gray-600 focus:border-purple-400 focus:outline-none resize-none ${showOnboardingMobile && gurus.length === 0 ? 'ring-2 ring-purple-400/60' : ''}`}
                             />
+
+                            {showOnboardingMobile && gurus.length === 0 && (
+                              <div className="text-purple-200 text-xs mt-1">Step 5: Tap "Create" to finish.</div>
+                            )}
+
                             <div className="flex gap-2 pt-2">
                               <BubblyButton
                                 onClick={handleCreateGuru}
                                 variant="primary"
-                                className="flex-1 py-2 text-sm"
-                                disabled={!guruFormData.name.trim() || !guruFormData.subject.trim()}
+                                className={`flex-1 py-2 text-sm ${showOnboardingMobile && gurus.length === 0 ? 'ring-2 ring-purple-400 shadow-purple-500/30 shadow-lg' : ''}`}
+                                disabled={!guruFormData.name.trim() || !guruFormData.subject.trim() || !guruFormData.description.trim()}
                               >
                                 Create
                               </BubblyButton>
