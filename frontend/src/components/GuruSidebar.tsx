@@ -42,6 +42,20 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
     subject: "",
     description: ""
   });
+
+  // Helper function to check if form is valid
+  const isFormValid = () => {
+    const valid = formData.name.trim() !== "" && 
+                  formData.subject.trim() !== "" && 
+                  formData.description.trim() !== "";
+    console.log('Form validation check:', {
+      name: formData.name.trim(),
+      subject: formData.subject.trim(), 
+      description: formData.description.trim(),
+      valid
+    });
+    return valid;
+  };
   const [isCreating, setIsCreating] = useState(false);
   const [isCreatingChat, setIsCreatingChat] = useState(false);
   const [showChatMenu, setShowChatMenu] = useState<string | null>(null);
@@ -119,10 +133,41 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
       ...prev,
       [name]: value
     }));
+    console.log(`Field ${name} updated:`, value, 'Form valid:', isFormValid());
   };
 
   const handleCreateGuru = async () => {
-    if (!user || !formData.name.trim() || !formData.subject.trim()) {
+    if (!user) {
+      return;
+    }
+
+    // Force validation check - especially for mobile
+    const nameValid = formData.name.trim().length > 0;
+    const subjectValid = formData.subject.trim().length > 0;
+    const descriptionValid = formData.description.trim().length > 0;
+
+    console.log('Validation check:', { nameValid, subjectValid, descriptionValid });
+
+    if (!nameValid || !subjectValid || !descriptionValid) {
+      const missingFields = [];
+      if (!nameValid) missingFields.push('Guru Name');
+      if (!subjectValid) missingFields.push('Subject');
+      if (!descriptionValid) missingFields.push('Description');
+
+      toast.error(`Required: ${missingFields.join(', ')}`, {
+        duration: 4000,
+        position: 'top-center',
+        style: {
+          fontSize: '14px',
+          padding: '10px 14px',
+          maxWidth: '300px',
+          zIndex: 99999,
+          marginTop: '60px',
+          backgroundColor: '#ef4444',
+          color: 'white',
+          fontWeight: '500'
+        }
+      });
       return;
     }
 
@@ -386,7 +431,11 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
 
           {/* Create Guru Form */}
           {showCreateForm && (
-            <div
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleCreateGuru();
+              }}
               className="backdrop-blur-sm rounded-lg p-3 sm:p-4 space-y-3 sm:space-y-4 border border-purple-400/30 animate-mobile-slide-up"
               style={{
                 background: "rgba(147, 51, 234, 0.04)",
@@ -405,6 +454,7 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
                   value={formData.name}
                   onChange={handleInputChange}
                   placeholder="Enter guru name..."
+                  required
                   className="w-full px-3 py-2.5 sm:py-2 border border-purple-400/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all backdrop-blur-sm text-sm sm:text-base touch-target"
                   style={{
                     background: "rgba(147, 51, 234, 0.03)",
@@ -422,6 +472,7 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
                   value={formData.subject}
                   onChange={handleInputChange}
                   placeholder="e.g., Math, Physics, Programming..."
+                  required
                   className="w-full px-3 py-2.5 sm:py-2 border border-purple-400/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all backdrop-blur-sm text-sm sm:text-base touch-target"
                   style={{
                     background: "rgba(147, 51, 234, 0.03)",
@@ -431,14 +482,16 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
 
               <div>
                 <label className="block text-xs sm:text-sm font-medium text-purple-300 mb-2">
-                  Description
+                  Description *
                 </label>
                 <textarea
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
                   rows={2}
-                  placeholder="Describe your guru's personality..."
+                  placeholder="Describe your guru's personality and expertise..."
+                  required
+                  minLength={1}
                   className="w-full px-3 py-2.5 sm:py-2 border border-purple-400/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all resize-none backdrop-blur-sm text-sm sm:text-base touch-target"
                   style={{
                     background: "rgba(147, 51, 234, 0.03)",
@@ -454,15 +507,15 @@ const GuruSidebar: React.FC<GuruSidebarProps> = ({ isOpen, onClose }) => {
                   Cancel
                 </button>
                 <BubblyButton
-                  onClick={handleCreateGuru}
-                  disabled={isCreating || !formData.name.trim() || !formData.subject.trim()}
+                  type="submit"
+                  disabled={isCreating || formData.name.length === 0 || formData.subject.length === 0 || formData.description.length === 0}
                   variant="primary"
                   className="px-6 py-2.5 sm:py-2 font-medium text-sm sm:text-base touch-target"
                 >
                   {isCreating ? "Creating..." : "Create Guru"}
                 </BubblyButton>
               </div>
-            </div>
+            </form>
           )}
 
           {/* My Gurus Section */}
