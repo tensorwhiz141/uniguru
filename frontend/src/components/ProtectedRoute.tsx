@@ -16,11 +16,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, isLoggedIn })
   // Show loading screen while checking authentication
   if (isAuthLoading) {
     return (
-      <div className="relative min-h-screen bg-black">
+      <div className="fixed inset-0 z-50 bg-black/80">
         <div className="fixed inset-0 z-0">
           <StarsCanvas />
         </div>
-        <div className="relative z-10 flex items-center justify-center min-h-screen">
+        <div className="relative z-10 flex items-center justify-center min-h-screen" style={{ minHeight: '100dvh' }}>
           <div className="bg-glass-card backdrop-blur-xl rounded-xl p-8 border border-glass-border shadow-glass">
             <LoadingSpinner
               size="large"

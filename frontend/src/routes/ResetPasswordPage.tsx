@@ -93,7 +93,7 @@ const ResetPasswordPage: React.FC = () => {
         <div className="fixed inset-0 z-0">
           <StarsCanvas />
         </div>
-        <div className="relative z-10">
+        <div className="relative z-10 flex items-center justify-center min-h-screen" style={{ minHeight: '100dvh' }}>
           <AuthCard title="Invalid Reset Link">
             <div className="text-center space-y-6">
               <div className="flex justify-center">
@@ -132,7 +132,7 @@ const ResetPasswordPage: React.FC = () => {
       </div>
 
       {/* Reset Password Container */}
-      <div className="relative z-10">
+      <div className="relative z-10 flex items-center justify-center min-h-screen" style={{ minHeight: '100dvh' }}>
         <AuthCard title="Reset Password">
           <form onSubmit={handleSubmit}>
             <AuthInput

@@ -23,6 +23,8 @@ import { useChat } from "../context/ChatContext";
 import { useAuth } from "../context/AuthContext";
 import { createCustomGuru } from "../helpers/api-communicator";
 import toast from "react-hot-toast";
+import { useTranslation } from 'react-i18next';
+import i18n from '../i18n';
 
 interface NavbarProps {
   onLogout: () => void;
@@ -40,12 +42,14 @@ const Navbar: React.FC<NavbarProps> = ({
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isLoggedIn } = useAuth();
+  const { t } = useTranslation();
   const { gurus, addGuru, removeGuru, selectedGuru, refreshGurus, selectGuru } = useGuru();
   const { getChatsByGuru, selectChat, currentChatId, deleteChat, renameChat } = useChat();
 
   // Dropdown states
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
 
   // Mobile sidebar states (only used on mobile)
   const [activeSection, setActiveSection] = useState<'gurus' | 'chats'>('gurus');
@@ -129,6 +133,7 @@ const Navbar: React.FC<NavbarProps> = ({
   const userRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
+  const langRef = useRef<HTMLDivElement>(null);
 
   // Handle guru creation
   const handleCreateGuru = async () => {
@@ -236,6 +241,22 @@ const Navbar: React.FC<NavbarProps> = ({
     };
   }, [userDropdownOpen, mobileMenuOpen]);
 
+  // Close language dropdown on outside click
+  useEffect(() => {
+    const handler = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node;
+      if (langMenuOpen && langRef.current && !langRef.current.contains(target)) {
+        setLangMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    document.addEventListener('touchstart', handler);
+    return () => {
+      document.removeEventListener('mousedown', handler);
+      document.removeEventListener('touchstart', handler);
+    };
+  }, [langMenuOpen]);
+
   // Listen for Create Guru trigger from chat area (mobile)
   useEffect(() => {
     const onOpenGuruCreate = (_e: Event) => {
@@ -284,6 +305,37 @@ const Navbar: React.FC<NavbarProps> = ({
 
             {/* Desktop Auth Section - Extreme Right */}
             <div className="hidden md:flex items-center space-x-4">
+              {/* Language Dropdown */}
+              <div ref={langRef} className="relative">
+                <button
+                  onClick={() => setLangMenuOpen((o) => !o)}
+                  className="px-3 py-2 text-sm text-gray-200 hover:text-white hover:bg-gray-800/50 rounded-lg border border-gray-700/50"
+                >
+                  {t('language')}: {i18n.language === 'hi' ? 'हिंदी' : i18n.language === 'mr' ? 'मराठी' : 'English'}
+                </button>
+                {langMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-40 bg-gray-900/95 backdrop-blur-sm border border-gray-700 rounded-lg shadow-xl py-2 z-50">
+                    <button
+                      onClick={() => { i18n.changeLanguage('en'); localStorage.setItem('i18nextLng','en'); setLangMenuOpen(false); }}
+                      className="w-full px-4 py-2 text-left hover:bg-gray-800 text-gray-200"
+                    >
+                      English
+                    </button>
+                    <button
+                      onClick={() => { i18n.changeLanguage('hi'); localStorage.setItem('i18nextLng','hi'); setLangMenuOpen(false); }}
+                      className="w-full px-4 py-2 text-left hover:bg-gray-800 text-gray-200"
+                    >
+                      हिंदी
+                    </button>
+                    <button
+                      onClick={() => { i18n.changeLanguage('mr'); localStorage.setItem('i18nextLng','mr'); setLangMenuOpen(false); }}
+                      className="w-full px-4 py-2 text-left hover:bg-gray-800 text-gray-200"
+                    >
+                      मराठी
+                    </button>
+                  </div>
+                )}
+              </div>
                             {/* Helper UI toggle */}
               <div className="flex items-center gap-2 text-xs text-gray-300">
                 <span>Helper</span>
