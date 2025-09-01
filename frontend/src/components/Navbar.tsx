@@ -14,7 +14,7 @@ import {
   faTrash,
   faEdit,
   faUserPlus,
-
+  faQuestionCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import BubblyButton from "./BubblyButton";
 import { useGuru } from "../context/GuruContext";
@@ -194,6 +194,27 @@ const Navbar: React.FC<NavbarProps> = ({
   const isHomePage = location.pathname === "/";
   const isChatPage = location.pathname === "/chatpage";
 
+  // Global Help trigger: re-enable onboarding and open Create Guru flow
+  const triggerOnboarding = () => {
+    try {
+      localStorage.setItem('guruOnboardingDismissed', 'false');
+    } catch {}
+
+    const openEvent = () => {
+      // Dispatch custom event used by LeftSidebar and Navbar (mobile) to open the Create Guru UI
+      window.dispatchEvent(new Event('open-guru-create' as any) as Event);
+      toast.success("Opening Create Guru helper", { id: 'open-guru-helper', icon: '✨' });
+    };
+
+    if (!isChatPage) {
+      navigate('/chatpage');
+      // Give the page a short moment to mount the chat UI before dispatching the event
+      setTimeout(openEvent, 300);
+    } else {
+      openEvent();
+    }
+  };
+
   return (
     <>
       {/* Main Navbar */}
@@ -223,6 +244,15 @@ const Navbar: React.FC<NavbarProps> = ({
 
             {/* Desktop Auth Section - Extreme Right */}
             <div className="hidden md:flex items-center space-x-4">
+              {/* Help & Onboarding */}
+              <button
+                onClick={triggerOnboarding}
+                className="flex items-center space-x-2 px-4 py-2 text-white hover:text-purple-300 transition-colors font-medium"
+                title="Show Create Guru helper"
+              >
+                <FontAwesomeIcon icon={faQuestionCircle} className="text-sm" />
+                <span>Help</span>
+              </button>
               {/* About Link */}
               <button
                 onClick={() => navigate("/about")}
@@ -579,6 +609,23 @@ const Navbar: React.FC<NavbarProps> = ({
                 <div className="mb-4">
                   <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-3">Navigation</h3>
                 </div>
+
+                {/* Help & Onboarding Mobile */}
+                <button
+                  onClick={() => {
+                    triggerOnboarding();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full px-5 py-4 text-white hover:bg-gradient-to-r hover:from-purple-600/20 hover:to-blue-600/20 rounded-xl transition-all duration-300 text-left flex items-center space-x-4 mb-3 group border border-transparent hover:border-purple-500/30 animate-mobile-stagger-1"
+                >
+                  <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <FontAwesomeIcon icon={faQuestionCircle} className="text-white text-sm" />
+                  </div>
+                  <div>
+                    <span className="font-medium">Help & Onboarding</span>
+                    <p className="text-xs text-gray-400 mt-0.5">Open the Create Guru guide</p>
+                  </div>
+                </button>
 
                 {/* About Mobile */}
                 <button

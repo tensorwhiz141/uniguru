@@ -35,6 +35,11 @@ interface GuruFormData {
   description: string;
 }
 
+interface GuruPreset extends GuruFormData {
+  emoji: string;
+  tagline?: string;
+}
+
 const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingChat }) => {
   const { user } = useAuth();
   const { gurus, addGuru, removeGuru, selectedGuru, refreshGurus, selectGuru } = useGuru();
@@ -56,6 +61,15 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
   const gurusRef = useRef<HTMLDivElement>(null);
   const chatsRef = useRef<HTMLDivElement>(null);
   const toolsRef = useRef<HTMLDivElement>(null);
+
+  // Horizontal scrolling ref for presets carousel
+  const presetsScrollRef = useRef<HTMLDivElement>(null);
+  const scrollPresets = (dir: 'left' | 'right') => {
+    const el = presetsScrollRef.current;
+    if (!el) return;
+    const amount = Math.max(260, Math.floor(el.clientWidth * 0.85));
+    el.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' });
+  };
 
   // Initial animation for sections
   useEffect(() => {
@@ -85,6 +99,91 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
     subject: "",
     description: ""
   });
+
+  // Helpful templates to quickly prefill the form
+  const guruPresets: GuruPreset[] = [
+    {
+      emoji: "📐",
+      name: "Math Tutor",
+      subject: "Mathematics (Algebra, Calculus, Geometry)",
+      tagline: "Step-by-step explanations with examples",
+      description: "Patient tutor who explains step-by-step with examples and checks understanding."
+    },
+    {
+      emoji: "💻",
+      name: "Coding Mentor",
+      subject: "Programming (JavaScript, Python)",
+      tagline: "Clear code, simple explanations",
+      description: "Practical mentor who writes clear code, explains concepts simply, and provides best practices."
+    },
+    {
+      emoji: "⚛️",
+      name: "Physics Coach",
+      subject: "Physics (Mechanics, Electricity, Waves)",
+      tagline: "Analogies and visual intuition",
+      description: "Explains concepts with analogies and visual intuition; helps with problem-solving."
+    },
+    {
+      emoji: "✍️",
+      name: "Essay Coach",
+      subject: "Writing & Essays",
+      tagline: "Structure, clarity, and feedback",
+      description: "Helps outline a thesis, improve clarity, suggest revisions, and cite sources properly."
+    },
+    {
+      emoji: "🗣️",
+      name: "Language Buddy",
+      subject: "Languages (English practice)",
+      tagline: "Conversation and gentle corrections",
+      description: "Conversational practice with friendly corrections and useful phrases."
+    },
+    {
+      emoji: "📊",
+      name: "Data Science Guru",
+      subject: "Data Science (Python, Pandas, ML)",
+      tagline: "From data cleaning to models",
+      description: "Guides through EDA, data cleaning, model building, and evaluation with practical tips."
+    },
+    {
+      emoji: "🎯",
+      name: "Interview Prep Coach",
+      subject: "Interview Prep (Behavioral & Technical)",
+      tagline: "Mock questions and feedback",
+      description: "Practices common questions, provides behavioral frameworks, and offers feedback."
+    },
+    {
+      emoji: "🧪",
+      name: "Chemistry Tutor",
+      subject: "Chemistry (Organic, Inorganic, Physical)",
+      tagline: "Reactions, mechanisms, and intuition",
+      description: "Breaks down reactions and mechanisms, builds chemical intuition with examples."
+    },
+    {
+      emoji: "🏛️",
+      name: "History Guide",
+      subject: "History (World, Modern)",
+      tagline: "Timelines and cause/effect",
+      description: "Explains timelines, causes, and consequences with memorable summaries."
+    },
+    {
+      emoji: "💼",
+      name: "Business Strategy Advisor",
+      subject: "Business/Strategy (Case Studies)",
+      tagline: "MECE, hypotheses, and frameworks",
+      description: "Uses structured thinking, hypotheses, and classic frameworks to solve cases."
+    }
+  ];
+
+  // First-time user onboarding helper
+  const [showOnboarding, setShowOnboarding] = useState<boolean>(() => {
+    try {
+      const dismissed = localStorage.getItem('guruOnboardingDismissed') === 'true';
+      return !dismissed;
+    } catch {
+      return true;
+    }
+  });
+  const [showPresets, setShowPresets] = useState<boolean>(true);
 
   // Rename modal state
   const [renameModal, setRenameModal] = useState<{
@@ -159,6 +258,16 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
     };
   }, []);
 
+  // Auto-dismiss onboarding once the user has at least one guru
+  useEffect(() => {
+    if (gurus.length > 0 && showOnboarding) {
+      try {
+        localStorage.setItem('guruOnboardingDismissed', 'true');
+      } catch {}
+      setShowOnboarding(false);
+    }
+  }, [gurus.length, showOnboarding]);
+
   const handleCreateGuru = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -197,6 +306,10 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
 
       setFormData({ name: "", subject: "", description: "" });
       setShowCreateForm(false);
+      try {
+        localStorage.setItem('guruOnboardingDismissed','true');
+      } catch {}
+      setShowOnboarding(false);
       
       toast.success("Guru created successfully! 🧙‍♂️", {
         id: "create-guru",
@@ -403,7 +516,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
       <div
         ref={sidebarRef}
         className={`fixed top-16 left-0 h-[calc(100vh-4rem)] transform transition-all duration-300 ease-in-out z-40 backdrop-blur-xl border-r border-purple-400/20 shadow-2xl flex flex-col overflow-hidden ${
-          isCollapsed ? 'w-16' : 'w-80 lg:w-96'
+          isCollapsed ? 'w-16' : 'w-80 md:w-96 lg:w-[30rem] xl:w-[34rem]'
         }`}
         style={{
           background: "linear-gradient(180deg, rgba(139, 92, 246, 0.08) 0%, rgba(124, 58, 237, 0.06) 30%, rgba(109, 40, 217, 0.05) 70%, rgba(91, 33, 182, 0.04) 100%)",
@@ -592,11 +705,36 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
             {activeSection === 'gurus' && (
               <div ref={gurusRef} className="flex flex-col h-full space-y-4">
                 {/* Action Buttons */}
+                {showOnboarding && gurus.length === 0 && !showCreateForm && (
+                  <div className="bg-purple-500/10 border border-purple-400/30 text-purple-200 text-sm p-3 rounded-lg flex items-start justify-between gap-3">
+                    <div>
+                      <div className="font-semibold">Getting started</div>
+                      <div>Step 1: Click "Create Guru" to start.</div>
+                    </div>
+                    <button
+                      onClick={() => { try { localStorage.setItem('guruOnboardingDismissed','true'); } catch {} setShowOnboarding(false); }}
+                      className="text-xs text-purple-300 hover:text-white underline"
+                    >
+                      Hide tips
+                    </button>
+                  </div>
+                )}
+                {!showOnboarding && gurus.length === 0 && !showCreateForm && (
+                  <div className="bg-purple-500/5 border border-purple-400/20 text-purple-200 text-xs p-2 rounded-lg flex items-center justify-between gap-3">
+                    <span>New here? You can show tips again.</span>
+                    <button
+                      onClick={() => { try { localStorage.setItem('guruOnboardingDismissed','false'); } catch {} setShowOnboarding(true); }}
+                      className="text-xs text-purple-300 hover:text-white underline"
+                    >
+                      Show tips
+                    </button>
+                  </div>
+                )}
                 <div className="flex gap-2">
                   <BubblyButton
                     onClick={() => setShowCreateForm(!showCreateForm)}
                     variant="primary"
-                    className="flex-1 flex items-center justify-center gap-2 py-2 px-3 font-medium text-sm"
+                    className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 font-medium text-sm ${showOnboarding && gurus.length === 0 && !showCreateForm ? 'ring-2 ring-purple-400 shadow-purple-500/30 shadow-lg' : ''}`}
                   >
                   
                     <span>Create Guru</span>
@@ -606,11 +744,111 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                 {/* Create New Guru Form */}
                 {showCreateForm && (
                   <div className="bg-gradient-to-br from-purple-900/40 to-purple-800/30 backdrop-blur-sm rounded-xl p-6 border border-purple-400/30 shadow-xl">
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
-                        <img src={guruLogo} alt="Guru" className="w-5 h-5" />
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
+                          <img src={guruLogo} alt="Guru" className="w-5 h-5" />
+                        </div>
+                        <h3 className="text-white font-semibold text-lg">Create New Guru</h3>
                       </div>
-                      <h3 className="text-white font-semibold text-lg">Create New Guru</h3>
+                      {showOnboarding && (
+                        <button
+                          onClick={() => { try { localStorage.setItem('guruOnboardingDismissed','true'); } catch {} setShowOnboarding(false); }}
+                          className="text-xs text-purple-300 hover:text-white underline"
+                        >
+                          Hide tips
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Quick start templates - horizontal carousel */}
+                    <div className="mb-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-purple-200 text-xs">Quick start templates</div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setShowPresets((prev) => !prev)}
+                            className="text-xs text-purple-300 hover:text-white underline"
+                          >
+                            {showPresets ? 'Hide' : 'Show'}
+                          </button>
+                          {showPresets && (
+                            <div className="hidden sm:flex items-center gap-1">
+                              <button
+                                type="button"
+                                onClick={() => scrollPresets('left')}
+                                className="p-1.5 rounded-full bg-black/30 hover:bg-black/50 border border-purple-400/30 text-purple-200 hover:text-white transition-colors"
+                                aria-label="Previous templates"
+                              >
+                                <FontAwesomeIcon icon={faChevronLeft} className="text-xs" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => scrollPresets('right')}
+                                className="p-1.5 rounded-full bg-black/30 hover:bg-black/50 border border-purple-400/30 text-purple-200 hover:text-white transition-colors"
+                                aria-label="Next templates"
+                              >
+                                <FontAwesomeIcon icon={faChevronRight} className="text-xs" />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {showPresets && (
+                        <div className="relative">
+                          {/* Overlay arrows for mobile too */}
+                          <div className="sm:hidden absolute inset-y-0 left-0 flex items-center">
+                            <button
+                              type="button"
+                              onClick={() => scrollPresets('left')}
+                              className="ml-[-6px] p-2 rounded-full bg-black/30 hover:bg-black/50 border border-purple-400/30 text-purple-200"
+                              aria-label="Previous templates"
+                            >
+                              <FontAwesomeIcon icon={faChevronLeft} className="text-xs" />
+                            </button>
+                          </div>
+                          <div className="sm:hidden absolute inset-y-0 right-0 flex items-center">
+                            <button
+                              type="button"
+                              onClick={() => scrollPresets('right')}
+                              className="mr-[-6px] p-2 rounded-full bg-black/30 hover:bg-black/50 border border-purple-400/30 text-purple-200"
+                              aria-label="Next templates"
+                            >
+                              <FontAwesomeIcon icon={faChevronRight} className="text-xs" />
+                            </button>
+                          </div>
+
+                          <div
+                            ref={presetsScrollRef}
+                            className="flex gap-2 overflow-x-auto pr-1"
+                            style={{ scrollBehavior: 'smooth' }}
+                          >
+                            {guruPresets.map((p, idx) => (
+                              <button
+                                key={idx}
+                                type="button"
+                                onClick={() => setFormData({ name: p.name, subject: p.subject, description: p.description })}
+                                className="min-w-[260px] sm:min-w-[280px] group relative p-3 rounded-lg border border-purple-400/30 bg-white/5 hover:bg-white/10 hover:border-purple-400/60 transition-all text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/50"
+                                title={`${p.name} — ${p.subject}`}
+                                aria-label={`Use ${p.name} template`}
+                              >
+                                <div className="flex items-start gap-3">
+                                  <div className="text-lg leading-none">{p.emoji}</div>
+                                  <div className="min-w-0">
+                                    <div className="text-white text-sm font-medium truncate">{p.name}</div>
+                                    <div className="text-purple-200 text-xs truncate">{p.subject}</div>
+                                    {p.tagline && (
+                                      <div className="text-gray-400 text-xs mt-1 line-clamp-2">{p.tagline}</div>
+                                    )}
+                                  </div>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <form onSubmit={handleCreateGuru} className="space-y-4">
@@ -618,12 +856,15 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                         <label className="block text-purple-200 text-sm font-medium mb-2">
                           Guru Name *
                         </label>
+                        {showOnboarding && gurus.length === 0 && (
+                          <p className="text-xs text-purple-300 mb-2">Step 2: Give your guru a clear, memorable name.</p>
+                        )}
                         <input
                           type="text"
                           placeholder="Enter guru name..."
                           value={formData.name}
                           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                          className="w-full px-4 py-3 bg-white/10 border border-purple-400/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all"
+                          className={`w-full px-4 py-3 bg-white/10 border border-purple-400/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all ${showOnboarding && gurus.length === 0 ? 'ring-2 ring-purple-400/60' : ''}`}
                           required
                         />
                       </div>
@@ -632,12 +873,15 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                         <label className="block text-purple-200 text-sm font-medium mb-2">
                           Subject/Expertise *
                         </label>
+                        {showOnboarding && gurus.length === 0 && (
+                          <p className="text-xs text-purple-300 mb-2">Step 3: Specify the subject or expertise (e.g., Math, Physics, Programming).</p>
+                        )}
                         <input
                           type="text"
                           placeholder="e.g., Math, Physics, Programming..."
                           value={formData.subject}
                           onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                          className="w-full px-4 py-3 bg-white/10 border border-purple-400/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all"
+                          className={`w-full px-4 py-3 bg-white/10 border border-purple-400/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all ${showOnboarding && gurus.length === 0 ? 'ring-2 ring-purple-400/60' : ''}`}
                           required
                         />
                       </div>
@@ -646,15 +890,22 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                         <label className="block text-purple-200 text-sm font-medium mb-2">
                           Description
                         </label>
+                        {showOnboarding && gurus.length === 0 && (
+                          <p className="text-xs text-purple-300 mb-2">Step 4: Describe your guru's style and what it should help with.</p>
+                        )}
                         <textarea
                           placeholder="Describe your guru's personality..."
                           value={formData.description}
                           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                          className="w-full px-4 py-3 bg-white/10 border border-purple-400/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all resize-none"
+                          className={`w-full px-4 py-3 bg-white/10 border border-purple-400/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all resize-none ${showOnboarding && gurus.length === 0 ? 'ring-2 ring-purple-400/60' : ''}`}
                           rows={4}
+                          required
                         />
                       </div>
 
+                      {showOnboarding && gurus.length === 0 && (
+                        <div className="text-purple-200 text-sm mt-2">Step 5: Click "Create Guru" to finish.</div>
+                      )}
                       <div className="flex gap-3 pt-2">
                         <button
                           type="button"
@@ -666,7 +917,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                         <BubblyButton
                           type="submit"
                           variant="primary"
-                          className="flex-1 py-3 px-4 font-medium"
+                          className={`flex-1 py-3 px-4 font-medium ${showOnboarding && gurus.length === 0 ? 'ring-2 ring-purple-400 shadow-purple-500/30 shadow-lg' : ''}`}
                         >
                           Create Guru
                         </BubblyButton>
