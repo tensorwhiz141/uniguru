@@ -338,12 +338,12 @@ const Navbar: React.FC<NavbarProps> = ({
               </div>
                             {/* Helper UI toggle */}
               <div className="flex items-center gap-2 text-xs text-gray-300">
-                <span>Helper</span>
+                <span>{t('helper')}</span>
                 <button
                   onClick={() => setHelper(!helperEnabled)}
                   aria-pressed={helperEnabled}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none border ${helperEnabled ? 'bg-purple-600 border-purple-500' : 'bg-gray-700 border-gray-600'}`}
-                  title={helperEnabled ? 'Disable helper UI' : 'Enable helper UI'}
+                  title={helperEnabled ? t('disableHelperUI') : t('enableHelperUI')}
                 >
                   <span
                     className={`inline-block h-4 w-4 transform bg-white rounded-full transition-transform duration-200 ${helperEnabled ? 'translate-x-6' : 'translate-x-1'}`}
@@ -356,7 +356,7 @@ const Navbar: React.FC<NavbarProps> = ({
                 className="flex items-center space-x-2 px-4 py-2 text-white hover:text-yellow-400 transition-colors font-medium"
               >
                 <FontAwesomeIcon icon={faInfoCircle} className="text-sm" />
-                <span>About</span>
+                <span>{t('about')}</span>
               </button>
               {/* Homepage Auth Buttons */}
               {isHomePage && !isLoggedIn && !isChatStarted && (
@@ -366,14 +366,14 @@ const Navbar: React.FC<NavbarProps> = ({
                     variant="primary"
                     className="px-6 py-2.5 font-medium text-sm flex items-center justify-center"
                   >
-                    Login
+                    {t('login')}
                   </BubblyButton>
                   <BubblyButton
                     onClick={() => navigate("/signup")}
                     variant="secondary"
                     className="px-6 py-2.5 font-medium text-sm flex items-center justify-center"
                   >
-                    Sign Up
+                    {t('signup')}
                   </BubblyButton>
                 </div>
               )}
@@ -402,7 +402,7 @@ const Navbar: React.FC<NavbarProps> = ({
                             className="w-full px-4 py-2 text-left text-red-400 hover:bg-gray-800 transition-colors flex items-center space-x-2"
                           >
                             <FontAwesomeIcon icon={faSignOutAlt} className="text-sm" />
-                            <span>Logout</span>
+                            <span>{t('logout')}</span>
                           </button>
                         </div>
                       )}
@@ -414,7 +414,7 @@ const Navbar: React.FC<NavbarProps> = ({
                       className="flex items-center justify-center space-x-2 px-5 py-2.5 font-medium text-sm"
                     >
                       <FontAwesomeIcon icon={faSignInAlt} className="text-sm" />
-                      <span>Login</span>
+                      <span>{t('login')}</span>
                     </BubblyButton>
                   )}
                 </>
@@ -454,6 +454,31 @@ const Navbar: React.FC<NavbarProps> = ({
           <div ref={mobileMenuRef} className="md:hidden animate-mobile-slide-down mobile-menu-safe-area">
             <div className="px-6 py-3 space-y-3 mobile-scroll max-h-[calc(100vh-5rem)] overflow-y-auto">
 
+              {/* Language Selector - Mobile */}
+              <div className="w-full px-5 py-3 rounded-xl bg-black/20 border border-gray-700 flex items-center justify-between">
+                <div className="text-sm text-gray-300">{t('language')}</div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => { i18n.changeLanguage('en'); try { localStorage.setItem('i18nextLng','en'); } catch {} }}
+                    className="px-3 py-1.5 text-sm rounded-lg border border-gray-600 text-gray-200 hover:bg-gray-800"
+                  >
+                    English
+                  </button>
+                  <button
+                    onClick={() => { i18n.changeLanguage('hi'); try { localStorage.setItem('i18nextLng','hi'); } catch {} }}
+                    className="px-3 py-1.5 text-sm rounded-lg border border-gray-600 text-gray-200 hover:bg-gray-800"
+                  >
+                    हिंदी
+                  </button>
+                  <button
+                    onClick={() => { i18n.changeLanguage('mr'); try { localStorage.setItem('i18nextLng','mr'); } catch {} }}
+                    className="px-3 py-1.5 text-sm rounded-lg border border-gray-600 text-gray-200 hover:bg-gray-800"
+                  >
+                    मराठी
+                  </button>
+                </div>
+              </div>
+
 
 
               {/* Chat Page Mobile - Include sidebar content */}
@@ -470,7 +495,7 @@ const Navbar: React.FC<NavbarProps> = ({
                       }`}
                     >
                       <img src={guruLogo} alt="Guru" className="w-4 h-4 mr-2" />
-                      Gurus
+                      {t('gurus')}
                     </button>
                     <button
                       onClick={() => setActiveSection('chats')}
@@ -481,7 +506,7 @@ const Navbar: React.FC<NavbarProps> = ({
                       }`}
                     >
                       <FontAwesomeIcon icon={faBars} className="mr-2 text-sm" />
-                      Chats
+                      {t('chats')}
                     </button>
                   </div>
 
@@ -523,7 +548,7 @@ const Navbar: React.FC<NavbarProps> = ({
                             variant="primary"
                             className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 font-medium text-sm ${showOnboardingMobile && gurus.length === 0 ? 'ring-2 ring-purple-400 shadow-purple-500/30 shadow-lg' : ''}`}
                           >
-                            <span>Create Guru</span>
+                            <span>{t('createGuru')}</span>
                           </BubblyButton>
                         </div>
                       )}
@@ -753,7 +778,7 @@ const Navbar: React.FC<NavbarProps> = ({
                           className="w-full flex items-center justify-center gap-2 py-2 px-3 font-medium text-sm"
                         >
 
-                          <span>{isCreatingChat ? 'Creating...' : 'New Chat'}</span>
+                          <span>{isCreatingChat ? t('creating') : t('newChat')}</span>
                         </BubblyButton>
                       )}
 
@@ -836,7 +861,7 @@ const Navbar: React.FC<NavbarProps> = ({
                           ))
                         ) : (
                           <div className="text-center py-6 text-gray-400">
-                            <p className="text-sm">Select a guru first</p>
+                            <p className="text-sm">{t('selectGuruFirst')}</p>
                           </div>
                         )}
                       </div>
@@ -849,7 +874,7 @@ const Navbar: React.FC<NavbarProps> = ({
               <div className="border-t border-gradient-to-r from-purple-500/30 to-blue-500/30 pt-6 mt-6">
                 {/* Navigation Header */}
                 <div className="mb-4">
-                  <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-3">Navigation</h3>
+                  <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-3">{t('navigation')}</h3>
                 </div>
 
                 {/* Helper UI toggle - Mobile */}
@@ -885,14 +910,14 @@ const Navbar: React.FC<NavbarProps> = ({
                     <FontAwesomeIcon icon={faInfoCircle} className="text-white text-sm" />
                   </div>
                   <div>
-                    <span className="font-medium">About</span>
-                    <p className="text-xs text-gray-400 mt-0.5">Learn more about UniGuru</p>
+                    <span className="font-medium">{t('about')}</span>
+                    <p className="text-xs text-gray-400 mt-0.5">{t('learnMoreAbout')}</p>
                   </div>
                 </button>
 
                 {/* Authentication Section Header */}
                 <div className="mb-4 mt-6">
-                  <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-3">Account</h3>
+                  <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-3">{t('account')}</h3>
                 </div>
 
                 {/* Mobile Authentication Section - Always visible */}
@@ -908,8 +933,8 @@ const Navbar: React.FC<NavbarProps> = ({
                       <FontAwesomeIcon icon={faSignOutAlt} className="text-white text-sm" />
                     </div>
                     <div>
-                      <span className="font-medium">Logout</span>
-                      <p className="text-xs text-red-300 mt-0.5">Sign out of your account</p>
+                      <span className="font-medium">{t('logout')}</span>
+                      <p className="text-xs text-red-300 mt-0.5">{t('signOutOfYourAccount')}</p>
                     </div>
                   </button>
                 ) : (
@@ -925,8 +950,8 @@ const Navbar: React.FC<NavbarProps> = ({
                         <FontAwesomeIcon icon={faSignInAlt} className="text-white text-sm" />
                       </div>
                       <div>
-                        <span className="font-semibold">Login</span>
-                        <p className="text-xs text-purple-100 mt-0.5">Access your account</p>
+                        <span className="font-semibold">{t('login')}</span>
+                        <p className="text-xs text-purple-100 mt-0.5">{t('accessYourAccount')}</p>
                       </div>
                     </button>
                     <button
@@ -940,8 +965,8 @@ const Navbar: React.FC<NavbarProps> = ({
                         <FontAwesomeIcon icon={faUserPlus} className="text-white text-sm" />
                       </div>
                       <div>
-                        <span className="font-semibold">Sign Up</span>
-                        <p className="text-xs text-yellow-100 mt-0.5">Create new account</p>
+                        <span className="font-semibold">{t('signup')}</span>
+                        <p className="text-xs text-yellow-100 mt-0.5">{t('createNewAccount')}</p>
                       </div>
                     </button>
                   </div>

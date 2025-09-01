@@ -23,6 +23,7 @@ import BubblyButton from "./BubblyButton";
 import ConfirmationModal from "./ConfirmationModal";
 import RenameModal from "./RenameModal";
 import "../styles/discord-tooltips.css";
+import { useTranslation } from 'react-i18next';
 
 interface LeftSidebarProps {
   onCreateNewChat: () => void;
@@ -44,6 +45,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
   const { user } = useAuth();
   const { gurus, addGuru, removeGuru, selectedGuru, refreshGurus, selectGuru } = useGuru();
   const { selectChat, currentChatId, deleteChat, renameChat, chatSessions, getChatsByGuru } = useChat();
+  const { t } = useTranslation();
 
   const [isCollapsed, setIsCollapsed] = useState(() => {
     // Always default to collapsed (closed) on refresh
@@ -568,7 +570,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
               <div className="absolute inset-0 bg-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
 
               <img src={guruLogo} alt="Guru" className="w-4 h-4 mr-2 relative z-10 transition-transform duration-200 group-hover:scale-110" />
-              <span className="relative z-10">Gurus</span>
+              <span className="relative z-10">{t('gurus')}</span>
             </button>
 
             <button
@@ -586,7 +588,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
               <div className="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
 
               <FontAwesomeIcon icon={faComments} className="mr-2 relative z-10 transition-transform duration-200 group-hover:scale-110" />
-              <span className="relative z-10">Chats</span>
+              <span className="relative z-10">{t('chats')}</span>
             </button>
 
             <button
@@ -679,7 +681,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                 onClick={onCreateNewChat}
                 disabled={isCreatingChat || !selectedGuru}
                 className="relative w-12 h-12 rounded-3xl bg-green-600 hover:bg-green-500 text-white transition-all duration-200 ease-out group-hover:rounded-2xl flex items-center justify-center overflow-hidden disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-green-600 disabled:hover:rounded-3xl shadow-lg hover:shadow-green-500/30"
-                title={!selectedGuru ? "Select a guru first" : isCreatingChat ? "Creating chat..." : "Start New Chat"}
+                title={!selectedGuru ? t('selectGuruFirst') : isCreatingChat ? t('creating') : t('startNewChat')}
               >
                 {/* Discord-style background glow */}
                 <div className="absolute inset-0 bg-green-400/30 opacity-0 group-hover:opacity-100 group-disabled:opacity-0 transition-opacity duration-200 rounded-3xl group-hover:rounded-2xl"></div>
@@ -1036,7 +1038,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                       icon={faPlus}
                       className={`text-sm mr-3 transition-all duration-200 relative z-10 group-hover:rotate-90 group-disabled:rotate-0 ${isCreatingChat ? 'animate-spin' : ''}`}
                     />
-                    <span className="relative z-10">{isCreatingChat ? "Creating..." : "Start New Chat"}</span>
+                    <span className="relative z-10">{isCreatingChat ? t('creating') : t('startNewChat')}</span>
                   </BubblyButton>
                 </div>
 
@@ -1047,7 +1049,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCreateNewChat, isCreatingCh
                     className="flex items-center justify-between w-full text-left mb-3 text-purple-300 hover:text-white transition-all duration-200 ease-out py-2 px-2 rounded-lg hover:bg-blue-500/10 group"
                   >
                     <span className="text-base font-semibold transition-colors duration-200">
-                      {selectedGuru ? `${selectedGuru.name} Chats` : 'Recent Conversations'} ({selectedGuru ? getChatsByGuru(selectedGuru.id).length : chatSessions.length})
+                      {selectedGuru ? `${selectedGuru.name} ${t('chats')}` : 'Recent Conversations'} ({selectedGuru ? getChatsByGuru(selectedGuru.id).length : chatSessions.length})
                     </span>
                     <FontAwesomeIcon
                       icon={isChatListExpanded ? faChevronUp : faChevronDown}

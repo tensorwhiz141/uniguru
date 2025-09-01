@@ -1,6 +1,7 @@
 // "use client";
 
 import React, { useRef, useState } from "react";
+import i18n from "../i18n";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -22,6 +23,9 @@ const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
   const welcomeContainerRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const { isLoggedIn, isAuthLoading } = useAuth();
+
+  // Simple language helper to hardcode localized strings without expanding i18n resources
+  const L = (en: string, hi: string, mr: string) => (i18n.language === 'hi' ? hi : i18n.language === 'mr' ? mr : en);
 
   const buttonClasses = [
     "group relative px-8 py-4 bg-transparent border-2 border-purple-400 text-purple-400",
@@ -61,12 +65,18 @@ const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
             >
               UniGuru
             </h1>
-            <p className="text-base text-gray-200 font-light mb-3">AI Learning Platform</p>
+            <p className="text-base text-gray-200 font-light mb-3">{L('AI Learning Platform', 'एआई लर्निंग प्लेटफॉर्म', 'एआय शिक्षण प्लॅटफॉर्म')}</p>
 
             {/* Context Box */}
             <div className="bg-white/5 backdrop-blur-xl rounded-xl p-3 border border-purple-400/20 mb-4">
               <p className="text-sm text-gray-100 leading-relaxed">
-                Welcome to UniGuru! <span className="text-purple-400 font-semibold">Create your own AI mentors</span> and start learning with experts in any field
+                {L(
+                  'Welcome to UniGuru! ',
+                  'UniGuru में आपका स्वागत है! ',
+                  'UniGuru मध्ये आपले स्वागत आहे! '
+                )}
+                <span className="text-purple-400 font-semibold">{L('Create your own AI mentors', 'अपने AI मेंटर्स बनाएं', 'आपले AI गुरु तयार करा')}</span>
+                {L(' and start learning with experts in any field', ' और किसी भी विषय के विशेषज्ञों के साथ सीखना शुरू करें', ' आणि कोणत्याही क्षेत्रातील तज्ञांसोबत शिकायला सुरुवात करा')}
               </p>
             </div>
           </div>
@@ -77,24 +87,24 @@ const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
               <div className="flex items-center space-x-3 p-3 bg-white/5 rounded-xl border border-purple-400/20">
                 <img src={guruLogo} alt="Create" className="w-8 h-8 flex-shrink-0" />
                 <div>
-                  <h3 className="text-base font-bold text-white">Create Your Guru</h3>
-                  <p className="text-xs text-gray-300">Math professor, scientist, code mentor - any expert</p>
+                  <h3 className="text-base font-bold text-white">{L('Create Your Guru', 'अपना गुरु बनाएं', 'आपला गुरू तयार करा')}</h3>
+                  <p className="text-xs text-gray-300">{L('Math professor, scientist, code mentor - any expert', 'गणित प्रोफेसर, वैज्ञानिक, कोड मेंटर - कोई भी विशेषज्ञ', 'गणित प्राध्यापक, वैज्ञानिक, कोड मार्गदर्शक - कोणताही तज्ज्ञ')}</p>
                 </div>
               </div>
 
               <div className="flex items-center space-x-3 p-3 bg-white/5 rounded-xl border border-blue-400/20">
                 <FontAwesomeIcon icon={faBrain} className="text-blue-400 text-xl w-8 flex-shrink-0" />
                 <div>
-                  <h3 className="text-base font-bold text-white">AI Roleplay</h3>
-                  <p className="text-xs text-gray-300">Your mentor thinks and responds like a real expert</p>
+                  <h3 className="text-base font-bold text-white">{L('AI Roleplay', 'एआई रोलप्ले', 'एआय भूमिका')}</h3>
+                  <p className="text-xs text-gray-300">{L('Your mentor thinks and responds like a real expert', 'आपका मेंटर एक वास्तविक विशेषज्ञ की तरह सोचता और जवाब देता है', 'तुमचा गुरु खऱ्या तज्ञासारखा विचार करतो आणि प्रतिसाद देतो')}</p>
                 </div>
               </div>
 
               <div className="flex items-center space-x-3 p-3 bg-white/5 rounded-xl border border-green-400/20">
                 <FontAwesomeIcon icon={faRocket} className="text-green-400 text-xl w-8 flex-shrink-0" />
                 <div>
-                  <h3 className="text-base font-bold text-white">Learn Faster</h3>
-                  <p className="text-xs text-gray-300">Get personalized insights and authentic knowledge</p>
+                  <h3 className="text-base font-bold text-white">{L('Learn Faster', 'तेजी से सीखें', 'लवकर शिका')}</h3>
+                  <p className="text-xs text-gray-300">{L('Get personalized insights and authentic knowledge', 'व्यक्तिगत अंतर्दृष्टि और प्रामाणिक ज्ञान प्राप्त करें', 'वैयक्तिक अंतर्दृष्टी आणि अस्सल ज्ञान मिळवा')}</p>
                 </div>
               </div>
             </div>
@@ -133,7 +143,7 @@ const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
 
           {/* Bottom Examples */}
           <div className="text-center flex-shrink-0 pb-4">
-            <p className="text-xs text-gray-400 mb-2">Popular: Math • Science • Coding • Languages</p>
+            <p className="text-xs text-gray-400 mb-2">{L('Popular: Math • Science • Coding • Languages', 'लोकप्रिय: गणित • विज्ञान • कोडिंग • भाषाएँ', 'लोकप्रिय: गणित • विज्ञान • कोडिंग • भाषा')}</p>
           </div>
         </div>
       </main>
@@ -171,15 +181,15 @@ const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
 
           {/* Subtitle */}
           <p className="text-base sm:text-lg lg:text-xl text-gray-200 mb-4 font-light max-w-3xl mx-auto leading-relaxed">
-            Create AI Mentors Who Roleplay as Real Experts
+            {L('Create AI Mentors Who Roleplay as Real Experts', 'ऐसे एआई मेंटर्स बनाएं जो वास्तविक विशेषज्ञों जैसा रोलप्ले करें', 'खरे तज्ञांसारखी भूमिका निभावणारे एआय गुरु तयार करा')}
           </p>
 
           {/* Main Description */}
           <div className="max-w-3xl mx-auto mb-6">
             <p className="text-sm sm:text-base lg:text-lg text-gray-100 leading-relaxed mb-4 font-light">
-              Welcome to UniGuru! Start your learning journey by creating your own <span className="text-purple-400 font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">AI Gurus</span>.
-              Whether you need a mathematician, scientist, or philosopher, your AI mentors will guide you with personalized, expert-level knowledge.
-              Let's begin your adventure in learning!
+              {L('Welcome to UniGuru! Start your learning journey by creating your own ', 'UniGuru में आपका स्वागत है! अपनी सीखने की यात्रा की शुरुआत अपने ', 'UniGuru मध्ये आपले स्वागत आहे! आपली शिकण्याची यात्रा सुरू करा आपल्या ')}
+              <span className="text-purple-400 font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">{L('AI Gurus', 'एआई गुरुओं', 'एआय गुरूं')}</span>
+              {L('. Whether you need a mathematician, scientist, or philosopher, your AI mentors will guide you with personalized, expert-level knowledge. Let\'s begin your adventure in learning!', ' बनाकर। चाहे आपको गणितज्ञ, वैज्ञानिक या दार्शनिक की आवश्यकता हो, आपके एआई मेंटर्स व्यक्तिगत और विशेषज्ञ-स्तरीय ज्ञान के साथ आपका मार्गदर्शन करेंगे। आइए सीखने की आपकी यात्रा शुरू करें!', ' तयार करून. तुम्हाला गणितज्ञ, वैज्ञानिक किंवा तत्त्वज्ञ हवा असो, तुमचे एआय गुरु वैयक्तिक, तज्ञ-स्तरीय ज्ञानासह तुम्हाला मार्गदर्शन करतील. चला शिकण्याचा तुमचा प्रवास सुरू करूया!')}
             </p>
           </div>
 
@@ -189,9 +199,9 @@ const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
               <div className="flex justify-center mb-2">
                 <img src={guruLogo} alt="Guru" className="w-5 h-5 group-hover:scale-110 transition-all duration-300 drop-shadow-sm" />
               </div>
-              <h3 className="text-sm font-bold text-white mb-1">Create</h3>
+              <h3 className="text-sm font-bold text-white mb-1">{L('Create', 'बनाएं', 'तयार करा')}</h3>
               <p className="text-xs text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                Define any expert mentor
+                {L('Define any expert mentor', 'किसी भी विशेषज्ञ मेंटर को परिभाषित करें', 'कोणताही तज्ज्ञ गुरु परिभाषित करा')}
               </p>
             </div>
 
@@ -199,9 +209,9 @@ const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
               <div className="flex justify-center mb-2">
                 <FontAwesomeIcon icon={faBrain} className="text-blue-400 text-xl group-hover:scale-110 group-hover:text-blue-300 transition-all duration-300" />
               </div>
-              <h3 className="text-sm font-bold text-white mb-1">Roleplay</h3>
+              <h3 className="text-sm font-bold text-white mb-1">{L('Roleplay', 'रोलप्ले', 'भूमिका')}</h3>
               <p className="text-xs text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                AI embodies their expertise
+                {L('AI embodies their expertise', 'एआई उनकी विशेषज्ञता को आत्मसात करता है', 'एआय त्यांच्या तज्ज्ञतेला मूर्त रूप देतो')}
               </p>
             </div>
 
@@ -209,16 +219,16 @@ const HomePage: React.FC<HomePageProps> = ({ onChatStarted }) => {
               <div className="flex justify-center mb-2">
                 <FontAwesomeIcon icon={faRocket} className="text-green-400 text-xl group-hover:scale-110 group-hover:text-green-300 transition-all duration-300" />
               </div>
-              <h3 className="text-sm font-bold text-white mb-1">Learn</h3>
+              <h3 className="text-sm font-bold text-white mb-1">{L('Learn', 'सीखें', 'शिका')}</h3>
               <p className="text-xs text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                Get authentic insights
+                {L('Get authentic insights', 'प्रामाणिक अंतर्दृष्टि प्राप्त करें', 'अस्सल अंतर्दृष्टी मिळवा')}
               </p>
             </div>
           </div>
 
           {/* Popular Guru Types - Compact */}
           <div className="mb-6">
-            <h3 className="text-sm font-semibold text-gray-300 mb-3 text-center">Popular Mentor Types</h3>
+            <h3 className="text-sm font-semibold text-gray-300 mb-3 text-center">{L('Popular Mentor Types', 'लोकप्रिय मेंटर प्रकार', 'लोकप्रिय मेंटर प्रकार')}</h3>
             <div className="flex flex-wrap justify-center gap-2 max-w-3xl mx-auto">
               {[
                 "Math Professor", "Scientist", "Philosopher",
