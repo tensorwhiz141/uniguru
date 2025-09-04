@@ -17,6 +17,7 @@ import guruRoutes from './routes/guruRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import featureRoutes from './routes/featureRoutes.js';
+import composerRoutes from './routes/composerRoutes.js';
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler.js';
@@ -136,6 +137,7 @@ app.use('/api/v1/guru', guruRoutes);
 app.use('/api/v1/chat', chatRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/feature', featureRoutes);
+app.use('/api/v1/composer', composerRoutes);
 
 // API routes without version (for frontend compatibility)
 app.use('/api/user', userRoutes);
@@ -143,6 +145,7 @@ app.use('/api/guru', guruRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/feature', featureRoutes);
+app.use('/api/composer', composerRoutes);
 
 // Legacy route support (for frontend compatibility)
 app.use('/user', userRoutes);
@@ -150,6 +153,7 @@ app.use('/guru', guruRoutes);
 app.use('/chat', chatRoutes);
 app.use('/auth', authRoutes);
 app.use('/feature', featureRoutes);
+app.use('/composer', composerRoutes);
 
 // Error handling middleware
 app.use(notFound);

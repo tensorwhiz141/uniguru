@@ -1,0 +1,398 @@
+{
+  "total_tests": 10,
+  "passed_tests": 10,
+  "failed_tests": 0,
+  "grounding_success_rate": 1.0,
+  "test_details": [
+    {
+      "test_name": "EN: Meditation and Peace",
+      "test_id": 1,
+      "trace_id": "smoke_test_en_001",
+      "lang": "EN",
+      "passed": true,
+      "grounded": true,
+      "grounding_score": 0.7583333333333333,
+      "composition_time_ms": 3.28,
+      "template_id": "explain_en",
+      "rl_action": "explain",
+      "final_text_length": 669,
+      "citations_count": 2,
+      "validation_details": {
+        "passed": true,
+        "checks": {
+          "final_text_present": true,
+          "citations_present": true,
+          "grounding_status": true,
+          "trace_id_preserved": true,
+          "template_id_present": true,
+          "reasonable_time": true,
+          "rl_action_present": true
+        },
+        "issues": []
+      },
+      "feedback_test": {
+        "feedback_collection_success": true,
+        "feedback_data": {
+          "rating": 4,
+          "type": "quality",
+          "comments": "Good composition quality for smoke test"
+        }
+      },
+      "test_time_ms": 5.39
+    },
+    {
+      "test_name": "EN: Dharma and Righteous Living",
+      "test_id": 2,
+      "trace_id": "smoke_test_en_002",
+      "lang": "EN",
+      "passed": true,
+      "grounded": true,
+      "grounding_score": 0.7555555555555555,
+      "composition_time_ms": 3.67,
+      "template_id": "extractive_en",
+      "rl_action": "explain",
+      "final_text_length": 416,
+      "citations_count": 2,
+      "validation_details": {
+        "passed": true,
+        "checks": {
+          "final_text_present": true,
+          "citations_present": true,
+          "grounding_status": true,
+          "trace_id_preserved": true,
+          "template_id_present": true,
+          "reasonable_time": true,
+          "rl_action_present": true
+        },
+        "issues": []
+      },
+      "feedback_test": {
+        "feedback_collection_success": true,
+        "feedback_data": {
+          "rating": 4,
+          "type": "quality",
+          "comments": "Good composition quality for smoke test"
+        }
+      },
+      "test_time_ms": 7.38
+    },
+    {
+      "test_name": "EN: Yoga and Union",
+      "test_id": 3,
+      "trace_id": "smoke_test_en_003",
+      "lang": "EN",
+      "passed": true,
+      "grounded": true,
+      "grounding_score": 0.7416666666666666,
+      "composition_time_ms": 3.7,
+      "template_id": "extractive_en",
+      "rl_action": "explain",
+      "final_text_length": 432,
+      "citations_count": 2,
+      "validation_details": {
+        "passed": true,
+        "checks": {
+          "final_text_present": true,
+          "citations_present": true,
+          "grounding_status": true,
+          "trace_id_preserved": true,
+          "template_id_present": true,
+          "reasonable_time": true,
+          "rl_action_present": true
+        },
+        "issues": []
+      },
+      "feedback_test": {
+        "feedback_collection_success": true,
+        "feedback_data": {
+          "rating": 4,
+          "type": "quality",
+          "comments": "Good composition quality for smoke test"
+        }
+      },
+      "test_time_ms": 4.74
+    },
+    {
+      "test_name": "EN: Knowledge and Devotion",
+      "test_id": 4,
+      "trace_id": "smoke_test_en_004",
+      "lang": "EN",
+      "passed": true,
+      "grounded": true,
+      "grounding_score": 0.75,
+      "composition_time_ms": 2.43,
+      "template_id": "extractive_en",
+      "rl_action": "example",
+      "final_text_length": 381,
+      "citations_count": 2,
+      "validation_details": {
+        "passed": true,
+        "checks": {
+          "final_text_present": true,
+          "citations_present": true,
+          "grounding_status": true,
+          "trace_id_preserved": true,
+          "template_id_present": true,
+          "reasonable_time": true,
+          "rl_action_present": true
+        },
+        "issues": []
+      },
+      "feedback_test": {
+        "feedback_collection_success": true,
+        "feedback_data": {
+          "rating": 4,
+          "type": "quality",
+          "comments": "Good composition quality for smoke test"
+        }
+      },
+      "test_time_ms": 3.5
+    },
+    {
+      "test_name": "EN: Service and Selflessness",
+      "test_id": 5,
+      "trace_id": "smoke_test_en_005",
+      "lang": "EN",
+      "passed": true,
+      "grounded": true,
+      "grounding_score": 0.74,
+      "composition_time_ms": 2.73,
+      "template_id": "extractive_en",
+      "rl_action": "explain",
+      "final_text_length": 414,
+      "citations_count": 2,
+      "validation_details": {
+        "passed": true,
+        "checks": {
+          "final_text_present": true,
+          "citations_present": true,
+          "grounding_status": true,
+          "trace_id_preserved": true,
+          "template_id_present": true,
+          "reasonable_time": true,
+          "rl_action_present": true
+        },
+        "issues": []
+      },
+      "feedback_test": {
+        "feedback_collection_success": true,
+        "feedback_data": {
+          "rating": 4,
+          "type": "quality",
+          "comments": "Good composition quality for smoke test"
+        }
+      },
+      "test_time_ms": 3.63
+    },
+    {
+      "test_name": "HI: ध्यान और शांति",
+      "test_id": 6,
+      "trace_id": "smoke_test_hi_001",
+      "lang": "HI",
+      "passed": true,
+      "grounded": true,
+      "grounding_score": 0.8999999999999999,
+      "composition_time_ms": 3.5,
+      "template_id": "extractive_hi",
+      "rl_action": "explain",
+      "final_text_length": 353,
+      "citations_count": 2,
+      "validation_details": {
+        "passed": true,
+        "checks": {
+          "final_text_present": true,
+          "citations_present": true,
+          "grounding_status": true,
+          "trace_id_preserved": true,
+          "template_id_present": true,
+          "reasonable_time": true,
+          "rl_action_present": true
+        },
+        "issues": []
+      },
+      "feedback_test": {
+        "feedback_collection_success": true,
+        "feedback_data": {
+          "rating": 4,
+          "type": "quality",
+          "comments": "Good composition quality for smoke test"
+        }
+      },
+      "test_time_ms": 4.52
+    },
+    {
+      "test_name": "HI: धर्म और नैतिक आचरण",
+      "test_id": 7,
+      "trace_id": "smoke_test_hi_002",
+      "lang": "HI",
+      "passed": true,
+      "grounded": true,
+      "grounding_score": 0.85,
+      "composition_time_ms": 2.43,
+      "template_id": "extractive_hi",
+      "rl_action": "explain",
+      "final_text_length": 284,
+      "citations_count": 2,
+      "validation_details": {
+        "passed": true,
+        "checks": {
+          "final_text_present": true,
+          "citations_present": true,
+          "grounding_status": true,
+          "trace_id_preserved": true,
+          "template_id_present": true,
+          "reasonable_time": true,
+          "rl_action_present": true
+        },
+        "issues": []
+      },
+      "feedback_test": {
+        "feedback_collection_success": true,
+        "feedback_data": {
+          "rating": 4,
+          "type": "quality",
+          "comments": "Good composition quality for smoke test"
+        }
+      },
+      "test_time_ms": 3.62
+    },
+    {
+      "test_name": "HI: योग और एकता",
+      "test_id": 8,
+      "trace_id": "smoke_test_hi_003",
+      "lang": "HI",
+      "passed": true,
+      "grounded": true,
+      "grounding_score": 0.85,
+      "composition_time_ms": 2.52,
+      "template_id": "extractive_hi",
+      "rl_action": "explain",
+      "final_text_length": 342,
+      "citations_count": 2,
+      "validation_details": {
+        "passed": true,
+        "checks": {
+          "final_text_present": true,
+          "citations_present": true,
+          "grounding_status": true,
+          "trace_id_preserved": true,
+          "template_id_present": true,
+          "reasonable_time": true,
+          "rl_action_present": true
+        },
+        "issues": []
+      },
+      "feedback_test": {
+        "feedback_collection_success": true,
+        "feedback_data": {
+          "rating": 4,
+          "type": "quality",
+          "comments": "Good composition quality for smoke test"
+        }
+      },
+      "test_time_ms": 4.13
+    },
+    {
+      "test_name": "HI: ज्ञान और भक्ति",
+      "test_id": 9,
+      "trace_id": "smoke_test_hi_004",
+      "lang": "HI",
+      "passed": true,
+      "grounded": true,
+      "grounding_score": 0.82,
+      "composition_time_ms": 2.62,
+      "template_id": "extractive_hi",
+      "rl_action": "explain",
+      "final_text_length": 304,
+      "citations_count": 2,
+      "validation_details": {
+        "passed": true,
+        "checks": {
+          "final_text_present": true,
+          "citations_present": true,
+          "grounding_status": true,
+          "trace_id_preserved": true,
+          "template_id_present": true,
+          "reasonable_time": true,
+          "rl_action_present": true
+        },
+        "issues": []
+      },
+      "feedback_test": {
+        "feedback_collection_success": true,
+        "feedback_data": {
+          "rating": 4,
+          "type": "quality",
+          "comments": "Good composition quality for smoke test"
+        }
+      },
+      "test_time_ms": 3.48
+    },
+    {
+      "test_name": "HI: सेवा और निःस्वार्थता",
+      "test_id": 10,
+      "trace_id": "smoke_test_hi_005",
+      "lang": "HI",
+      "passed": true,
+      "grounded": true,
+      "grounding_score": 0.7333333333333333,
+      "composition_time_ms": 2.65,
+      "template_id": "extractive_hi",
+      "rl_action": "explain",
+      "final_text_length": 368,
+      "citations_count": 2,
+      "validation_details": {
+        "passed": true,
+        "checks": {
+          "final_text_present": true,
+          "citations_present": true,
+          "grounding_status": true,
+          "trace_id_preserved": true,
+          "template_id_present": true,
+          "reasonable_time": true,
+          "rl_action_present": true
+        },
+        "issues": []
+      },
+      "feedback_test": {
+        "feedback_collection_success": true,
+        "feedback_data": {
+          "rating": 4,
+          "type": "quality",
+          "comments": "Good composition quality for smoke test"
+        }
+      },
+      "test_time_ms": 4.48
+    }
+  ],
+  "summary": {
+    "overall_success_rate": 1.0,
+    "grounding_success_rate": 1.0,
+    "language_breakdown": {
+      "english": {
+        "total": 5,
+        "passed": 5,
+        "success_rate": 1.0
+      },
+      "hindi": {
+        "total": 5,
+        "passed": 5,
+        "success_rate": 1.0
+      }
+    },
+    "performance_metrics": {
+      "avg_composition_time_ms": 2.95,
+      "avg_grounding_score": 0.79,
+      "min_time_ms": 2.43,
+      "max_time_ms": 3.7
+    },
+    "template_usage": {
+      "explain_en": 1,
+      "extractive_en": 4,
+      "extractive_hi": 5
+    },
+    "grounding_requirement_met": true
+  },
+  "timestamp": 1756979367.2058496,
+  "success_rate": 1.0
+}

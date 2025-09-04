@@ -1,0 +1,31 @@
+# Python Dependencies for Uniguru-LM Composer
+# Install with: pip install -r requirements.txt
+
+# Core dependencies for text processing
+nltk>=3.8.1
+spacy>=3.5.0
+numpy>=1.24.0
+scipy>=1.10.0
+
+# Machine learning dependencies (for future GRU implementation)
+torch>=2.0.0
+transformers>=4.25.0
+scikit-learn>=1.2.0
+
+# Text processing and NLP utilities
+regex>=2022.10.31
+unidecode>=1.3.6
+langdetect>=1.0.9
+
+# Development and testing
+pytest>=7.2.0
+pytest-cov>=4.0.0
+black>=23.0.0
+flake8>=6.0.0
+
+# Logging and monitoring
+structlog>=22.3.0
+
+# Optional: For advanced NLP features
+# sentence-transformers>=2.2.0
+# faiss-cpu>=1.7.3

@@ -1,0 +1,416 @@
+{
+  "total_tests": 10,
+  "passed_tests": 10,
+  "failed_tests": 0,
+  "grounding_success_rate": 0.0,
+  "test_details": [
+    {
+      "test_name": "EN: Meditation and Peace",
+      "test_id": 1,
+      "trace_id": "smoke_test_en_001",
+      "lang": "EN",
+      "passed": true,
+      "grounded": false,
+      "grounding_score": 0.0,
+      "composition_time_ms": 4.77,
+      "template_id": "error_fallback",
+      "rl_action": "unknown",
+      "final_text_length": 76,
+      "citations_count": 2,
+      "validation_details": {
+        "passed": true,
+        "checks": {
+          "final_text_present": true,
+          "citations_present": true,
+          "grounding_status": true,
+          "trace_id_preserved": true,
+          "template_id_present": true,
+          "reasonable_time": true,
+          "rl_action_present": false
+        },
+        "issues": [
+          "Missing RL action metadata"
+        ]
+      },
+      "feedback_test": {
+        "feedback_collection_success": true,
+        "feedback_data": {
+          "rating": 4,
+          "type": "quality",
+          "comments": "Good composition quality for smoke test"
+        }
+      },
+      "test_time_ms": 9.08
+    },
+    {
+      "test_name": "EN: Dharma and Righteous Living",
+      "test_id": 2,
+      "trace_id": "smoke_test_en_002",
+      "lang": "EN",
+      "passed": true,
+      "grounded": false,
+      "grounding_score": 0.0,
+      "composition_time_ms": 3.56,
+      "template_id": "error_fallback",
+      "rl_action": "unknown",
+      "final_text_length": 76,
+      "citations_count": 2,
+      "validation_details": {
+        "passed": true,
+        "checks": {
+          "final_text_present": true,
+          "citations_present": true,
+          "grounding_status": true,
+          "trace_id_preserved": true,
+          "template_id_present": true,
+          "reasonable_time": true,
+          "rl_action_present": false
+        },
+        "issues": [
+          "Missing RL action metadata"
+        ]
+      },
+      "feedback_test": {
+        "feedback_collection_success": true,
+        "feedback_data": {
+          "rating": 4,
+          "type": "quality",
+          "comments": "Good composition quality for smoke test"
+        }
+      },
+      "test_time_ms": 3.6
+    },
+    {
+      "test_name": "EN: Yoga and Union",
+      "test_id": 3,
+      "trace_id": "smoke_test_en_003",
+      "lang": "EN",
+      "passed": true,
+      "grounded": false,
+      "grounding_score": 0.0,
+      "composition_time_ms": 3.45,
+      "template_id": "error_fallback",
+      "rl_action": "unknown",
+      "final_text_length": 83,
+      "citations_count": 2,
+      "validation_details": {
+        "passed": true,
+        "checks": {
+          "final_text_present": true,
+          "citations_present": true,
+          "grounding_status": true,
+          "trace_id_preserved": true,
+          "template_id_present": true,
+          "reasonable_time": true,
+          "rl_action_present": false
+        },
+        "issues": [
+          "Missing RL action metadata"
+        ]
+      },
+      "feedback_test": {
+        "feedback_collection_success": true,
+        "feedback_data": {
+          "rating": 4,
+          "type": "quality",
+          "comments": "Good composition quality for smoke test"
+        }
+      },
+      "test_time_ms": 3.49
+    },
+    {
+      "test_name": "EN: Knowledge and Devotion",
+      "test_id": 4,
+      "trace_id": "smoke_test_en_004",
+      "lang": "EN",
+      "passed": true,
+      "grounded": false,
+      "grounding_score": 0.0,
+      "composition_time_ms": 3.68,
+      "template_id": "error_fallback",
+      "rl_action": "unknown",
+      "final_text_length": 73,
+      "citations_count": 2,
+      "validation_details": {
+        "passed": true,
+        "checks": {
+          "final_text_present": true,
+          "citations_present": true,
+          "grounding_status": true,
+          "trace_id_preserved": true,
+          "template_id_present": true,
+          "reasonable_time": true,
+          "rl_action_present": false
+        },
+        "issues": [
+          "Missing RL action metadata"
+        ]
+      },
+      "feedback_test": {
+        "feedback_collection_success": true,
+        "feedback_data": {
+          "rating": 4,
+          "type": "quality",
+          "comments": "Good composition quality for smoke test"
+        }
+      },
+      "test_time_ms": 3.69
+    },
+    {
+      "test_name": "EN: Service and Selflessness",
+      "test_id": 5,
+      "trace_id": "smoke_test_en_005",
+      "lang": "EN",
+      "passed": true,
+      "grounded": false,
+      "grounding_score": 0.0,
+      "composition_time_ms": 3.46,
+      "template_id": "error_fallback",
+      "rl_action": "unknown",
+      "final_text_length": 71,
+      "citations_count": 2,
+      "validation_details": {
+        "passed": true,
+        "checks": {
+          "final_text_present": true,
+          "citations_present": true,
+          "grounding_status": true,
+          "trace_id_preserved": true,
+          "template_id_present": true,
+          "reasonable_time": true,
+          "rl_action_present": false
+        },
+        "issues": [
+          "Missing RL action metadata"
+        ]
+      },
+      "feedback_test": {
+        "feedback_collection_success": true,
+        "feedback_data": {
+          "rating": 4,
+          "type": "quality",
+          "comments": "Good composition quality for smoke test"
+        }
+      },
+      "test_time_ms": 3.49
+    },
+    {
+      "test_name": "HI: ध्यान और शांति",
+      "test_id": 6,
+      "trace_id": "smoke_test_hi_001",
+      "lang": "HI",
+      "passed": true,
+      "grounded": false,
+      "grounding_score": 0.0,
+      "composition_time_ms": 4.58,
+      "template_id": "error_fallback",
+      "rl_action": "unknown",
+      "final_text_length": 50,
+      "citations_count": 2,
+      "validation_details": {
+        "passed": true,
+        "checks": {
+          "final_text_present": true,
+          "citations_present": true,
+          "grounding_status": true,
+          "trace_id_preserved": true,
+          "template_id_present": true,
+          "reasonable_time": true,
+          "rl_action_present": false
+        },
+        "issues": [
+          "Missing RL action metadata"
+        ]
+      },
+      "feedback_test": {
+        "feedback_collection_success": true,
+        "feedback_data": {
+          "rating": 4,
+          "type": "quality",
+          "comments": "Good composition quality for smoke test"
+        }
+      },
+      "test_time_ms": 4.6
+    },
+    {
+      "test_name": "HI: धर्म और नैतिक आचरण",
+      "test_id": 7,
+      "trace_id": "smoke_test_hi_002",
+      "lang": "HI",
+      "passed": true,
+      "grounded": false,
+      "grounding_score": 0.0,
+      "composition_time_ms": 2.82,
+      "template_id": "error_fallback",
+      "rl_action": "unknown",
+      "final_text_length": 46,
+      "citations_count": 2,
+      "validation_details": {
+        "passed": true,
+        "checks": {
+          "final_text_present": true,
+          "citations_present": true,
+          "grounding_status": true,
+          "trace_id_preserved": true,
+          "template_id_present": true,
+          "reasonable_time": true,
+          "rl_action_present": false
+        },
+        "issues": [
+          "Missing RL action metadata"
+        ]
+      },
+      "feedback_test": {
+        "feedback_collection_success": true,
+        "feedback_data": {
+          "rating": 4,
+          "type": "quality",
+          "comments": "Good composition quality for smoke test"
+        }
+      },
+      "test_time_ms": 2.83
+    },
+    {
+      "test_name": "HI: योग और एकता",
+      "test_id": 8,
+      "trace_id": "smoke_test_hi_003",
+      "lang": "HI",
+      "passed": true,
+      "grounded": false,
+      "grounding_score": 0.0,
+      "composition_time_ms": 2.3,
+      "template_id": "error_fallback",
+      "rl_action": "unknown",
+      "final_text_length": 61,
+      "citations_count": 2,
+      "validation_details": {
+        "passed": true,
+        "checks": {
+          "final_text_present": true,
+          "citations_present": true,
+          "grounding_status": true,
+          "trace_id_preserved": true,
+          "template_id_present": true,
+          "reasonable_time": true,
+          "rl_action_present": false
+        },
+        "issues": [
+          "Missing RL action metadata"
+        ]
+      },
+      "feedback_test": {
+        "feedback_collection_success": true,
+        "feedback_data": {
+          "rating": 4,
+          "type": "quality",
+          "comments": "Good composition quality for smoke test"
+        }
+      },
+      "test_time_ms": 2.33
+    },
+    {
+      "test_name": "HI: ज्ञान और भक्ति",
+      "test_id": 9,
+      "trace_id": "smoke_test_hi_004",
+      "lang": "HI",
+      "passed": true,
+      "grounded": false,
+      "grounding_score": 0.0,
+      "composition_time_ms": 3.55,
+      "template_id": "error_fallback",
+      "rl_action": "unknown",
+      "final_text_length": 62,
+      "citations_count": 2,
+      "validation_details": {
+        "passed": true,
+        "checks": {
+          "final_text_present": true,
+          "citations_present": true,
+          "grounding_status": true,
+          "trace_id_preserved": true,
+          "template_id_present": true,
+          "reasonable_time": true,
+          "rl_action_present": false
+        },
+        "issues": [
+          "Missing RL action metadata"
+        ]
+      },
+      "feedback_test": {
+        "feedback_collection_success": true,
+        "feedback_data": {
+          "rating": 4,
+          "type": "quality",
+          "comments": "Good composition quality for smoke test"
+        }
+      },
+      "test_time_ms": 3.57
+    },
+    {
+      "test_name": "HI: सेवा और निःस्वार्थता",
+      "test_id": 10,
+      "trace_id": "smoke_test_hi_005",
+      "lang": "HI",
+      "passed": true,
+      "grounded": false,
+      "grounding_score": 0.0,
+      "composition_time_ms": 3.17,
+      "template_id": "error_fallback",
+      "rl_action": "unknown",
+      "final_text_length": 70,
+      "citations_count": 2,
+      "validation_details": {
+        "passed": true,
+        "checks": {
+          "final_text_present": true,
+          "citations_present": true,
+          "grounding_status": true,
+          "trace_id_preserved": true,
+          "template_id_present": true,
+          "reasonable_time": true,
+          "rl_action_present": false
+        },
+        "issues": [
+          "Missing RL action metadata"
+        ]
+      },
+      "feedback_test": {
+        "feedback_collection_success": true,
+        "feedback_data": {
+          "rating": 4,
+          "type": "quality",
+          "comments": "Good composition quality for smoke test"
+        }
+      },
+      "test_time_ms": 3.19
+    }
+  ],
+  "summary": {
+    "overall_success_rate": 1.0,
+    "grounding_success_rate": 0.0,
+    "language_breakdown": {
+      "english": {
+        "total": 5,
+        "passed": 5,
+        "success_rate": 1.0
+      },
+      "hindi": {
+        "total": 5,
+        "passed": 5,
+        "success_rate": 1.0
+      }
+    },
+    "performance_metrics": {
+      "avg_composition_time_ms": 3.53,
+      "avg_grounding_score": 0.0,
+      "min_time_ms": 2.3,
+      "max_time_ms": 4.77
+    },
+    "template_usage": {
+      "error_fallback": 10
+    },
+    "grounding_requirement_met": false
+  },
+  "timestamp": 1756979528.603955,
+  "success_rate": 1.0
+}
