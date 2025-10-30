@@ -74,10 +74,7 @@ app.use(cors({
     'https://uni-guru.vercel.app',
     // Firebase hosting domains
     'https://uniguru-bf024.web.app',
-    'https://uniguru-bf024.firebaseapp.com',
-    // Additional Firebase domains (without trailing slash)
-    'https://uniguru-bf024.web.app/',
-    'https://uniguru-bf024.firebaseapp.com/'
+    'https://uniguru-bf024.firebaseapp.com'
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],

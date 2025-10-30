@@ -199,7 +199,13 @@ class FeedbackCollector:
                 f.write(json.dumps(feedback_dict, ensure_ascii=False) + '\n')
                 
         except Exception as e:
-            logger.error(f"Failed to log feedback to file: {str(e)}")
+            import traceback
+            error_details = {
+                'error_type': type(e).__name__,
+                'error_message': str(e),
+                'traceback': traceback.format_exc()
+            }
+            logger.error(f"Failed to log feedback to file: {error_details}")
     
     def _update_rl_policy_with_feedback(self, feedback_record: FeedbackRecord):
         """Update RL policy with feedback"""
@@ -214,7 +220,7 @@ class FeedbackCollector:
             # Create dummy action metadata (in real implementation, this would be retrieved)
             action_metadata = {
                 'trace_id': feedback_record.trace_id,
-                'action': 'unknown',  # Would be retrieved from trace
+                'action': 'feedback',  # More appropriate default for feedback updates
                 'context_key': 'default',
                 'timestamp': feedback_record.timestamp
             }
@@ -230,7 +236,13 @@ class FeedbackCollector:
             logger.info(f"RL policy updated with feedback reward: {feedback_reward:.3f}")
             
         except Exception as e:
-            logger.error(f"Failed to update RL policy with feedback: {str(e)}")
+            import traceback
+            error_details = {
+                'error_type': type(e).__name__,
+                'error_message': str(e),
+                'traceback': traceback.format_exc()
+            }
+            logger.error(f"Failed to update RL policy with feedback: {error_details}")
     
     def _calculate_feedback_reward(self, feedback_record: FeedbackRecord) -> float:
         """Calculate reward from feedback"""

@@ -151,7 +151,13 @@ class Composer:
             return result
             
         except Exception as e:
-            logger.error(f"Composition failed for trace_id: {trace_id}, error: {str(e)}")
+            import traceback
+            error_details = {
+                'error_type': type(e).__name__,
+                'error_message': str(e),
+                'traceback': traceback.format_exc()
+            }
+            logger.error(f"Composition failed for trace_id: {trace_id}, error: {error_details}")
             return {
                 'trace_id': trace_id,
                 'final_text': extractive_answer,  # Fallback to original answer
@@ -163,6 +169,7 @@ class Composer:
                 'lang': lang,
                 'method': 'error_fallback',
                 'error': str(e),
+                'error_details': error_details,
                 'citations': self._extract_citations(top_chunks) if top_chunks else []
             }
     

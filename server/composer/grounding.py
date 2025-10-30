@@ -156,14 +156,21 @@ class GroundingVerifier:
             return result
             
         except Exception as e:
-            logger.error(f"Grounding verification failed: {str(e)}")
+            import traceback
+            error_details = {
+                'error_type': type(e).__name__,
+                'error_message': str(e),
+                'traceback': traceback.format_exc()
+            }
+            logger.error(f"Grounding verification failed: {error_details}")
             return {
                 'grounded': False,
                 'score': 0.0,
                 'overlapping_tokens': [],
                 'overlap_ratio': 0.0,
                 'chunk_coverage': [],
-                'error': str(e)
+                'error': str(e),
+                'error_details': error_details
             }
     
     def _tokenize_text(self, text: str) -> Set[str]:

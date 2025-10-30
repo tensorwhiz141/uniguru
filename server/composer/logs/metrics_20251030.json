@@ -1,0 +1,27 @@
+{
+  "timestamp": 1761816142.0760078,
+  "session_start": 1761816140.9347699,
+  "total_compositions": 10,
+  "performance_summary": {
+    "session_info": {
+      "uptime_seconds": 1.1412405967712402,
+      "start_time": 1761816140.9347699,
+      "total_compositions": 10
+    },
+    "success_metrics": {
+      "success_rate": 1.0,
+      "grounding_rate": 1.0,
+      "successful_compositions": 10,
+      "failed_compositions": 0,
+      "grounding_failures": 0
+    },
+    "performance_metrics": {
+      "avg_composition_time_ms": 108.37899999999999,
+      "p50_composition_time_ms": 109.04,
+      "p95_composition_time_ms": 109.73,
+      "p99_composition_time_ms": 109.73,
+      "min_time_ms": 105.56,
+      "max_time_ms": 109.73
+    }
+  }
+}

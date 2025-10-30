@@ -16,7 +16,7 @@ class NGramScorer:
     """N-gram based text scorer and smoother for improving fluency"""
     
     def __init__(self, n=3):
-        self.n = n  # Default to trigrams
+        self.n = n  
         self.language_models = {
             'EN': self._initialize_english_model(),
             'HI': self._initialize_hindi_model()
@@ -164,7 +164,13 @@ class NGramScorer:
             return polished_text
             
         except Exception as e:
-            logger.error(f"Text smoothing failed: {str(e)}")
+            import traceback
+            error_details = {
+                'error_type': type(e).__name__,
+                'error_message': str(e),
+                'traceback': traceback.format_exc()
+            }
+            logger.error(f"Text smoothing failed: {error_details}")
             return text  # Return original text if smoothing fails
     
     def _tokenize_sentences(self, text: str, lang: str) -> List[str]:
@@ -239,7 +245,7 @@ class NGramScorer:
                 best_score = score
                 best_trigram = model_trigram
         
-        return best_trigram
+        return best_trigram if best_trigram is not None else tuple()
     
     def _calculate_trigram_similarity(self, trigram1: Tuple, trigram2: Tuple) -> float:
         """Calculate similarity between two trigrams"""
@@ -351,7 +357,7 @@ class NGramScorer:
                 score += 0.15  # Default score for unknown bigrams
             ngram_count += 0.5  # Partial count for bigrams
         
-        return score, ngram_count
+        return float(score), int(ngram_count)
     
     @lru_cache(maxsize=1000)
     def get_word_suggestions(self, context: Tuple[str, str], lang: str) -> List[str]:
@@ -368,3 +374,4 @@ class NGramScorer:
         suggestions = sorted(suggestions, key=lambda w: model['trigrams'].get(context + (w,), 0), reverse=True)
         
         return suggestions[:5]  # Return top 5 suggestions
+        

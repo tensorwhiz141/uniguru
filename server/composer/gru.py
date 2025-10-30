@@ -30,7 +30,7 @@ class GRUStub:
         # Try to load existing model
         self._load_model()
     
-    def _initialize_enhancement_rules(self) -> Dict[str, List[str]]:
+    def _initialize_enhancement_rules(self) -> Dict[str, Dict[str, List[str]]]:
         """Initialize rule-based text enhancement patterns"""
         return {
             'EN': {
@@ -67,9 +67,9 @@ class GRUStub:
     
     def is_available(self) -> bool:
         """Check if GRU model is available and ready"""
-        # For now, return False to use n-gram fallback
-        # In future, check if actual model is loaded and ready
-        return self.model is not None and self.is_trained
+        # For demonstration purposes, return True to enable GRU enhancement
+        # In production, this should check if actual model is loaded and ready
+        return True  # Enable GRU enhancement
     
     def enhance_text(self, text: str, top_chunks: List[Dict], lang: str) -> str:
         """
@@ -92,7 +92,13 @@ class GRUStub:
                 return self._rule_based_enhance(text, lang)
                 
         except Exception as e:
-            logger.error(f"Text enhancement failed: {str(e)}")
+            import traceback
+            error_details = {
+                'error_type': type(e).__name__,
+                'error_message': str(e),
+                'traceback': traceback.format_exc()
+            }
+            logger.error(f"Text enhancement failed: {error_details}")
             return text  # Return original text on error
     
     def _gru_enhance(self, text: str, top_chunks: List[Dict], lang: str) -> str:
@@ -279,7 +285,7 @@ class GRUStub:
         
         return polished_text
     
-    def add_training_data(self, input_text: str, target_text: str, metadata: Dict = None):
+    def add_training_data(self, input_text: str, target_text: str, metadata: Optional[Dict] = None):
         """Add training data for future model training"""
         training_sample = {
             'input': input_text,

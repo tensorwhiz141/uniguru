@@ -231,7 +231,7 @@ Citations: {citations}"""
         
         max_score = max(scores.values())
         if max_score > 0:
-            return max(scores, key=scores.get)
+            return max(scores.items(), key=lambda x: x[1])[0]
         else:
             # Default to explain template if no clear signals
             return TemplateType.EXPLAIN
@@ -264,7 +264,13 @@ Citations: {citations}"""
             return composed_text
             
         except Exception as e:
-            logger.error(f"Template application failed: {str(e)}")
+            import traceback
+            error_details = {
+                'error_type': type(e).__name__,
+                'error_message': str(e),
+                'traceback': traceback.format_exc()
+            }
+            logger.error(f"Template application failed: {error_details}")
             # Fallback to simple format
             return f"{extractive_answer}\n\nSources: {self._format_simple_citations(top_chunks)}"
     

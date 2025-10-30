@@ -104,12 +104,19 @@ class RLPolicy:
             return action, action_metadata
             
         except Exception as e:
-            logger.error(f"RL Policy action selection failed: {str(e)}")
+            import traceback
+            error_details = {
+                'error_type': type(e).__name__,
+                'error_message': str(e),
+                'traceback': traceback.format_exc()
+            }
+            logger.error(f"RL Policy action selection failed: {error_details}")
             # Fallback to default action
             return PolicyAction.EXPLAIN, {
                 'action': PolicyAction.EXPLAIN.value,
                 'selection_method': 'fallback',
-                'error': str(e)
+                'error': str(e),
+                'error_details': error_details
             }
     
     def update_policy(self, trace_id: str, action_metadata: Dict[str, Any], 
@@ -167,7 +174,13 @@ class RLPolicy:
                        f"reward={reward:.3f}, new_q={new_q:.3f}")
             
         except Exception as e:
-            logger.error(f"RL Policy update failed: {str(e)}")
+            import traceback
+            error_details = {
+                'error_type': type(e).__name__,
+                'error_message': str(e),
+                'traceback': traceback.format_exc()
+            }
+            logger.error(f"RL Policy update failed: {error_details}")
     
     def _extract_context_key(self, context: Dict[str, Any]) -> str:
         """Extract context key for state representation"""
@@ -219,7 +232,7 @@ class RLPolicy:
         """Update epsilon for exploration-exploitation balance"""
         # Adaptive epsilon decay based on performance
         if len(self.reward_history) >= 10:
-            recent_performance = sum(self.reward_history[-10:]) / 10
+            recent_performance = sum(list(self.reward_history)[-10:]) / 10
             
             # If performance is good, reduce exploration
             if recent_performance > 0.8:
@@ -237,8 +250,8 @@ class RLPolicy:
             'epsilon': self.epsilon,
             'experience_buffer_size': len(self.experience_buffer),
             'contexts_learned': len(self.q_values),
-            'average_reward': sum(self.reward_history) / max(1, len(self.reward_history)) if self.reward_history else 0.0,
-            'recent_performance': sum(self.reward_history[-10:]) / min(10, len(self.reward_history)) if self.reward_history else 0.0
+            'average_reward': sum(list(self.reward_history)) / max(1, len(self.reward_history)) if self.reward_history else 0.0,
+            'recent_performance': sum(list(self.reward_history)[-10:]) / min(10, len(self.reward_history)) if self.reward_history else 0.0
         }
         
         # Action distribution
